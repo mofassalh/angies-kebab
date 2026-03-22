@@ -66,8 +66,13 @@ const DELIVERY_PARTNERS = [
 
 const ADMIN_PASSWORD = "angies2024";
 
+const getPath = () => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('p') || window.location.pathname.slice(1);
+};
+
 export default function App() {
-  const path = window.location.pathname;
+  const path = '/' + getPath();
   const isAdmin = path === "/admin";
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
