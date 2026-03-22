@@ -3,82 +3,126 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>P&L Report — Angie's 2026</title>
+<title>P&L Report — Angie's Group 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f5f0e8;font-family:'Nunito',sans-serif;min-height:100vh;}
-input,button,select{outline:none;font-family:'Nunito',sans-serif;}
-#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#1a0a00;}
-.login-box{background:#fff;border-radius:20px;padding:40px;width:360px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.3);}
+body{background:#f0f0f0;font-family:Arial,sans-serif;min-height:100vh;color:#000;}
+input,button,select,textarea{outline:none;font-family:Arial,sans-serif;}
+
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#1a1a1a;}
+.login-box{background:#fff;border-radius:16px;padding:40px;width:360px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.3);}
 .login-box img{width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid #f5c842;}
-.login-box h2{font-size:22px;font-weight:900;margin-top:12px;}
-.login-box p{font-size:13px;color:#888;margin-top:4px;margin-bottom:24px;}
-.login-box input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid #e0e0e0;font-size:14px;margin-bottom:10px;}
-.err{color:#c0392b;font-size:13px;margin-bottom:8px;display:none;}
-.login-box button{width:100%;padding:12px;border-radius:10px;background:#b8860b;color:#fff;font-size:15px;font-weight:800;border:none;cursor:pointer;}
-#dashboard{display:none;}
-.topbar{background:#7a5c00;padding:0 12px;display:flex;align-items:center;justify-content:space-between;height:50px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
-.topbar-left{display:flex;align-items:center;gap:8px;}
-.topbar-left img{width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid #f5c842;cursor:pointer;}
-.topbar-title{color:#fff;font-weight:900;font-size:13px;}
-.topbar-sub{color:rgba(255,255,255,0.6);font-size:10px;}
-.tabs{display:flex;gap:3px;overflow-x:auto;}
-.tab{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;}
-.tab.active{background:#f5c842;color:#1a0a00;}
-.tab:not(.active){background:rgba(255,255,255,0.15);color:#fff;}
-.logout-btn{padding:5px 10px;border-radius:6px;background:rgba(255,255,255,0.15);color:#fff;border:none;cursor:pointer;font-size:11px;white-space:nowrap;}
-.sheet{display:none;padding:12px;}
+.login-box h2{font-size:20px;font-weight:700;margin-top:12px;}
+.login-box p{font-size:13px;color:#666;margin-top:4px;margin-bottom:20px;}
+.login-box input{width:100%;padding:11px 14px;border-radius:8px;border:1px solid #ddd;font-size:14px;margin-bottom:10px;}
+.err-msg{color:#c0392b;font-size:12px;margin-bottom:8px;display:none;}
+.login-btn{width:100%;padding:11px;border-radius:8px;background:#2c3e50;color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;}
+
+/* LAYOUT */
+#app{display:none;height:100vh;flex-direction:column;}
+.topbar{background:#2c3e50;height:48px;display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;z-index:300;position:relative;}
+.topbar img{width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid #f5c842;cursor:pointer;}
+.topbar-title{color:#fff;font-weight:700;font-size:13px;flex:1;}
+.topbar-sub{color:rgba(255,255,255,0.5);font-size:10px;}
+.top-tabs{display:flex;gap:2px;}
+.ttab{padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;}
+.ttab.active{background:#f5c842;color:#1a1a1a;}
+.ttab:not(.active){background:rgba(255,255,255,0.12);color:#fff;}
+.logout-btn{padding:5px 10px;border-radius:5px;background:rgba(255,255,255,0.12);color:#fff;border:none;cursor:pointer;font-size:11px;}
+
+.main-body{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR (dashboard only) */
+.sidebar{width:180px;background:#fff;border-right:1px solid #ddd;flex-shrink:0;display:none;flex-direction:column;overflow-y:auto;}
+.sidebar.show{display:flex;}
+.sb-title{padding:12px 14px;font-size:11px;font-weight:700;color:#666;border-bottom:1px solid #eee;background:#f8f8f8;}
+.sb-item{padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:1px solid #f0f0f0;transition:all 0.15s;}
+.sb-item:hover{background:#f0f0f0;}
+.sb-item.active{background:#2c3e50;color:#fff;}
+.sb-group{padding:8px 14px 4px;font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* CONTENT */
+.content{flex:1;overflow:auto;padding:14px;}
+.sheet{display:none;}
 .sheet.active{display:block;}
-.input-section h3{font-size:15px;font-weight:900;color:#5a4000;margin-bottom:12px;}
+
+/* CARDS */
+.card{background:#fff;border-radius:10px;padding:14px;margin-bottom:14px;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1px solid #e8e8e8;}
+.card-title{font-size:12px;font-weight:700;color:#333;margin-bottom:12px;border-bottom:1px solid #f0f0f0;padding-bottom:8px;}
 .ig2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
 .ig3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
-.fl{font-size:11px;font-weight:700;color:#7a5c00;margin-bottom:4px;}
-.fi{width:100%;padding:9px 12px;border-radius:8px;border:1px solid #ddd;font-size:13px;background:#fff;}
-.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,0.06);}
-.card-title{font-size:12px;font-weight:800;color:#7a5c00;margin-bottom:12px;}
-.add-btn{width:100%;padding:11px;background:#b8860b;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:16px;}
-.toast{background:#d4edda;color:#2d6a4f;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;margin-bottom:10px;display:none;}
-.dtwrap{overflow-x:auto;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,0.08);}
+.ig4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;}
+.fl{font-size:11px;font-weight:700;color:#444;margin-bottom:3px;}
+.fi{width:100%;padding:8px 10px;border-radius:6px;border:1px solid #ddd;font-size:12px;background:#fff;color:#000;}
+.fi:focus{border-color:#2c3e50;}
+.save-btn{width:100%;padding:10px;background:#2c3e50;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:14px;}
+.save-btn:hover{background:#1a252f;}
+.toast{background:#d4edda;color:#155724;border-radius:6px;padding:8px 14px;font-size:12px;font-weight:700;margin-bottom:10px;display:none;}
+
+/* DATA TABLE */
+.dtwrap{overflow-x:auto;border-radius:8px;border:1px solid #e0e0e0;}
 .dt{width:100%;border-collapse:collapse;font-size:11px;background:#fff;}
-.dt th{background:#7a5c00;color:#fff;padding:7px 10px;font-weight:700;white-space:nowrap;border:1px solid #5a4200;text-align:left;}
-.dt td{padding:6px 10px;border:1px solid #e8ddb0;white-space:nowrap;font-size:11px;}
-.dt tr:nth-child(even) td{background:#fdf9f0;}
-.del-btn{background:#fff0f0;color:#c0392b;border:none;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:700;}
-.upload-zone{border:2px dashed #b8860b;border-radius:12px;padding:24px;text-align:center;cursor:pointer;background:#fff9f0;transition:all 0.2s;margin-bottom:12px;}
-.upload-zone:hover{background:#fff3dc;}
-.pg-title{font-size:15px;font-weight:900;color:#5a4000;padding:8px 0 4px;}
-.pg-sub{font-size:11px;color:#999;padding:0 0 10px;}
+.dt th{background:#2c3e50;color:#fff;padding:7px 10px;font-weight:700;white-space:nowrap;border:1px solid #1a252f;text-align:left;font-size:11px;}
+.dt td{padding:6px 10px;border:1px solid #e8e8e8;white-space:nowrap;font-size:11px;color:#000;}
+.dt tr:nth-child(even) td{background:#f9f9f9;}
+.dt tr:hover td{background:#f0f4f8;}
+.del-btn{background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:10px;}
+
+/* UPLOAD */
+.upload-zone{border:2px dashed #2c3e50;border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:#f8f9fa;transition:all 0.2s;margin-bottom:10px;}
+.upload-zone:hover{background:#e8f0fe;border-color:#1a252f;}
+.upload-icon{font-size:32px;margin-bottom:8px;}
+.upload-title{font-size:13px;font-weight:700;color:#2c3e50;margin-bottom:4px;}
+.upload-sub{font-size:11px;color:#888;}
+
+/* REPORT TABLE */
 .rtwrap{overflow-x:auto;}
-table.rt{border-collapse:collapse;font-size:11px;background:#fff;}
-.rt-lbl{background:#7a5c00;color:#fff;font-weight:700;padding:6px 12px;border:1px solid #5a4200;white-space:nowrap;position:sticky;left:0;z-index:2;text-align:right;min-width:210px;font-size:11px;}
-.rt-lbl-sub{background:#8a6c10;color:rgba(255,255,255,0.9);font-weight:600;padding:5px 12px 5px 22px;border:1px solid #6a4c00;white-space:nowrap;position:sticky;left:0;z-index:2;text-align:right;font-size:10px;}
-.rt-lbl-sec{background:#4a3400;color:#f5c842;font-weight:800;padding:5px 12px;border:1px solid #2a1800;white-space:nowrap;position:sticky;left:0;z-index:2;text-align:right;font-size:10px;letter-spacing:0.5px;}
-.rt-thw{background:#7a5c00;color:#fff;font-weight:800;font-size:11px;padding:6px 8px;border:1px solid #5a4200;white-space:nowrap;min-width:70px;text-align:center;}
-.rt-thm{background:#b8860b;color:#fff;font-weight:800;font-size:11px;padding:6px 8px;border:1px solid #8a6200;white-space:nowrap;min-width:80px;text-align:center;}
-.rt-thy{background:#4a3400;color:#f5c842;font-weight:900;font-size:11px;padding:6px 8px;border:1px solid #2a1800;white-space:nowrap;min-width:85px;text-align:center;}
-.rt-dw{background:#b8860b;color:#fff;font-size:9px;padding:4px 6px;border:1px solid #8a6200;text-align:center;}
-.rt-dm{background:#d4a800;color:#fff;font-size:9px;padding:4px 6px;border:1px solid #a07800;text-align:center;}
-.rt-dy{background:#6a4000;color:#f5c842;font-size:9px;padding:4px 6px;border:1px solid #4a2800;text-align:center;}
-.rt-w{text-align:right;padding:5px 8px;border:1px solid #e0d0a0;font-family:monospace;color:#333;font-size:11px;}
-.rt-m{text-align:right;padding:5px 8px;border:1px solid #c8a800;font-family:monospace;color:#7a5c00;font-weight:700;background:#fff9e0;font-size:11px;}
-.rt-y{text-align:right;padding:5px 8px;border:1px solid #8a6200;font-family:monospace;color:#3a2000;font-weight:900;background:#f5e8c0;font-size:11px;}
-.rt-empty td{height:8px;background:#f9f5e8;border:1px solid #ede0b0;}
-.profit{color:#2d6a4f!important;font-weight:800;}
-.loss{color:#c0392b!important;font-weight:800;}
-.dash-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
-.dash-card{background:#fff;border-radius:14px;padding:16px;border-left:4px solid #b8860b;box-shadow:0 2px 10px rgba(0,0,0,0.06);}
-.dash-card .icon{font-size:22px;margin-bottom:6px;}
-.dash-card .val{font-size:20px;font-weight:900;color:#5a4000;font-family:monospace;}
-.dash-card .lbl{font-size:11px;color:#888;margin-top:2px;font-weight:700;}
-.loc-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,0.06);}
-.loc-card h4{font-size:13px;font-weight:900;margin-bottom:8px;}
-.loc-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.lm{background:#f9f5e8;border-radius:8px;padding:8px;text-align:center;}
-.lm .mv{font-size:13px;font-weight:900;font-family:monospace;color:#5a4000;}
-.lm .ml{font-size:10px;color:#888;}
+table.rt{border-collapse:collapse;font-size:11px;background:#fff;border:1px solid #ccc;}
+.rt td,table.rt th{font-family:Arial,sans-serif;color:#000;}
+
+/* Frozen cols */
+.rt-fix1{background:#fff;color:#000;font-weight:700;padding:5px 10px;border:1px solid #ccc;white-space:nowrap;position:sticky;left:0;z-index:3;text-align:right;min-width:190px;font-size:11px;}
+.rt-fix2{background:#f5f5f5;color:#000;font-weight:600;padding:4px 10px 4px 20px;border:1px solid #ddd;white-space:nowrap;position:sticky;left:0;z-index:3;text-align:right;font-size:10px;}
+.rt-fix-sec{background:#2c3e50;color:#fff;font-weight:700;padding:5px 10px;border:1px solid #1a252f;white-space:nowrap;position:sticky;left:0;z-index:3;text-align:right;font-size:11px;}
+.rt-fix-header{background:#1a252f;color:#fff;font-weight:700;padding:6px 10px;border:1px solid #111;white-space:nowrap;position:sticky;left:0;z-index:4;text-align:center;font-size:12px;}
+
+/* Week/month/year headers */
+.rt-thw{background:#34495e;color:#fff;font-weight:700;font-size:11px;padding:6px 8px;border:1px solid #2c3e50;white-space:nowrap;min-width:68px;text-align:center;}
+.rt-thm{background:#7f8c8d;color:#fff;font-weight:700;font-size:11px;padding:6px 8px;border:1px solid #6c7a7d;white-space:nowrap;min-width:78px;text-align:center;}
+.rt-thy{background:#1a252f;color:#f5c842;font-weight:900;font-size:11px;padding:6px 8px;border:1px solid #111;white-space:nowrap;min-width:82px;text-align:center;}
+.rt-dw{background:#7f8c8d;color:#fff;font-size:9px;padding:3px 6px;border:1px solid #6c7a7d;text-align:center;}
+.rt-dm{background:#95a5a6;color:#fff;font-size:9px;padding:3px 6px;border:1px solid #7f8c8d;text-align:center;}
+.rt-dy{background:#2c3e50;color:#f5c842;font-size:9px;padding:3px 6px;border:1px solid #1a252f;text-align:center;}
+
+/* Data cells */
+.rt-w{text-align:right;padding:4px 8px;border:1px solid #e0e0e0;font-size:11px;color:#000;background:#fff;}
+.rt-m{text-align:right;padding:4px 8px;border:1px solid #ccc;font-size:11px;color:#000;background:#f9f9f9;font-weight:700;}
+.rt-y{text-align:right;padding:4px 8px;border:1px solid #bbb;font-size:11px;color:#000;background:#f0f0f0;font-weight:900;}
+.rt-empty td{height:7px;background:#f8f8f8;border:1px solid #ebebeb;}
+.rt-profit{color:#1a7a3c!important;font-weight:700;}
+.rt-loss{color:#c0392b!important;font-weight:700;}
+
+/* DASHBOARD */
+.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
+.kpi-card{background:#fff;border-radius:10px;padding:14px;border:1px solid #e8e8e8;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.kpi-icon{font-size:20px;margin-bottom:6px;}
+.kpi-val{font-size:18px;font-weight:700;color:#000;font-family:Arial;}
+.kpi-lbl{font-size:11px;color:#666;margin-top:2px;}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.chart-card{background:#fff;border-radius:10px;padding:14px;border:1px solid #e8e8e8;}
+.chart-title{font-size:12px;font-weight:700;color:#333;margin-bottom:10px;}
+.dash-table{width:100%;border-collapse:collapse;font-size:11px;}
+.dash-table th{background:#2c3e50;color:#fff;padding:7px 10px;text-align:left;border:1px solid #1a252f;}
+.dash-table td{padding:6px 10px;border:1px solid #e8e8e8;color:#000;}
+.dash-table tr:nth-child(even) td{background:#f9f9f9;}
+
+/* Toggle entries */
+.entries-toggle{background:#f0f0f0;border:1px solid #ddd;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -89,189 +133,275 @@ table.rt{border-collapse:collapse;font-size:11px;background:#fff;}
     <h2>P&L Report 2026</h2>
     <p>Angie's Group · Confidential</p>
     <input type="password" id="pass-input" placeholder="Enter password"/>
-    <div class="err" id="err-msg">❌ Wrong password!</div>
-    <button onclick="doLogin()">View Report →</button>
+    <div class="err-msg" id="err-msg">❌ Wrong password!</div>
+    <button class="login-btn" onclick="doLogin()">View Report →</button>
   </div>
 </div>
 
-<div id="dashboard">
+<div id="app">
   <div class="topbar">
-    <div class="topbar-left">
-      <img src="/logo.jpg" onclick="window.location.href='/'"/>
-      <div>
-        <div class="topbar-title">Angie's Group P&L 2026</div>
-        <div class="topbar-sub">6 Restaurants · 3 Locations</div>
-      </div>
+    <img src="/logo.jpg" onclick="window.location.href='/'"/>
+    <div>
+      <div class="topbar-title">Angie's Group P&L 2026</div>
+      <div class="topbar-sub">6 Restaurants · 3 Locations · AUD</div>
     </div>
-    <div class="tabs">
-      <button class="tab active" onclick="showTab('input',this)">📝 Data Input</button>
-      <button class="tab" onclick="showTab('overall',this)">📊 Overall</button>
-      <button class="tab" onclick="showTab('stalbans',this)">ST ALBANS</button>
-      <button class="tab" onclick="showTab('fitzroy',this)">FITZROY NORTH</button>
-      <button class="tab" onclick="showTab('ascot',this)">ASCOT VALE</button>
-      <button class="tab" onclick="showTab('dash',this)">📈 Dashboard</button>
+    <div class="top-tabs">
+      <button class="ttab active" onclick="showTab('input',this)">📝 Data Input</button>
+      <button class="ttab" onclick="showTab('overall',this)">📊 Overall</button>
+      <button class="ttab" onclick="showTab('stalbans',this)">ST ALBANS</button>
+      <button class="ttab" onclick="showTab('fitzroy',this)">FITZROY NORTH</button>
+      <button class="ttab" onclick="showTab('ascot',this)">ASCOT VALE</button>
+      <button class="ttab" onclick="showTab('dash',this)">📈 Dashboard</button>
     </div>
     <button class="logout-btn" onclick="doLogout()">Logout</button>
   </div>
 
-  <!-- DATA INPUT -->
-  <div id="tab-input" class="sheet active">
-    <div class="input-section">
-      <h3>📝 Data Input</h3>
-      <div class="toast" id="toast">✅ Saved!</div>
+  <div class="main-body">
+    <!-- SIDEBAR (dashboard) -->
+    <div class="sidebar" id="sidebar">
+      <div class="sb-title">📊 Dashboard Menu</div>
+      <div class="sb-group">Overview</div>
+      <div class="sb-item active" onclick="showDash('overview',this)">📋 Overview</div>
+      <div class="sb-group">Revenue</div>
+      <div class="sb-item" onclick="showDash('revenue',this)">💰 Revenue</div>
+      <div class="sb-item" onclick="showDash('online',this)">🛵 Online Orders</div>
+      <div class="sb-group">Cost</div>
+      <div class="sb-item" onclick="showDash('cost',this)">💸 Cost Analysis</div>
+      <div class="sb-group">P&L</div>
+      <div class="sb-item" onclick="showDash('pnl',this)">📈 P&L Summary</div>
+      <div class="sb-group">Locations</div>
+      <div class="sb-item" onclick="showDash('loc-stalbans',this)">📍 ST ALBANS</div>
+      <div class="sb-item" onclick="showDash('loc-fitzroy',this)">📍 FITZROY NORTH</div>
+      <div class="sb-item" onclick="showDash('loc-ascot',this)">📍 ASCOT VALE</div>
+    </div>
 
-      <!-- FILE UPLOAD -->
-      <div class="card">
-        <div class="card-title">📂 Upload File (Excel / CSV) — Column order doesn't matter</div>
-        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-inp').click()">
-          <div style="font-size:36px;margin-bottom:8px">📂</div>
-          <div style="font-size:14px;font-weight:800;color:#7a5c00;margin-bottom:4px">Click to upload Excel or CSV</div>
-          <div style="font-size:12px;color:#aaa">.xlsx / .xls / .csv supported · Column order doesn't matter</div>
-          <div id="fname" style="margin-top:8px;font-size:12px;color:#b8860b;font-weight:700;display:none"></div>
-        </div>
-        <input type="file" id="file-inp" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFile(event)"/>
+    <div class="content">
 
-        <div id="map-section" style="display:none;margin-bottom:12px;">
-          <div style="font-size:12px;font-weight:800;color:#7a5c00;margin-bottom:8px;">🗂️ Match your columns — কোন column কোথায় যাবে</div>
-          <div id="map-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
-        </div>
+      <!-- DATA INPUT -->
+      <div id="tab-input" class="sheet active">
+        <div class="toast" id="toast">✅ Saved!</div>
 
-        <div id="preview-section" style="display:none;margin-bottom:12px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <div style="font-size:12px;font-weight:800;color:#5a4000;">👁️ Preview — <span id="prev-count">0</span> rows</div>
-            <div style="display:flex;gap:8px;">
-              <button onclick="clearUpload()" style="padding:5px 12px;background:#f0f0f0;color:#555;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;">✕ Clear</button>
-              <button onclick="saveUploaded()" style="padding:5px 14px;background:#b8860b;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:800;cursor:pointer;">✅ Save to Report</button>
+        <!-- FILE UPLOAD -->
+        <div class="card">
+          <div class="card-title">📂 Upload File — Excel or CSV (column order doesn't matter)</div>
+          <div class="upload-zone" onclick="document.getElementById('file-inp').click()">
+            <div class="upload-icon">📂</div>
+            <div class="upload-title">Click to upload Excel (.xlsx) or CSV</div>
+            <div class="upload-sub">Column order doesn't matter — auto-detected</div>
+            <div id="fname" style="margin-top:6px;font-size:12px;color:#2c3e50;font-weight:700;display:none;"></div>
+          </div>
+          <input type="file" id="file-inp" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFile(event)"/>
+
+          <div id="map-section" style="display:none;margin-bottom:10px;">
+            <div style="font-size:12px;font-weight:700;color:#333;margin-bottom:8px;">🗂️ Column Mapping (auto-detected — adjust if needed)</div>
+            <div id="map-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;"></div>
+            <div style="display:flex;gap:8px;margin-top:10px;">
+              <button onclick="clearUpload()" style="padding:6px 14px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">✕ Clear</button>
+              <button onclick="saveUploaded()" style="padding:6px 16px;background:#2c3e50;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">✅ Save to Report</button>
             </div>
           </div>
-          <div style="overflow-x:auto;border-radius:8px;">
-            <table id="prev-table" style="width:100%;border-collapse:collapse;font-size:11px;background:#fff;">
-              <thead id="prev-head"></thead>
-              <tbody id="prev-body"></tbody>
+
+          <div id="preview-section" style="display:none;margin-top:10px;">
+            <div style="font-size:11px;font-weight:700;color:#333;margin-bottom:6px;">👁️ Preview — first 5 rows (<span id="prev-count">0</span> total)</div>
+            <div style="overflow-x:auto;border-radius:6px;border:1px solid #ddd;">
+              <table id="prev-table" style="width:100%;border-collapse:collapse;font-size:10px;background:#fff;">
+                <thead id="prev-head"></thead>
+                <tbody id="prev-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center;color:#999;font-size:12px;margin:-6px 0 12px;">— or enter manually —</div>
+
+        <!-- MANUAL INPUT -->
+        <div class="card">
+          <div class="card-title">📅 Entry Details</div>
+          <div class="ig4">
+            <div>
+              <div class="fl">Date (Week Start) *</div>
+              <input type="date" id="f-date" class="fi"/>
+            </div>
+            <div>
+              <div class="fl">Location *</div>
+              <select id="f-loc" class="fi" onchange="filterRestByLoc()">
+                <option value="">Select Location</option>
+                <option value="ST ALBANS">ST ALBANS</option>
+                <option value="FITZROY NORTH">FITZROY NORTH</option>
+                <option value="ASCOT VALE">ASCOT VALE</option>
+              </select>
+            </div>
+            <div>
+              <div class="fl">Restaurant Name *</div>
+              <select id="f-rest" class="fi">
+                <option value="">Select Restaurant</option>
+                <option>ANGIES - ST ALBANS</option>
+                <option>GOLDEN FLAMES - ST ALBANS</option>
+                <option>ANGIES - FITZROY NORTH</option>
+                <option>LAMB ON NICHOLSON</option>
+                <option>ANGIES - ASCOT VALE</option>
+                <option>ASCOT VALE KEBABS</option>
+              </select>
+            </div>
+            <div>
+              <div class="fl">Week</div>
+              <input type="text" id="f-week" class="fi" readonly placeholder="Auto"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">💰 Revenue</div>
+          <div class="ig3">
+            <div>
+              <div class="fl">Revenue Type</div>
+              <select id="f-revtype" class="fi" onchange="toggleRevFields()">
+                <option value="store">Store (Cash/EFTPOS)</option>
+                <option value="uber">Uber Eats</option>
+                <option value="doordash">DoorDash</option>
+                <option value="menulog">Menulog</option>
+              </select>
+            </div>
+            <div>
+              <div class="fl">Delivery Partner</div>
+              <select id="f-partner" class="fi" disabled>
+                <option value="">N/A (Store)</option>
+                <option value="uber">Uber Eats</option>
+                <option value="doordash">DoorDash</option>
+                <option value="menulog">Menulog</option>
+              </select>
+            </div>
+            <div>
+              <div class="fl">Number of Orders</div>
+              <input type="number" id="f-orders" class="fi" placeholder="0" min="0"/>
+            </div>
+          </div>
+          <div class="ig3">
+            <div>
+              <div class="fl">Gross Revenue (A$)</div>
+              <input type="number" id="f-gross" class="fi" placeholder="0.00" min="0" step="0.01"/>
+            </div>
+            <div>
+              <div class="fl">Net Revenue (A$)</div>
+              <input type="number" id="f-net" class="fi" placeholder="0.00" min="0" step="0.01"/>
+            </div>
+            <div id="comm-field">
+              <div class="fl">Commission %</div>
+              <select id="f-comm" class="fi" disabled>
+                <option value="0">0% (Store)</option>
+                <option value="0.25">25%</option>
+                <option value="0.30">30%</option>
+                <option value="0.35">35%</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">💸 Expenses</div>
+          <div class="ig3">
+            <div>
+              <div class="fl">Expenses Type</div>
+              <select id="f-exptype" class="fi">
+                <option value="">None</option>
+                <option value="food">Food</option>
+                <option value="staff">Staff</option>
+                <option value="operation">Operation</option>
+                <option value="rent">Rent</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div>
+              <div class="fl">Expenses Amount (A$)</div>
+              <input type="number" id="f-expamt" class="fi" placeholder="0.00" min="0" step="0.01"/>
+            </div>
+            <div>
+              <div class="fl">Notes</div>
+              <input type="text" id="f-notes" class="fi" placeholder="Optional"/>
+            </div>
+          </div>
+        </div>
+
+        <button class="save-btn" onclick="saveEntry()">✅ Save Entry</button>
+
+        <!-- ENTRIES TABLE -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div style="font-size:13px;font-weight:700;color:#333;">Saved Entries (<span id="ecount">0</span>)</div>
+          <div style="display:flex;gap:8px;">
+            <button class="entries-toggle" onclick="toggleEntries()" id="toggle-btn">👁️ Show Entries</button>
+            <button onclick="clearAll()" style="padding:5px 12px;background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">🗑️ Clear All</button>
+          </div>
+        </div>
+        <div id="entries-wrap" style="display:none;">
+          <div class="dtwrap">
+            <table class="dt">
+              <thead><tr>
+                <th>Date</th><th>Week</th><th>Location</th><th>Restaurant</th>
+                <th>Rev Type</th><th>Partner</th><th>Orders</th>
+                <th>Gross (A$)</th><th>Net (A$)</th>
+                <th>Exp Type</th><th>Exp Amt (A$)</th>
+                <th>Notes</th><th>Del</th>
+              </tr></thead>
+              <tbody id="etbody"></tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <div style="text-align:center;color:#ccc;font-size:12px;margin:0 0 14px;">— অথবা manually enter করো —</div>
-
-      <!-- MANUAL INPUT -->
-      <div class="card">
-        <div class="card-title">📅 Basic Info</div>
-        <div class="ig3">
-          <div><div class="fl">Date (Week Start)</div><input type="date" id="f-date" class="fi"/></div>
-          <div><div class="fl">Restaurant</div>
-            <select id="f-rest" class="fi">
-              <option value="">Select...</option>
-              <option>ANGIES - ST ALBANS</option>
-              <option>GOLDEN FLAMES - ST ALBANS</option>
-              <option>ANGIES - FITZROY NORTH</option>
-              <option>LAMB ON NICHOLSON</option>
-              <option>ANGIES - ASCOT VALE</option>
-              <option>ASCOT VALE KEBABS</option>
-            </select>
-          </div>
-          <div><div class="fl">Week</div><input type="text" id="f-week" class="fi" readonly placeholder="Auto"/></div>
-        </div>
+      <!-- REPORT TABS -->
+      <div id="tab-overall" class="sheet">
+        <div style="font-size:15px;font-weight:700;margin-bottom:4px;">📊 Overall — All 6 Restaurants Combined</div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px;">ST ALBANS + FITZROY NORTH + ASCOT VALE · Currency: AUD (A$)</div>
+        <div class="rtwrap" id="r-overall"></div>
+      </div>
+      <div id="tab-stalbans" class="sheet">
+        <div style="font-size:15px;font-weight:700;margin-bottom:4px;">📍 ST ALBANS</div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px;">Angie's ST Albans + Golden Flames ST Albans</div>
+        <div class="rtwrap" id="r-stalbans"></div>
+      </div>
+      <div id="tab-fitzroy" class="sheet">
+        <div style="font-size:15px;font-weight:700;margin-bottom:4px;">📍 FITZROY NORTH</div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px;">Angie's Fitzroy North + Lamb on Nicholson</div>
+        <div class="rtwrap" id="r-fitzroy"></div>
+      </div>
+      <div id="tab-ascot" class="sheet">
+        <div style="font-size:15px;font-weight:700;margin-bottom:4px;">📍 ASCOT VALE</div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px;">Angie's Ascot Vale + Ascot Vale Kebabs</div>
+        <div class="rtwrap" id="r-ascot"></div>
       </div>
 
-      <div class="card">
-        <div class="card-title">💰 Revenue</div>
-        <div class="ig2">
-          <div><div class="fl">Store Revenue</div><input type="number" id="f-srev" class="fi" placeholder="0.00"/></div>
-          <div><div class="fl">Store Transactions</div><input type="number" id="f-stxn" class="fi" placeholder="0"/></div>
-        </div>
-        <div class="ig3">
-          <div><div class="fl">Uber Gross</div><input type="number" id="f-ug" class="fi" placeholder="0.00"/></div>
-          <div><div class="fl">Uber Orders</div><input type="number" id="f-ut" class="fi" placeholder="0"/></div>
-          <div><div class="fl">Uber Comm%</div><select id="f-uc" class="fi"><option value="0.30">30%</option><option value="0.25">25%</option><option value="0.35">35%</option></select></div>
-        </div>
-        <div class="ig3">
-          <div><div class="fl">DoorDash Gross</div><input type="number" id="f-dg" class="fi" placeholder="0.00"/></div>
-          <div><div class="fl">DoorDash Orders</div><input type="number" id="f-dt" class="fi" placeholder="0"/></div>
-          <div><div class="fl">DD Comm%</div><select id="f-dc" class="fi"><option value="0.30">30%</option><option value="0.25">25%</option><option value="0.35">35%</option></select></div>
-        </div>
-        <div class="ig3">
-          <div><div class="fl">Menulog Gross</div><input type="number" id="f-mg" class="fi" placeholder="0.00"/></div>
-          <div><div class="fl">Menulog Orders</div><input type="number" id="f-mt" class="fi" placeholder="0"/></div>
-          <div><div class="fl">ML Comm%</div><select id="f-mc" class="fi"><option value="0.30">30%</option><option value="0.25">25%</option><option value="0.35">35%</option></select></div>
-        </div>
+      <!-- DASHBOARD -->
+      <div id="tab-dash" class="sheet">
+        <div id="dash-overview" class="dash-section active"></div>
+        <div id="dash-revenue" class="dash-section"></div>
+        <div id="dash-online" class="dash-section"></div>
+        <div id="dash-cost" class="dash-section"></div>
+        <div id="dash-pnl" class="dash-section"></div>
+        <div id="dash-loc-stalbans" class="dash-section"></div>
+        <div id="dash-loc-fitzroy" class="dash-section"></div>
+        <div id="dash-loc-ascot" class="dash-section"></div>
       </div>
 
-      <div class="card">
-        <div class="card-title">💸 Expenses</div>
-        <div class="ig3">
-          <div><div class="fl">Food Cost</div><input type="number" id="f-food" class="fi" placeholder="0.00"/></div>
-          <div><div class="fl">Staff Cost</div><input type="number" id="f-staff" class="fi" placeholder="0.00"/></div>
-          <div><div class="fl">Operation Cost</div><input type="number" id="f-ops" class="fi" placeholder="0.00"/></div>
-        </div>
-        <div class="ig3">
-          <div><div class="fl">Rent</div><input type="number" id="f-rent" class="fi" placeholder="0.00"/></div>
-          <div><div class="fl">Other</div><input type="number" id="f-other" class="fi" placeholder="0.00"/></div>
-          <div><div class="fl">Notes</div><input type="text" id="f-notes" class="fi" placeholder="Optional"/></div>
-        </div>
-      </div>
-
-      <button class="add-btn" onclick="saveEntry()">✅ Save Entry</button>
-
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <div style="font-size:13px;font-weight:800;color:#5a4000;">📋 Saved Entries (<span id="ecount">0</span>)</div>
-        <button onclick="clearAll()" style="padding:4px 12px;background:#fff0f0;color:#c0392b;border:1px solid #f0c0c0;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">🗑️ Clear All</button>
-      </div>
-      <div class="dtwrap">
-        <table class="dt">
-          <thead><tr>
-            <th>Date</th><th>Week</th><th>Restaurant</th>
-            <th>Store Rev</th><th>Txn</th>
-            <th>Uber Gross</th><th>Uber Net</th><th>Uber Txn</th>
-            <th>DD Gross</th><th>DD Net</th><th>DD Txn</th>
-            <th>ML Gross</th><th>ML Net</th><th>ML Txn</th>
-            <th>Food</th><th>Staff</th><th>Ops</th><th>Rent</th><th>Other</th>
-            <th>Del</th>
-          </tr></thead>
-          <tbody id="etbody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div id="tab-overall" class="sheet">
-    <div class="pg-title">📊 Overall — All 6 Restaurants</div>
-    <div class="pg-sub">ST ALBANS + FITZROY NORTH + ASCOT VALE Combined</div>
-    <div class="rtwrap" id="r-overall"></div>
-  </div>
-  <div id="tab-stalbans" class="sheet">
-    <div class="pg-title">📍 ST ALBANS</div>
-    <div class="pg-sub">Angie's ST Albans + Golden Flames ST Albans</div>
-    <div class="rtwrap" id="r-stalbans"></div>
-  </div>
-  <div id="tab-fitzroy" class="sheet">
-    <div class="pg-title">📍 FITZROY NORTH</div>
-    <div class="pg-sub">Angie's Fitzroy North + Lamb on Nicholson</div>
-    <div class="rtwrap" id="r-fitzroy"></div>
-  </div>
-  <div id="tab-ascot" class="sheet">
-    <div class="pg-title">📍 ASCOT VALE</div>
-    <div class="pg-sub">Angie's Ascot Vale + Ascot Vale Kebabs</div>
-    <div class="rtwrap" id="r-ascot"></div>
-  </div>
-  <div id="tab-dash" class="sheet">
-    <div class="pg-title">📈 Dashboard</div>
-    <div class="pg-sub">Live summary</div>
-    <div id="r-dash"></div>
-  </div>
-</div>
+    </div><!-- end content -->
+  </div><!-- end main-body -->
+</div><!-- end app -->
 
 <script>
 const PASS = "angies2024";
-let entries = JSON.parse(localStorage.getItem('pl_v2')||'[]');
-let upRows = [], upHeaders = [];
+let entries = JSON.parse(localStorage.getItem('pl_v3')||'[]');
+let upRows=[], upHeaders=[];
+let chartInstances={};
 
 const RESTS = ['ANGIES - ST ALBANS','GOLDEN FLAMES - ST ALBANS','ANGIES - FITZROY NORTH','LAMB ON NICHOLSON','ANGIES - ASCOT VALE','ASCOT VALE KEBABS'];
 const LOC_MAP = {
   'ANGIES - ST ALBANS':'stalbans','GOLDEN FLAMES - ST ALBANS':'stalbans',
   'ANGIES - FITZROY NORTH':'fitzroy','LAMB ON NICHOLSON':'fitzroy',
   'ANGIES - ASCOT VALE':'ascot','ASCOT VALE KEBABS':'ascot'
+};
+const REST_BY_LOC = {
+  'ST ALBANS':['ANGIES - ST ALBANS','GOLDEN FLAMES - ST ALBANS'],
+  'FITZROY NORTH':['ANGIES - FITZROY NORTH','LAMB ON NICHOLSON'],
+  'ASCOT VALE':['ANGIES - ASCOT VALE','ASCOT VALE KEBABS'],
 };
 
 const ALL_WEEKS = [
@@ -303,10 +433,10 @@ const ALL_WEEKS = [
   {w:"Week-47",d:"2026-11-22",m:"November"},{w:"Week-48",d:"2026-11-29",m:"November"},
   {w:"Week-49",d:"2026-12-06",m:"December"},{w:"Week-50",d:"2026-12-13",m:"December"},
   {w:"Week-51",d:"2026-12-20",m:"December"},{w:"Week-52",d:"2026-12-27",m:"December"},
-  {w:"Week-1", d:"2027-01-03",m:"December"},
+  {w:"Week-1",d:"2027-01-03",m:"December"},
 ];
 
-function buildDCols() {
+function buildDCols(){
   const mw={};
   ALL_WEEKS.forEach(c=>{if(!mw[c.m])mw[c.m]=[];mw[c.m].push(c.d);});
   const res=[];let lm=null;
@@ -319,75 +449,64 @@ function buildDCols() {
   res.push({type:'year',label:'YEAR 2026',dates:ALL_WEEKS.map(c=>c.d)});
   return res;
 }
-const DCOLS = buildDCols();
+const DCOLS=buildDCols();
 
 function d2w(d){const c=ALL_WEEKS.find(x=>x.d===d);return c?c.w:'';}
 
 function parseDate(v){
-  if(!v)return '';
-  if(v instanceof Date){const d=v;return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+  if(!v)return'';
+  if(v instanceof Date){
+    const d=new Date(v);
+    return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
   const s=String(v).trim();
-  // YYYY-MM-DD
   if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
-  // DD/MM/YYYY
   const m1=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-  if(m1)return `${m1[3]}-${m1[2].padStart(2,'0')}-${m1[1].padStart(2,'0')}`;
-  // Excel serial number
+  if(m1)return`${m1[3]}-${m1[2].padStart(2,'0')}-${m1[1].padStart(2,'0')}`;
   if(/^\d{5}$/.test(s)){
     const d=new Date((+s-25569)*86400000);
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
   return s;
 }
 
 function matchRest(v){
-  if(!v)return '';
+  if(!v)return'';
   const u=String(v).toUpperCase().trim();
-  // exact match
   if(RESTS.includes(u))return u;
-  // fuzzy match
-  const scored=RESTS.map(r=>({r,score:u.split(' ').filter(w=>r.includes(w)).length}));
+  const scored=RESTS.map(r=>({r,score:u.split(/\s+/).filter(w=>w.length>2&&r.includes(w)).length}));
   scored.sort((a,b)=>b.score-a.score);
   return scored[0].score>0?scored[0].r:u;
 }
 
-// Smart column detection — works regardless of column order/name
-function detectCol(headers, keywords) {
-  const kl = keywords.map(k=>k.toLowerCase());
-  // exact
-  let found = headers.find(h=>kl.includes(h.toLowerCase().trim()));
-  if(found) return found;
-  // partial
-  found = headers.find(h=>kl.some(k=>h.toLowerCase().includes(k)));
-  return found||'';
-}
-
-const COL_DEFS = [
-  {id:'cm-date',   label:'Date',              keys:['date','week date','week_date','period']},
-  {id:'cm-rest',   label:'Restaurant / Store Name', keys:['restaurant','store','resturent','name','location','branch']},
-  {id:'cm-srev',   label:'Store Revenue',     keys:['store revenue','store rev','revenue','net revenue','cash','eftpos']},
-  {id:'cm-stxn',   label:'Store Transactions',keys:['store txn','transactions','store orders','number of order','no of order','txn']},
-  {id:'cm-ug',     label:'Uber Gross Revenue',keys:['uber gross','uber eats gross','uber revenue','uber eats revenue']},
-  {id:'cm-ut',     label:'Uber Orders',       keys:['uber txn','uber orders','uber eats orders','uber eats txn']},
-  {id:'cm-dg',     label:'DoorDash Gross',    keys:['doordash gross','door dash gross','dd gross','doordash revenue','dd revenue']},
-  {id:'cm-dt',     label:'DoorDash Orders',   keys:['doordash txn','dd txn','doordash orders','dd orders']},
-  {id:'cm-mg',     label:'Menulog Gross',     keys:['menulog gross','menulog revenue','ml gross','ml revenue']},
-  {id:'cm-mt',     label:'Menulog Orders',    keys:['menulog txn','ml txn','menulog orders','ml orders']},
-  {id:'cm-food',   label:'Food Cost',         keys:['food','food cost','food expense']},
-  {id:'cm-staff',  label:'Staff Cost',        keys:['staff','staff cost','wages','labour','labor']},
-  {id:'cm-ops',    label:'Operation Cost',    keys:['operation','ops','operation cost','operating']},
-  {id:'cm-rent',   label:'Rent',              keys:['rent','rental']},
-  {id:'cm-other',  label:'Other Expenses',    keys:['other','others','miscellaneous','misc']},
+const COL_DEFS=[
+  {id:'cm-date',   label:'Date',             keys:['date','week date','week_date','period','week start']},
+  {id:'cm-loc',    label:'Location',         keys:['location','resturent location','restaurant location','area','suburb']},
+  {id:'cm-rest',   label:'Restaurant Name',  keys:['restaurant name','resturent name','restaurant','store','name','branch']},
+  {id:'cm-revtype',label:'Revenue Type',     keys:['revenue type','type','rev type','sale type']},
+  {id:'cm-partner',label:'Delivery Partner', keys:['delivery partner','partner','platform','channel']},
+  {id:'cm-orders', label:'Number of Orders', keys:['number of order','no of order','orders','txn','transactions','order count']},
+  {id:'cm-gross',  label:'Gross Revenue',    keys:['gross revenue','gross','gross rev','total revenue','revenue']},
+  {id:'cm-net',    label:'Net Revenue',      keys:['net revenue','net','net rev','net sales']},
+  {id:'cm-exptype',label:'Expenses Type',    keys:['expenses type','expense type','exp type','cost type']},
+  {id:'cm-expamt', label:'Expenses Amount',  keys:['expenses amount','expense amount','amount','cost','exp amount']},
 ];
 
+function detectCol(headers,keys){
+  const kl=keys.map(k=>k.toLowerCase());
+  let f=headers.find(h=>kl.includes(h.toLowerCase().trim()));
+  if(f)return f;
+  f=headers.find(h=>kl.some(k=>h.toLowerCase().includes(k)||k.includes(h.toLowerCase().trim())));
+  return f||'';
+}
+
+// UI
 function doLogin(){
   if(document.getElementById('pass-input').value===PASS){
     document.getElementById('login-screen').style.display='none';
-    document.getElementById('dashboard').style.display='block';
+    document.getElementById('app').style.display='flex';
     renderEntries();
-  } else {
-    document.getElementById('err-msg').style.display='block';
-  }
+  }else{document.getElementById('err-msg').style.display='block';}
 }
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('pass-input').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
@@ -397,59 +516,91 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 function doLogout(){
   document.getElementById('login-screen').style.display='flex';
-  document.getElementById('dashboard').style.display='none';
-}
-function showTab(name,btn){
-  document.querySelectorAll('.sheet').forEach(e=>e.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  btn.classList.add('active');
-  if(name!=='input')refreshReports();
+  document.getElementById('app').style.display='none';
 }
 
-// ===== FILE UPLOAD =====
+function showTab(name,btn){
+  document.querySelectorAll('.sheet').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.ttab').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  const sb=document.getElementById('sidebar');
+  if(name==='dash'){sb.classList.add('show');buildDashboard('overview');}
+  else{sb.classList.remove('show');if(name!=='input')refreshReports();}
+}
+
+function showDash(name,el){
+  document.querySelectorAll('.dash-section').forEach(e=>e.style.display='none');
+  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
+  document.getElementById('dash-'+name).style.display='block';
+  el.classList.add('active');
+  buildDashboard(name);
+}
+
+function filterRestByLoc(){
+  const loc=document.getElementById('f-loc').value;
+  const sel=document.getElementById('f-rest');
+  sel.innerHTML='<option value="">Select Restaurant</option>';
+  const rests=loc?REST_BY_LOC[loc]:RESTS;
+  rests.forEach(r=>sel.innerHTML+=`<option>${r}</option>`);
+}
+
+function toggleRevFields(){
+  const t=document.getElementById('f-revtype').value;
+  const isStore=t==='store';
+  document.getElementById('f-partner').disabled=isStore;
+  document.getElementById('f-comm').disabled=isStore;
+  if(!isStore){
+    document.getElementById('f-partner').value=t;
+  }
+}
+
+function toggleEntries(){
+  const w=document.getElementById('entries-wrap');
+  const b=document.getElementById('toggle-btn');
+  if(w.style.display==='none'){w.style.display='block';b.textContent='🙈 Hide Entries';}
+  else{w.style.display='none';b.textContent='👁️ Show Entries';}
+}
+
+// FILE UPLOAD
 function handleFile(e){
-  const file=e.target.files[0];
-  if(!file)return;
+  const file=e.target.files[0];if(!file)return;
   document.getElementById('fname').style.display='block';
   document.getElementById('fname').textContent='📄 '+file.name;
   const ext=file.name.split('.').pop().toLowerCase();
   if(ext==='csv'){
-    const reader=new FileReader();
-    reader.onload=ev=>processRows(Papa.parse(ev.target.result,{header:true,skipEmptyLines:true}).data);
-    reader.readAsText(file);
-  } else {
-    const reader=new FileReader();
-    reader.onload=ev=>{
+    const r=new FileReader();
+    r.onload=ev=>{
+      const res=Papa.parse(ev.target.result,{header:true,skipEmptyLines:true,transformHeader:h=>h.trim()});
+      processRows(res.data);
+    };
+    r.readAsText(file);
+  }else{
+    const r=new FileReader();
+    r.onload=ev=>{
       const wb=XLSX.read(ev.target.result,{type:'array',cellDates:true});
-      const sn=wb.SheetNames.find(n=>n.toLowerCase().includes('data')||n.toLowerCase().includes('input'))||wb.SheetNames[0];
-      const rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{defval:''});
+      const sn=wb.SheetNames.find(n=>/data|input/i.test(n))||wb.SheetNames[0];
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{defval:'',raw:false});
       processRows(rows);
     };
-    reader.readAsArrayBuffer(file);
+    r.readAsArrayBuffer(file);
   }
 }
 
 function processRows(rows){
-  if(!rows||rows.length===0){alert('No data found!');return;}
-  upRows=rows;
-  upHeaders=Object.keys(rows[0]);
-
-  // Build mapping UI
+  if(!rows||!rows.length){alert('No data found!');return;}
+  upRows=rows;upHeaders=Object.keys(rows[0]);
   const grid=document.getElementById('map-grid');
   grid.innerHTML=COL_DEFS.map(def=>{
     const auto=detectCol(upHeaders,def.keys);
     const opts='<option value="">— Skip —</option>'+upHeaders.map(h=>`<option value="${h}"${h===auto?' selected':''}>${h}</option>`).join('');
-    return `<div><div style="font-size:10px;font-weight:700;color:#7a5c00;margin-bottom:3px">${def.label}</div>
-    <select id="${def.id}" style="width:100%;padding:7px 10px;border-radius:7px;border:1px solid #ddd;font-size:12px;font-family:'Nunito',sans-serif">${opts}</select></div>`;
+    return`<div><div style="font-size:10px;font-weight:700;color:#333;margin-bottom:3px">${def.label}</div>
+    <select id="${def.id}" style="width:100%;padding:6px 8px;border-radius:5px;border:1px solid #ddd;font-size:11px;">${opts}</select></div>`;
   }).join('');
   document.getElementById('map-section').style.display='block';
-
   // Preview
-  const head=document.getElementById('prev-head');
-  const body=document.getElementById('prev-body');
-  head.innerHTML='<tr>'+upHeaders.map(h=>`<th style="background:#7a5c00;color:#fff;padding:6px 8px;border:1px solid #5a4200;font-size:10px;white-space:nowrap">${h}</th>`).join('')+'</tr>';
-  body.innerHTML=rows.slice(0,5).map(r=>'<tr>'+upHeaders.map(h=>`<td style="padding:5px 8px;border:1px solid #e8ddb0;font-size:10px;white-space:nowrap">${r[h]!==undefined?r[h]:''}</td>`).join('')+'</tr>').join('');
+  document.getElementById('prev-head').innerHTML='<tr>'+upHeaders.map(h=>`<th style="background:#2c3e50;color:#fff;padding:5px 7px;border:1px solid #1a252f;font-size:10px;white-space:nowrap">${h}</th>`).join('')+'</tr>';
+  document.getElementById('prev-body').innerHTML=rows.slice(0,5).map(r=>'<tr>'+upHeaders.map(h=>`<td style="padding:4px 7px;border:1px solid #e8e8e8;font-size:10px;white-space:nowrap">${r[h]!==undefined?r[h]:''}</td>`).join('')+'</tr>').join('');
   document.getElementById('prev-count').textContent=rows.length;
   document.getElementById('preview-section').style.display='block';
 }
@@ -458,42 +609,47 @@ function gm(id){const el=document.getElementById(id);return el?el.value:'';}
 
 function saveUploaded(){
   if(!upRows.length){alert('No data!');return;}
-  const mapDate=gm('cm-date'), mapRest=gm('cm-rest');
-  if(!mapDate||!mapRest){alert('Date and Restaurant columns are required!');return;}
-
   let added=0;
   upRows.forEach((row,i)=>{
-    const dateRaw=row[mapDate];
-    const restRaw=row[mapRest];
-    if(!dateRaw&&!restRaw)return;
-
+    const dateRaw=gm('cm-date')?row[gm('cm-date')]:'';
+    const restRaw=gm('cm-rest')?row[gm('cm-rest')]:'';
+    if(!dateRaw)return;
     const date=parseDate(dateRaw);
+    if(!date)return;
     const restaurant=matchRest(restRaw);
-    if(!date||!restaurant)return;
+    const loc=gm('cm-loc')?row[gm('cm-loc')]:'';
+    const revTypeRaw=gm('cm-revtype')?String(row[gm('cm-revtype')]||'').toLowerCase():'store';
+    const partnerRaw=gm('cm-partner')?String(row[gm('cm-partner')]||'').toLowerCase():'';
+    const grossRaw=gm('cm-gross')?+row[gm('cm-gross')]||0:0;
+    const netRaw=gm('cm-net')?+row[gm('cm-net')]||0:0;
+    const ordersRaw=gm('cm-orders')?+row[gm('cm-orders')]||0:0;
+    const expTypeRaw=gm('cm-exptype')?String(row[gm('cm-exptype')]||'').toLowerCase():'';
+    const expAmtRaw=gm('cm-expamt')?+row[gm('cm-expamt')]||0:0;
 
-    const g=(id)=>{const col=gm(id);return col?(+row[col]||0):0;};
-    const ug=g('cm-ug'), dg=g('cm-dg'), mg=g('cm-mg');
-    const uc=0.30, dc=0.30, mc=0.30;
+    // Detect revenue type
+    let revType='store';
+    if(/uber/.test(revTypeRaw)||/uber/.test(partnerRaw))revType='uber';
+    else if(/door|dd/.test(revTypeRaw)||/door|dd/.test(partnerRaw))revType='doordash';
+    else if(/menu/.test(revTypeRaw)||/menu/.test(partnerRaw))revType='menulog';
 
     entries.push({
       id:Date.now()+i,
-      date, restaurant,
-      week:d2w(date),
-      location:LOC_MAP[restaurant]||'other',
-      store_rev:g('cm-srev'), store_txn:g('cm-stxn'),
-      uber_gross:ug, uber_net:ug*(1-uc), uber_txn:g('cm-ut'),
-      dd_gross:dg, dd_net:dg*(1-dc), dd_txn:g('cm-dt'),
-      ml_gross:mg, ml_net:mg*(1-mc), ml_txn:g('cm-mt'),
-      food:g('cm-food'), staff:g('cm-staff'), ops:g('cm-ops'),
-      rent:g('cm-rent'), other:g('cm-other'), notes:'',
+      date, restaurant, week:d2w(date),
+      location:loc||'',
+      rev_type:revType,
+      partner:revType==='store'?'':revType,
+      orders:ordersRaw,
+      gross:grossRaw,
+      net:netRaw||grossRaw*(revType==='uber'?0.70:revType==='doordash'?0.70:revType==='menulog'?0.70:1),
+      exp_type:expTypeRaw,
+      exp_amt:expAmtRaw,
+      notes:'',
     });
     added++;
   });
-
-  localStorage.setItem('pl_v2',JSON.stringify(entries));
-  clearUpload();
-  renderEntries();
-  showToast(`✅ ${added} rows saved! Report updated.`);
+  localStorage.setItem('pl_v3',JSON.stringify(entries));
+  clearUpload();renderEntries();
+  showToast(`✅ ${added} rows saved!`);
 }
 
 function clearUpload(){
@@ -504,131 +660,141 @@ function clearUpload(){
   document.getElementById('preview-section').style.display='none';
 }
 
-// ===== MANUAL ENTRY =====
+// MANUAL SAVE
 function saveEntry(){
   const date=document.getElementById('f-date').value;
   const restaurant=document.getElementById('f-rest').value;
   if(!date||!restaurant){alert('Date and Restaurant required!');return;}
-  const ug=+document.getElementById('f-ug').value||0;
-  const dg=+document.getElementById('f-dg').value||0;
-  const mg=+document.getElementById('f-mg').value||0;
-  const uc=+document.getElementById('f-uc').value;
-  const dc=+document.getElementById('f-dc').value;
-  const mc=+document.getElementById('f-mc').value;
+  const revType=document.getElementById('f-revtype').value;
+  const gross=+document.getElementById('f-gross').value||0;
+  const net=+document.getElementById('f-net').value||gross*(1-(+document.getElementById('f-comm').value||0));
   entries.push({
-    id:Date.now(), date, restaurant,
-    week:d2w(date), location:LOC_MAP[restaurant]||'other',
-    store_rev:+document.getElementById('f-srev').value||0,
-    store_txn:+document.getElementById('f-stxn').value||0,
-    uber_gross:ug, uber_net:ug*(1-uc), uber_txn:+document.getElementById('f-ut').value||0,
-    dd_gross:dg, dd_net:dg*(1-dc), dd_txn:+document.getElementById('f-dt').value||0,
-    ml_gross:mg, ml_net:mg*(1-mc), ml_txn:+document.getElementById('f-mt').value||0,
-    food:+document.getElementById('f-food').value||0,
-    staff:+document.getElementById('f-staff').value||0,
-    ops:+document.getElementById('f-ops').value||0,
-    rent:+document.getElementById('f-rent').value||0,
-    other:+document.getElementById('f-other').value||0,
+    id:Date.now(),
+    date, restaurant, week:d2w(date),
+    location:document.getElementById('f-loc').value,
+    rev_type:revType,
+    partner:document.getElementById('f-partner').value,
+    orders:+document.getElementById('f-orders').value||0,
+    gross, net,
+    exp_type:document.getElementById('f-exptype').value,
+    exp_amt:+document.getElementById('f-expamt').value||0,
     notes:document.getElementById('f-notes').value,
   });
-  localStorage.setItem('pl_v2',JSON.stringify(entries));
-  ['f-srev','f-stxn','f-ug','f-ut','f-dg','f-dt','f-mg','f-mt','f-food','f-staff','f-ops','f-rent','f-other','f-notes'].forEach(id=>document.getElementById(id).value='');
-  renderEntries();
-  showToast('✅ Entry saved!');
+  localStorage.setItem('pl_v3',JSON.stringify(entries));
+  ['f-orders','f-gross','f-net','f-expamt','f-notes'].forEach(id=>document.getElementById(id).value='');
+  renderEntries();showToast('✅ Entry saved!');
 }
 
 function delEntry(id){
   entries=entries.filter(e=>e.id!==id);
-  localStorage.setItem('pl_v2',JSON.stringify(entries));
+  localStorage.setItem('pl_v3',JSON.stringify(entries));
   renderEntries();
 }
-
 function clearAll(){
-  if(confirm('সব data delete করবে?')){
-    entries=[];
-    localStorage.removeItem('pl_v2');
-    renderEntries();
-  }
+  if(confirm('Delete all data?')){entries=[];localStorage.removeItem('pl_v3');renderEntries();}
 }
-
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.style.display='block';
   setTimeout(()=>t.style.display='none',3000);
 }
-
 function renderEntries(){
   document.getElementById('ecount').textContent=entries.length;
-  const f=v=>v?'£'+Math.round(v).toLocaleString():'-';
+  const f=v=>v?'A$'+Math.round(v).toLocaleString():'-';
   document.getElementById('etbody').innerHTML=entries.slice().reverse().map(e=>`
     <tr>
-      <td>${e.date}</td><td>${e.week||'-'}</td><td><b>${e.restaurant}</b></td>
-      <td>${f(e.store_rev)}</td><td>${e.store_txn||'-'}</td>
-      <td>${f(e.uber_gross)}</td><td>${f(e.uber_net)}</td><td>${e.uber_txn||'-'}</td>
-      <td>${f(e.dd_gross)}</td><td>${f(e.dd_net)}</td><td>${e.dd_txn||'-'}</td>
-      <td>${f(e.ml_gross)}</td><td>${f(e.ml_net)}</td><td>${e.ml_txn||'-'}</td>
-      <td>${f(e.food)}</td><td>${f(e.staff)}</td><td>${f(e.ops)}</td>
-      <td>${f(e.rent)}</td><td>${f(e.other)}</td>
+      <td>${e.date}</td><td>${e.week||'-'}</td>
+      <td>${e.location||'-'}</td><td><b>${e.restaurant}</b></td>
+      <td>${e.rev_type||'-'}</td><td>${e.partner||'-'}</td><td>${e.orders||'-'}</td>
+      <td>${f(e.gross)}</td><td>${f(e.net)}</td>
+      <td>${e.exp_type||'-'}</td><td>${f(e.exp_amt)}</td>
+      <td>${e.notes||'-'}</td>
       <td><button class="del-btn" onclick="delEntry(${e.id})">🗑️</button></td>
     </tr>`).join('');
 }
 
-// ===== REPORT ENGINE =====
-function agg(rests, dates){
-  const rows=entries.filter(e=>rests.includes(e.restaurant)&&dates.includes(e.date));
+// ===== AGGREGATE ENGINE =====
+function agg(rests,dates){
+  const rows=entries.filter(e=>{
+    const inRest=rests==='all'||rests.includes(e.restaurant);
+    const inDate=dates==='all'||dates.includes(e.date);
+    return inRest&&inDate;
+  });
+  const sr=rows.filter(r=>r.rev_type==='store');
+  const ur=rows.filter(r=>r.rev_type==='uber');
+  const dr=rows.filter(r=>r.rev_type==='doordash');
+  const mr=rows.filter(r=>r.rev_type==='menulog');
   const s=f=>rows.reduce((a,r)=>a+(r[f]||0),0);
-  const sr=s('store_rev'), st=s('store_txn');
-  const ug=s('uber_gross'), un=s('uber_net'), ut=s('uber_txn');
-  const dg=s('dd_gross'), dn=s('dd_net'), dt=s('dd_txn');
-  const mg=s('ml_gross'), mn=s('ml_net'), mt=s('ml_txn');
-  const food=s('food'), staff=s('staff'), ops=s('ops'), rent=s('rent'), other=s('other');
-  const og=ug+dg+mg, on_=un+dn+mn, ot=ut+dt+mt;
-  const trg=sr+og, tnr=sr+on_;
-  const tc=food+staff+ops+rent+other;
-  const gp=tnr-food-staff, np=tnr-tc;
-  const tt=st+ot;
-  return {
-    total_txn:tt, per_txn:tt>0?trg/tt:0,
-    staff_pct:tnr>0?staff/tnr:0,
-    food_gross_pct:trg>0?food/trg:0,
-    food_net_pct:tnr>0?food/tnr:0,
-    ops_pct:tnr>0?ops/tnr:0,
-    trg, tnr, tc, food, staff, ops, gp, np,
-    profit_pct:tnr>0?np/tnr:0,
-    store_txn:st, store_rev:sr,
-    store_ptr:st>0?sr/st:0,
-    online_txn:ot, uber_txn:ut, dd_txn:dt, ml_txn:mt,
-    online_gross:og, uber_gross:ug, dd_gross:dg, ml_gross:mg,
-    online_net:on_, uber_net:un, dd_net:dn, ml_net:mn,
-    online_ptr:ot>0?on_/ot:0,
+  const sf=arr=>arr.reduce((a,r)=>a+(r.gross||0),0);
+  const sn=arr=>arr.reduce((a,r)=>a+(r.net||0),0);
+  const so=arr=>arr.reduce((a,r)=>a+(r.orders||0),0);
+  const se=t=>rows.filter(r=>r.exp_type===t).reduce((a,r)=>a+(r.exp_amt||0),0);
+
+  const store_gross=sf(sr),store_net=sn(sr),store_orders=so(sr);
+  const uber_gross=sf(ur),uber_net=sn(ur),uber_orders=so(ur);
+  const dd_gross=sf(dr),dd_net=sn(dr),dd_orders=so(dr);
+  const ml_gross=sf(mr),ml_net=sn(mr),ml_orders=so(mr);
+  const online_gross=uber_gross+dd_gross+ml_gross;
+  const online_net=uber_net+dd_net+ml_net;
+  const online_orders=uber_orders+dd_orders+ml_orders;
+  const total_gross=store_gross+online_gross;
+  const total_net=store_net+online_net;
+  const total_orders=store_orders+online_orders;
+
+  const food=se('food'),staff=se('staff'),ops=se('operation'),rent=se('rent'),other=se('other');
+  const total_cost=food+staff+ops+rent+other;
+  const gross_profit=total_net-food-staff;
+  const net_profit=total_net-total_cost;
+
+  return{
+    total_orders, per_txn:total_orders>0?total_gross/total_orders:0,
+    staff_pct:total_net>0?staff/total_net:0,
+    food_gross_pct:total_gross>0?food/total_gross:0,
+    food_net_pct:total_net>0?food/total_net:0,
+    ops_pct:total_net>0?ops/total_net:0,
+    total_gross,total_net,total_cost,food,staff,ops,rent,other,
+    gross_profit,net_profit,
+    profit_pct:total_net>0?net_profit/total_net:0,
+    store_orders,store_gross,store_net,
+    store_ptr:store_orders>0?store_gross/store_orders:0,
+    uber_orders,uber_gross,uber_net,
+    dd_orders,dd_gross,dd_net,
+    ml_orders,ml_gross,ml_net,
+    online_orders,online_gross,online_net,
+    online_ptr:online_orders>0?online_net/online_orders:0,
   };
 }
 
 function fmtV(v,t){
-  if(v===0)return '-';
-  if(t==='cur')return(v<0?'-':'')+'£'+Math.abs(Math.round(v)).toLocaleString();
+  if(v===0)return'-';
+  if(t==='cur')return(v<0?'-':'')+'A$'+Math.abs(Math.round(v)).toLocaleString();
   if(t==='pct')return(v*100).toFixed(2)+'%';
   if(t==='num')return Math.round(v).toLocaleString();
-  return '-';
+  return'-';
 }
 
-function hasData(col,rests){
+function hasAnyData(col,rests){
   const dates=col.type==='week'?[col.date]:(col.dates||[]);
-  return dates.some(d=>rests.some(r=>entries.find(e=>e.date===d&&e.restaurant===r)));
+  return entries.some(e=>{
+    const inR=rests==='all'||rests.includes(e.restaurant);
+    return inR&&dates.includes(e.date);
+  });
 }
 
-function buildReport(containerId, rests, locName){
-  const r1=rests[0], r2=rests[1]||rests[0];
-  const allRests=rests.length===6?rests:[r1,r2];
+// ===== BUILD REPORT TABLE =====
+function buildReport(containerId,rests,locName){
+  const allRests=rests==='all'?RESTS:rests;
+  const r1=allRests[0],r2=allRests.length>1?allRests[1]:null;
 
   let h='<table class="rt">';
 
-  // Header 1
-  h+=`<tr><td class="rt-lbl-sec">${locName}</td>`;
+  // Header 1 — frozen col + week cols
+  h+=`<tr><td class="rt-fix-header">${locName}</td>`;
   DCOLS.forEach(c=>h+=`<td class="${c.type==='week'?'rt-thw':c.type==='month'?'rt-thm':'rt-thy'}">${c.label}</td>`);
   h+='</tr>';
 
   // Header 2 dates
-  h+='<tr><td class="rt-lbl" style="font-size:10px;color:rgba(255,255,255,0.6)">Date</td>';
+  h+='<tr><td class="rt-fix1" style="font-size:10px;color:#666;background:#f5f5f5">Date</td>';
   DCOLS.forEach(c=>{
     const cls=c.type==='week'?'rt-dw':c.type==='month'?'rt-dm':'rt-dy';
     const dstr=c.type==='week'?c.date.split('-').reverse().join('/'):'';
@@ -636,62 +802,53 @@ function buildReport(containerId, rests, locName){
   });
   h+='</tr>';
 
-  const row=(label, getter, type, isProfit=false, isSub=false, rs=allRests)=>{
-    const lc=isSub?'rt-lbl-sub':'rt-lbl';
+  const row=(label,getter,type,isProfit=false,isSub=false,rs=allRests)=>{
+    const lc=isSub?'rt-fix2':'rt-fix1';
     let r=`<tr><td class="${lc}">${label}</td>`;
     DCOLS.forEach(col=>{
       const dates=col.type==='week'?[col.date]:(col.dates||[]);
       const m=agg(rs,dates);
       const v=getter(m);
       const base=col.type==='week'?'rt-w':col.type==='month'?'rt-m':'rt-y';
-      const pc=isProfit&&v!==0?(v>=0?' profit':' loss'):'';
-      const show=hasData(col,rs)?fmtV(v,type):'';
+      const pc=isProfit&&v!==0?(v>=0?' rt-profit':' rt-loss'):'';
+      const show=hasAnyData(col,rs)?fmtV(v,type):'';
       r+=`<td class="${base}${pc}">${show}</td>`;
     });
     return r+'</tr>';
   };
 
-  const empty=()=>{
-    let r='<tr class="rt-empty"><td class="rt-empty"></td>';
-    DCOLS.forEach(()=>r+='<td class="rt-empty"></td>');
-    return r+'</tr>';
-  };
+  const empty=()=>{let r='<tr class="rt-empty"><td class="rt-empty"></td>';DCOLS.forEach(()=>r+='<td class="rt-empty"></td>');return r+'</tr>';};
+  const sec=(lbl)=>{let r=`<tr><td class="rt-fix-sec">${lbl}</td>`;DCOLS.forEach(()=>r+='<td style="background:#f0f0f0;border:1px solid #e0e0e0;height:20px"></td>');return r+'</tr>';};
 
-  const sec=(label)=>{
-    let r=`<tr><td class="rt-lbl-sec">${label}</td>`;
-    DCOLS.forEach(()=>r+='<td style="background:#f9f5e8;border:1px solid #ede0b0;height:22px"></td>');
-    return r+'</tr>';
-  };
-
-  // SUMMARY
   h+=sec('SUMMARY — COMBINED');
-  h+=row('Total Number of Transaction',m=>m.total_txn,'num');
+  h+=row('Total Number of Transaction',m=>m.total_orders,'num');
   h+=row('Per Transaction Revenue',m=>m.per_txn,'cur');
   h+=row('Staff Cost %',m=>m.staff_pct,'pct');
   h+=row('Gross Food Cost %',m=>m.food_gross_pct,'pct');
   h+=row('Net Food Cost %',m=>m.food_net_pct,'pct');
   h+=row('Operation Cost %',m=>m.ops_pct,'pct');
-  h+=row('Total Revenue Gross',m=>m.trg,'cur');
-  h+=row('Total Net Revenue',m=>m.tnr,'cur');
-  h+=row('Total - Cost',m=>m.tc,'cur');
+  h+=row('Total Revenue Gross',m=>m.total_gross,'cur');
+  h+=row('Total Net Revenue',m=>m.total_net,'cur');
+  h+=row('Total - Cost',m=>m.total_cost,'cur');
   h+=row('Food',m=>m.food,'cur',false,true);
   h+=row('Staff',m=>m.staff,'cur',false,true);
   h+=row('Operation',m=>m.ops,'cur',false,true);
-  h+=row('Gross Profit',m=>m.gp,'cur',true);
-  h+=row('Net Profit',m=>m.np,'cur',true);
+  h+=row('Rent',m=>m.rent,'cur',false,true);
+  h+=row('Other',m=>m.other,'cur',false,true);
+  h+=row('Gross Profit',m=>m.gross_profit,'cur',true);
+  h+=row('Net Profit',m=>m.net_profit,'cur',true);
   h+=row('Profit %',m=>m.profit_pct,'pct',true);
   h+=empty();
 
-  // Restaurant 1
-  if(rests.length>=1){
+  if(r1){
     h+=sec('1. '+r1);
-    h+=row('# of Transaction Store',m=>m.store_txn,'num',false,false,[r1]);
-    h+=row('Net Revenue Store',m=>m.store_rev,'cur',false,false,[r1]);
+    h+=row('# of Transaction Store',m=>m.store_orders,'num',false,false,[r1]);
+    h+=row('Net Revenue Store',m=>m.store_net,'cur',false,false,[r1]);
     h+=row('Per Transaction Store Revenue',m=>m.store_ptr,'cur',false,false,[r1]);
-    h+=row('# of Transaction Online',m=>m.online_txn,'num',false,false,[r1]);
-    h+=row('Uber',m=>m.uber_txn,'num',false,true,[r1]);
-    h+=row('DoorDash',m=>m.dd_txn,'num',false,true,[r1]);
-    h+=row('Menulog',m=>m.ml_txn,'num',false,true,[r1]);
+    h+=row('# of Transaction Online',m=>m.online_orders,'num',false,false,[r1]);
+    h+=row('Uber',m=>m.uber_orders,'num',false,true,[r1]);
+    h+=row('DoorDash',m=>m.dd_orders,'num',false,true,[r1]);
+    h+=row('Menulog',m=>m.ml_orders,'num',false,true,[r1]);
     h+=row('Gross Revenue Online',m=>m.online_gross,'cur',false,false,[r1]);
     h+=row('Uber',m=>m.uber_gross,'cur',false,true,[r1]);
     h+=row('DoorDash',m=>m.dd_gross,'cur',false,true,[r1]);
@@ -703,17 +860,15 @@ function buildReport(containerId, rests, locName){
     h+=row('Per Transaction Revenue',m=>m.online_ptr,'cur',false,false,[r1]);
     h+=empty();
   }
-
-  // Restaurant 2
-  if(rests.length>=2&&r2!==r1){
+  if(r2){
     h+=sec('2. '+r2);
-    h+=row('# of Transaction Store',m=>m.store_txn,'num',false,false,[r2]);
-    h+=row('Net Revenue Store',m=>m.store_rev,'cur',false,false,[r2]);
+    h+=row('# of Transaction Store',m=>m.store_orders,'num',false,false,[r2]);
+    h+=row('Net Revenue Store',m=>m.store_net,'cur',false,false,[r2]);
     h+=row('Per Transaction Store Revenue',m=>m.store_ptr,'cur',false,false,[r2]);
-    h+=row('# of Transaction Online',m=>m.online_txn,'num',false,false,[r2]);
-    h+=row('Uber',m=>m.uber_txn,'num',false,true,[r2]);
-    h+=row('DoorDash',m=>m.dd_txn,'num',false,true,[r2]);
-    h+=row('Menulog',m=>m.ml_txn,'num',false,true,[r2]);
+    h+=row('# of Transaction Online',m=>m.online_orders,'num',false,false,[r2]);
+    h+=row('Uber',m=>m.uber_orders,'num',false,true,[r2]);
+    h+=row('DoorDash',m=>m.dd_orders,'num',false,true,[r2]);
+    h+=row('Menulog',m=>m.ml_orders,'num',false,true,[r2]);
     h+=row('Gross Revenue Online',m=>m.online_gross,'cur',false,false,[r2]);
     h+=row('Uber',m=>m.uber_gross,'cur',false,true,[r2]);
     h+=row('DoorDash',m=>m.dd_gross,'cur',false,true,[r2]);
@@ -724,60 +879,251 @@ function buildReport(containerId, rests, locName){
     h+=row('Menulog',m=>m.ml_net,'cur',false,true,[r2]);
     h+=row('Per Transaction Revenue',m=>m.online_ptr,'cur',false,false,[r2]);
   }
-
   h+='</table>';
   document.getElementById(containerId).innerHTML=h;
 }
 
-function buildDashboard(){
-  const allDates=ALL_WEEKS.map(c=>c.d);
-  const total=agg(RESTS,allDates);
-  const f2=v=>v===0?'-':(v<0?'-':'')+'£'+Math.abs(Math.round(v)).toLocaleString();
+function refreshReports(){
+  buildReport('r-overall','all','OVERALL — ALL 6 RESTAURANTS');
+  buildReport('r-stalbans',['ANGIES - ST ALBANS','GOLDEN FLAMES - ST ALBANS'],'ST ALBANS');
+  buildReport('r-fitzroy',['ANGIES - FITZROY NORTH','LAMB ON NICHOLSON'],'FITZROY NORTH');
+  buildReport('r-ascot',['ANGIES - ASCOT VALE','ASCOT VALE KEBABS'],'ASCOT VALE');
+}
 
+// ===== DASHBOARD =====
+function mkChart(id,type,labels,datasets,opts={}){
+  if(chartInstances[id]){chartInstances[id].destroy();delete chartInstances[id];}
+  const ctx=document.getElementById(id);
+  if(!ctx)return;
+  chartInstances[id]=new Chart(ctx,{type,data:{labels,datasets},options:{responsive:true,plugins:{legend:{labels:{font:{family:'Arial',size:11}}}},scales:type!=='pie'&&type!=='doughnut'?{x:{ticks:{font:{family:'Arial',size:10}}},y:{ticks:{font:{family:'Arial',size:10},callback:v=>'A$'+Math.round(v).toLocaleString()}}}:{}, ...opts}});
+}
+
+function fmtD(v){return v===0?'-':(v<0?'-':'')+'A$'+Math.abs(Math.round(v)).toLocaleString();}
+function fmtP(v){return(v*100).toFixed(1)+'%';}
+
+function buildDashboard(section){
+  document.querySelectorAll('.dash-section').forEach(e=>e.style.display='none');
+  const el=document.getElementById('dash-'+section);
+  if(!el)return;
+  el.style.display='block';
+
+  const allDates=ALL_WEEKS.map(c=>c.d);
   const locs=[
-    {name:'ST ALBANS',rests:['ANGIES - ST ALBANS','GOLDEN FLAMES - ST ALBANS'],color:'#e8520a'},
-    {name:'FITZROY NORTH',rests:['ANGIES - FITZROY NORTH','LAMB ON NICHOLSON'],color:'#2980b9'},
-    {name:'ASCOT VALE',rests:['ANGIES - ASCOT VALE','ASCOT VALE KEBABS'],color:'#27ae60'},
+    {name:'ST ALBANS',rests:['ANGIES - ST ALBANS','GOLDEN FLAMES - ST ALBANS'],color:'#e74c3c'},
+    {name:'FITZROY NORTH',rests:['ANGIES - FITZROY NORTH','LAMB ON NICHOLSON'],color:'#3498db'},
+    {name:'ASCOT VALE',rests:['ANGIES - ASCOT VALE','ASCOT VALE KEBABS'],color:'#2ecc71'},
   ];
 
-  let h=`<div class="dash-grid">
-    <div class="dash-card"><div class="icon">💰</div><div class="val">${f2(total.trg)}</div><div class="lbl">Total Gross Revenue</div></div>
-    <div class="dash-card"><div class="icon">📊</div><div class="val">${f2(total.tnr)}</div><div class="lbl">Total Net Revenue</div></div>
-    <div class="dash-card" style="border-color:${total.np>=0?'#27ae60':'#c0392b'}">
-      <div class="icon">${total.np>=0?'📈':'📉'}</div>
-      <div class="val" style="color:${total.np>=0?'#27ae60':'#c0392b'}">${f2(total.np)}</div>
-      <div class="lbl">Net Profit (${(total.profit_pct*100).toFixed(1)}%)</div>
-    </div>
-    <div class="dash-card"><div class="icon">🧾</div><div class="val">${total.total_txn.toLocaleString()}</div><div class="lbl">Total Transactions</div></div>
-    <div class="dash-card"><div class="icon">🛵</div><div class="val">${f2(total.online_gross)}</div><div class="lbl">Online Gross Revenue</div></div>
-    <div class="dash-card"><div class="icon">💸</div><div class="val">${f2(total.tc)}</div><div class="lbl">Total Cost</div></div>
-  </div>`;
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const mDates=m=>ALL_WEEKS.filter(w=>w.m===m).map(w=>w.d);
 
-  locs.forEach(loc=>{
-    const m=agg(loc.rests,allDates);
-    h+=`<div class="loc-card">
-      <h4 style="color:${loc.color}">📍 ${loc.name}</h4>
-      <div class="loc-metrics">
-        <div class="lm"><div class="mv">${f2(m.trg)}</div><div class="ml">Gross Revenue</div></div>
-        <div class="lm"><div class="mv" style="color:${m.np>=0?'#27ae60':'#c0392b'}">${f2(m.np)}</div><div class="ml">Net Profit</div></div>
-        <div class="lm"><div class="mv">${m.total_txn.toLocaleString()}</div><div class="ml">Transactions</div></div>
-        <div class="lm"><div class="mv">${f2(m.online_gross)}</div><div class="ml">Online Gross</div></div>
-        <div class="lm"><div class="mv">${(m.profit_pct*100).toFixed(1)}%</div><div class="ml">Profit %</div></div>
-        <div class="lm"><div class="mv">${f2(m.tc)}</div><div class="ml">Total Cost</div></div>
+  if(section==='overview'){
+    const tot=agg(RESTS,allDates);
+    el.innerHTML=`
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px;">📋 Overview — All Restaurants</div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon">💰</div><div class="kpi-val">${fmtD(tot.total_gross)}</div><div class="kpi-lbl">Total Gross Revenue</div></div>
+        <div class="kpi-card"><div class="kpi-icon">📊</div><div class="kpi-val">${fmtD(tot.total_net)}</div><div class="kpi-lbl">Total Net Revenue</div></div>
+        <div class="kpi-card" style="border-left:4px solid ${tot.net_profit>=0?'#2ecc71':'#e74c3c'}">
+          <div class="kpi-icon">${tot.net_profit>=0?'📈':'📉'}</div>
+          <div class="kpi-val" style="color:${tot.net_profit>=0?'#1a7a3c':'#c0392b'}">${fmtD(tot.net_profit)}</div>
+          <div class="kpi-lbl">Net Profit (${fmtP(tot.profit_pct)})</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-icon">🧾</div><div class="kpi-val">${tot.total_orders.toLocaleString()}</div><div class="kpi-lbl">Total Transactions</div></div>
+        <div class="kpi-card"><div class="kpi-icon">🛵</div><div class="kpi-val">${fmtD(tot.online_gross)}</div><div class="kpi-lbl">Online Gross Revenue</div></div>
+        <div class="kpi-card"><div class="kpi-icon">💸</div><div class="kpi-val">${fmtD(tot.total_cost)}</div><div class="kpi-lbl">Total Cost</div></div>
       </div>
-    </div>`;
-  });
+      <div class="chart-grid">
+        <div class="chart-card"><div class="chart-title">Monthly Revenue</div><canvas id="ch-monthly-rev" height="200"></canvas></div>
+        <div class="chart-card"><div class="chart-title">Revenue by Location</div><canvas id="ch-loc-rev" height="200"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Location Summary</div>
+        <table class="dash-table">
+          <thead><tr><th>Location</th><th>Gross Rev</th><th>Net Rev</th><th>Net Profit</th><th>Profit %</th><th>Transactions</th></tr></thead>
+          <tbody>${locs.map(l=>{const m=agg(l.rests,allDates);return`<tr><td><b>${l.name}</b></td><td>${fmtD(m.total_gross)}</td><td>${fmtD(m.total_net)}</td><td style="color:${m.net_profit>=0?'#1a7a3c':'#c0392b'};font-weight:700">${fmtD(m.net_profit)}</td><td>${fmtP(m.profit_pct)}</td><td>${m.total_orders.toLocaleString()}</td></tr>`;}).join('')}</tbody>
+        </table>
+      </div>`;
+    setTimeout(()=>{
+      const mLabels=months.filter(m=>entries.some(e=>mDates(m).includes(e.date)));
+      mkChart('ch-monthly-rev','bar',mLabels,[
+        {label:'Gross Revenue',data:mLabels.map(m=>agg(RESTS,mDates(m)).total_gross),backgroundColor:'rgba(52,152,219,0.7)'},
+        {label:'Net Revenue',data:mLabels.map(m=>agg(RESTS,mDates(m)).total_net),backgroundColor:'rgba(46,204,113,0.7)'},
+        {label:'Net Profit',data:mLabels.map(m=>agg(RESTS,mDates(m)).net_profit),backgroundColor:'rgba(52,73,94,0.7)'},
+      ]);
+      mkChart('ch-loc-rev','doughnut',locs.map(l=>l.name),
+        [{data:locs.map(l=>agg(l.rests,allDates).total_gross),backgroundColor:locs.map(l=>l.color)}],
+        {plugins:{legend:{position:'right'}}});
+    },100);
+  }
 
-  document.getElementById('r-dash').innerHTML=h;
+  else if(section==='revenue'){
+    const tot=agg(RESTS,allDates);
+    el.innerHTML=`
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px;">💰 Revenue Analysis</div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon">🏪</div><div class="kpi-val">${fmtD(tot.store_gross)}</div><div class="kpi-lbl">Store Gross Revenue</div></div>
+        <div class="kpi-card"><div class="kpi-icon">🛵</div><div class="kpi-val">${fmtD(tot.online_gross)}</div><div class="kpi-lbl">Online Gross Revenue</div></div>
+        <div class="kpi-card"><div class="kpi-icon">💚</div><div class="kpi-val">${fmtD(tot.uber_gross)}</div><div class="kpi-lbl">Uber Eats</div></div>
+        <div class="kpi-card"><div class="kpi-icon">❤️</div><div class="kpi-val">${fmtD(tot.dd_gross)}</div><div class="kpi-lbl">DoorDash</div></div>
+        <div class="kpi-card"><div class="kpi-icon">🟠</div><div class="kpi-val">${fmtD(tot.ml_gross)}</div><div class="kpi-lbl">Menulog</div></div>
+        <div class="kpi-card"><div class="kpi-icon">📦</div><div class="kpi-val">${fmtD(tot.per_txn)}</div><div class="kpi-lbl">Avg Order Value</div></div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card"><div class="chart-title">Revenue by Channel</div><canvas id="ch-rev-channel" height="200"></canvas></div>
+        <div class="chart-card"><div class="chart-title">Monthly Store vs Online</div><canvas id="ch-store-online" height="200"></canvas></div>
+      </div>`;
+    setTimeout(()=>{
+      mkChart('ch-rev-channel','doughnut',['Store','Uber Eats','DoorDash','Menulog'],
+        [{data:[tot.store_gross,tot.uber_gross,tot.dd_gross,tot.ml_gross],backgroundColor:['#3498db','#2ecc71','#e74c3c','#f39c12']}]);
+      const mLabels=months.filter(m=>entries.some(e=>mDates(m).includes(e.date)));
+      mkChart('ch-store-online','bar',mLabels,[
+        {label:'Store',data:mLabels.map(m=>agg(RESTS,mDates(m)).store_gross),backgroundColor:'rgba(52,152,219,0.7)'},
+        {label:'Online',data:mLabels.map(m=>agg(RESTS,mDates(m)).online_gross),backgroundColor:'rgba(46,204,113,0.7)'},
+      ]);
+    },100);
+  }
+
+  else if(section==='cost'){
+    const tot=agg(RESTS,allDates);
+    el.innerHTML=`
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px;">💸 Cost Analysis</div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon">🍔</div><div class="kpi-val">${fmtD(tot.food)}</div><div class="kpi-lbl">Food Cost (${fmtP(tot.food_net_pct)})</div></div>
+        <div class="kpi-card"><div class="kpi-icon">👥</div><div class="kpi-val">${fmtD(tot.staff)}</div><div class="kpi-lbl">Staff Cost (${fmtP(tot.staff_pct)})</div></div>
+        <div class="kpi-card"><div class="kpi-icon">⚙️</div><div class="kpi-val">${fmtD(tot.ops)}</div><div class="kpi-lbl">Operation Cost (${fmtP(tot.ops_pct)})</div></div>
+        <div class="kpi-card"><div class="kpi-icon">🏠</div><div class="kpi-val">${fmtD(tot.rent)}</div><div class="kpi-lbl">Rent</div></div>
+        <div class="kpi-card"><div class="kpi-icon">📦</div><div class="kpi-val">${fmtD(tot.other)}</div><div class="kpi-lbl">Other</div></div>
+        <div class="kpi-card"><div class="kpi-icon">💰</div><div class="kpi-val">${fmtD(tot.total_cost)}</div><div class="kpi-lbl">Total Cost</div></div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card"><div class="chart-title">Cost Breakdown</div><canvas id="ch-cost-break" height="200"></canvas></div>
+        <div class="chart-card"><div class="chart-title">Monthly Cost Trend</div><canvas id="ch-cost-trend" height="200"></canvas></div>
+      </div>`;
+    setTimeout(()=>{
+      mkChart('ch-cost-break','doughnut',['Food','Staff','Operation','Rent','Other'],
+        [{data:[tot.food,tot.staff,tot.ops,tot.rent,tot.other],backgroundColor:['#e74c3c','#3498db','#f39c12','#9b59b6','#95a5a6']}]);
+      const mLabels=months.filter(m=>entries.some(e=>mDates(m).includes(e.date)));
+      mkChart('ch-cost-trend','line',mLabels,[
+        {label:'Food',data:mLabels.map(m=>agg(RESTS,mDates(m)).food),borderColor:'#e74c3c',fill:false,tension:0.3},
+        {label:'Staff',data:mLabels.map(m=>agg(RESTS,mDates(m)).staff),borderColor:'#3498db',fill:false,tension:0.3},
+        {label:'Operation',data:mLabels.map(m=>agg(RESTS,mDates(m)).ops),borderColor:'#f39c12',fill:false,tension:0.3},
+      ]);
+    },100);
+  }
+
+  else if(section==='pnl'){
+    const tot=agg(RESTS,allDates);
+    el.innerHTML=`
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px;">📈 P&L Summary</div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon">💰</div><div class="kpi-val">${fmtD(tot.total_gross)}</div><div class="kpi-lbl">Gross Revenue</div></div>
+        <div class="kpi-card"><div class="kpi-icon">📊</div><div class="kpi-val">${fmtD(tot.total_net)}</div><div class="kpi-lbl">Net Revenue</div></div>
+        <div class="kpi-card"><div class="kpi-icon">💚</div><div class="kpi-val">${fmtD(tot.gross_profit)}</div><div class="kpi-lbl">Gross Profit</div></div>
+        <div class="kpi-card" style="border-left:4px solid ${tot.net_profit>=0?'#2ecc71':'#e74c3c'}">
+          <div class="kpi-icon">${tot.net_profit>=0?'📈':'📉'}</div>
+          <div class="kpi-val" style="color:${tot.net_profit>=0?'#1a7a3c':'#c0392b'}">${fmtD(tot.net_profit)}</div>
+          <div class="kpi-lbl">Net Profit</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-icon">📉</div><div class="kpi-val">${fmtD(tot.total_cost)}</div><div class="kpi-lbl">Total Cost</div></div>
+        <div class="kpi-card"><div class="kpi-icon">%</div><div class="kpi-val">${fmtP(tot.profit_pct)}</div><div class="kpi-lbl">Net Profit Margin</div></div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card"><div class="chart-title">Monthly P&L</div><canvas id="ch-pnl-monthly" height="200"></canvas></div>
+        <div class="chart-card"><div class="chart-title">P&L by Location</div><canvas id="ch-pnl-loc" height="200"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Monthly P&L Table</div>
+        <table class="dash-table">
+          <thead><tr><th>Month</th><th>Gross Rev</th><th>Net Rev</th><th>Total Cost</th><th>Gross Profit</th><th>Net Profit</th><th>Margin</th></tr></thead>
+          <tbody>${months.filter(m=>entries.some(e=>mDates(m).includes(e.date))).map(m=>{
+            const md=agg(RESTS,mDates(m));
+            return`<tr><td><b>${m}</b></td><td>${fmtD(md.total_gross)}</td><td>${fmtD(md.total_net)}</td><td>${fmtD(md.total_cost)}</td><td style="color:${md.gross_profit>=0?'#1a7a3c':'#c0392b'};font-weight:700">${fmtD(md.gross_profit)}</td><td style="color:${md.net_profit>=0?'#1a7a3c':'#c0392b'};font-weight:700">${fmtD(md.net_profit)}</td><td>${fmtP(md.profit_pct)}</td></tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>`;
+    setTimeout(()=>{
+      const mLabels=months.filter(m=>entries.some(e=>mDates(m).includes(e.date)));
+      mkChart('ch-pnl-monthly','bar',mLabels,[
+        {label:'Net Revenue',data:mLabels.map(m=>agg(RESTS,mDates(m)).total_net),backgroundColor:'rgba(52,152,219,0.7)'},
+        {label:'Total Cost',data:mLabels.map(m=>agg(RESTS,mDates(m)).total_cost),backgroundColor:'rgba(231,76,60,0.7)'},
+        {label:'Net Profit',data:mLabels.map(m=>agg(RESTS,mDates(m)).net_profit),backgroundColor:'rgba(46,204,113,0.7)'},
+      ]);
+      mkChart('ch-pnl-loc','bar',locs.map(l=>l.name),[
+        {label:'Net Revenue',data:locs.map(l=>agg(l.rests,allDates).total_net),backgroundColor:'rgba(52,152,219,0.7)'},
+        {label:'Net Profit',data:locs.map(l=>agg(l.rests,allDates).net_profit),backgroundColor:locs.map(l=>{const m=agg(l.rests,allDates);return m.net_profit>=0?'rgba(46,204,113,0.7)':'rgba(231,76,60,0.7)';})},
+      ]);
+    },100);
+  }
+
+  else if(section.startsWith('loc-')){
+    const locKey=section.replace('loc-','');
+    const locData={stalbans:{name:'ST ALBANS',rests:['ANGIES - ST ALBANS','GOLDEN FLAMES - ST ALBANS'],color:'#e74c3c'},fitzroy:{name:'FITZROY NORTH',rests:['ANGIES - FITZROY NORTH','LAMB ON NICHOLSON'],color:'#3498db'},ascot:{name:'ASCOT VALE',rests:['ANGIES - ASCOT VALE','ASCOT VALE KEBABS'],color:'#2ecc71'}};
+    const loc=locData[locKey];if(!loc)return;
+    const tot=agg(loc.rests,allDates);
+    el.innerHTML=`
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px;color:${loc.color}">📍 ${loc.name}</div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon">💰</div><div class="kpi-val">${fmtD(tot.total_gross)}</div><div class="kpi-lbl">Gross Revenue</div></div>
+        <div class="kpi-card"><div class="kpi-icon">📊</div><div class="kpi-val">${fmtD(tot.total_net)}</div><div class="kpi-lbl">Net Revenue</div></div>
+        <div class="kpi-card" style="border-left:4px solid ${tot.net_profit>=0?'#2ecc71':'#e74c3c'}">
+          <div class="kpi-icon">${tot.net_profit>=0?'📈':'📉'}</div>
+          <div class="kpi-val" style="color:${tot.net_profit>=0?'#1a7a3c':'#c0392b'}">${fmtD(tot.net_profit)}</div>
+          <div class="kpi-lbl">Net Profit (${fmtP(tot.profit_pct)})</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-icon">🧾</div><div class="kpi-val">${tot.total_orders.toLocaleString()}</div><div class="kpi-lbl">Transactions</div></div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card"><div class="chart-title">Monthly Revenue vs Cost</div><canvas id="ch-loc-mc" height="200"></canvas></div>
+        <div class="chart-card"><div class="chart-title">Revenue by Restaurant</div><canvas id="ch-loc-rest" height="200"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Restaurant Comparison</div>
+        <table class="dash-table">
+          <thead><tr><th>Restaurant</th><th>Gross Rev</th><th>Net Rev</th><th>Net Profit</th><th>Transactions</th><th>Avg Order</th></tr></thead>
+          <tbody>${loc.rests.map(r=>{const m=agg([r],allDates);return`<tr><td><b>${r}</b></td><td>${fmtD(m.total_gross)}</td><td>${fmtD(m.total_net)}</td><td style="color:${m.net_profit>=0?'#1a7a3c':'#c0392b'};font-weight:700">${fmtD(m.net_profit)}</td><td>${m.total_orders.toLocaleString()}</td><td>${fmtD(m.per_txn)}</td></tr>`;}).join('')}</tbody>
+        </table>
+      </div>`;
+    setTimeout(()=>{
+      const mLabels=months.filter(m=>entries.some(e=>mDates(m).includes(e.date)));
+      mkChart('ch-loc-mc','bar',mLabels,[
+        {label:'Net Revenue',data:mLabels.map(m=>agg(loc.rests,mDates(m)).total_net),backgroundColor:'rgba(52,152,219,0.7)'},
+        {label:'Total Cost',data:mLabels.map(m=>agg(loc.rests,mDates(m)).total_cost),backgroundColor:'rgba(231,76,60,0.7)'},
+      ]);
+      mkChart('ch-loc-rest','doughnut',loc.rests,
+        [{data:loc.rests.map(r=>agg([r],allDates).total_gross),backgroundColor:['rgba(52,152,219,0.8)','rgba(46,204,113,0.8)']}]);
+    },100);
+  }
+
+  else if(section==='online'){
+    const tot=agg(RESTS,allDates);
+    el.innerHTML=`
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px;">🛵 Online Orders Analysis</div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-icon">💚</div><div class="kpi-val">${fmtD(tot.uber_gross)}</div><div class="kpi-lbl">Uber Eats Gross / Net: ${fmtD(tot.uber_net)}</div></div>
+        <div class="kpi-card"><div class="kpi-icon">❤️</div><div class="kpi-val">${fmtD(tot.dd_gross)}</div><div class="kpi-lbl">DoorDash Gross / Net: ${fmtD(tot.dd_net)}</div></div>
+        <div class="kpi-card"><div class="kpi-icon">🟠</div><div class="kpi-val">${fmtD(tot.ml_gross)}</div><div class="kpi-lbl">Menulog Gross / Net: ${fmtD(tot.ml_net)}</div></div>
+        <div class="kpi-card"><div class="kpi-icon">📦</div><div class="kpi-val">${tot.online_orders.toLocaleString()}</div><div class="kpi-lbl">Total Online Orders</div></div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card"><div class="chart-title">Online Revenue Split</div><canvas id="ch-online-split" height="200"></canvas></div>
+        <div class="chart-card"><div class="chart-title">Commission Impact</div><canvas id="ch-comm" height="200"></canvas></div>
+      </div>`;
+    setTimeout(()=>{
+      mkChart('ch-online-split','doughnut',['Uber Eats','DoorDash','Menulog'],
+        [{data:[tot.uber_gross,tot.dd_gross,tot.ml_gross],backgroundColor:['#2ecc71','#e74c3c','#f39c12']}]);
+      mkChart('ch-comm','bar',['Uber Eats','DoorDash','Menulog'],[
+        {label:'Gross Revenue',data:[tot.uber_gross,tot.dd_gross,tot.ml_gross],backgroundColor:'rgba(52,152,219,0.7)'},
+        {label:'Net Revenue',data:[tot.uber_net,tot.dd_net,tot.ml_net],backgroundColor:'rgba(46,204,113,0.7)'},
+      ]);
+    },100);
+  }
 }
 
-function refreshReports(){
-  buildReport('r-overall', RESTS, 'OVERALL — ALL 6 RESTAURANTS');
-  buildReport('r-stalbans', ['ANGIES - ST ALBANS','GOLDEN FLAMES - ST ALBANS'], 'ST ALBANS');
-  buildReport('r-fitzroy', ['ANGIES - FITZROY NORTH','LAMB ON NICHOLSON'], 'FITZROY NORTH');
-  buildReport('r-ascot', ['ANGIES - ASCOT VALE','ASCOT VALE KEBABS'], 'ASCOT VALE');
-  buildDashboard();
-}
+// Init
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.dash-section').forEach((e,i)=>e.style.display=i===0?'block':'none');
+});
 </script>
 </body>
 </html>
