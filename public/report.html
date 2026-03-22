@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P&L Report — Angie's</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0f; color: #e2e8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #111; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+    input { outline: none; }
+    .fade-up { animation: fadeUp 0.4s ease forwards; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+    /* LOGIN */
+    #login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .login-box { background: #111; border-radius: 20px; padding: 40px; width: 360px; border: 1px solid rgba(255,255,255,0.08); text-align: center; }
+    .login-box img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid #f5c842; }
+    .login-box h2 { font-size: 20px; font-weight: 900; margin-top: 12px; color: #fff; }
+    .login-box p { font-size: 13px; color: #666; margin-top: 4px; margin-bottom: 24px; }
+    .login-box input { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.06); color: #fff; font-size: 14px; font-family: 'Nunito',sans-serif; margin-bottom: 10px; }
+    .login-box .err { color: #e8520a; font-size: 13px; margin-bottom: 8px; }
+    .login-box button { width: 100%; padding: 12px; border-radius: 10px; background: #e8520a; color: #fff; font-size: 15px; font-weight: 800; border: none; cursor: pointer; font-family: 'Nunito',sans-serif; }
+
+    /* DASHBOARD */
+    #dashboard { display: none; }
+    .navbar { background: #111; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+    .navbar img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid #f5c842; cursor: pointer; }
+    .nav-info { margin-left: 12px; }
+    .nav-info .title { font-size: 14px; font-weight: 800; color: #fff; }
+    .nav-info .sub { font-size: 11px; color: #555; }
+    .nav-left { display: flex; align-items: center; }
+    .tabs { display: flex; gap: 8px; }
+    .tab-btn { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; background: rgba(255,255,255,0.06); color: #666; border: none; cursor: pointer; font-family: 'Nunito',sans-serif; transition: all 0.15s; }
+    .tab-btn.active { background: #e8520a; color: #fff; }
+    .logout-btn { padding: 6px 14px; border-radius: 8px; background: rgba(255,255,255,0.06); color: #666; border: none; cursor: pointer; font-size: 12px; font-family: 'Nunito',sans-serif; }
+
+    .content { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* KPI CARDS */
+    .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+    .kpi-card { border-radius: 14px; padding: 16px 18px; }
+    .kpi-icon { font-size: 20px; margin-bottom: 6px; }
+    .kpi-value { font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; margin-bottom: 3px; }
+    .kpi-label { font-size: 12px; font-weight: 700; color: #e2e8f0; }
+    .kpi-sub { font-size: 11px; color: #555; margin-top: 2px; }
+
+    /* CHART CARD */
+    .chart-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+    .chart-title { font-size: 14px; font-weight: 800; margin-bottom: 16px; color: #94a3b8; }
+    .chart-container { position: relative; }
+
+    /* COST BARS */
+    .cost-item { margin-bottom: 14px; }
+    .cost-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+    .cost-name { font-size: 13px; font-weight: 700; }
+    .cost-val { font-family: 'Space Mono', monospace; font-size: 13px; }
+    .cost-bar-bg { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; }
+    .cost-bar { height: 6px; border-radius: 3px; transition: width 1s ease; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { padding: 8px 10px; text-align: right; color: #475569; font-weight: 700; white-space: nowrap; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    th:first-child { text-align: left; }
+    td { padding: 8px 10px; text-align: right; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    td:first-child { text-align: left; color: #94a3b8; font-weight: 700; }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.01); }
+
+    /* STORE CARDS */
+    .store-card { border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+    .store-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .store-name { font-size: 16px; font-weight: 900; }
+    .store-txn { font-size: 12px; color: #555; margin-top: 2px; }
+    .store-profit { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; text-align: right; }
+    .store-profit-sub { font-size: 11px; color: #555; }
+    .store-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .metric-box { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; }
+    .metric-label { font-size: 10px; color: #475569; margin-bottom: 3px; font-weight: 700; }
+    .metric-val { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; }
+
+    /* ONLINE CARDS */
+    .online-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .online-card { border-radius: 16px; padding: 20px; }
+    .online-name { font-size: 16px; font-weight: 900; margin-bottom: 12px; }
+    .online-row { margin-bottom: 8px; }
+    .online-row-label { font-size: 11px; color: #555; margin-bottom: 2px; }
+    .online-row-val { font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <img src="/logo.jpg" alt="logo" />
+    <h2>P&L Report</h2>
+    <p>Angie's Kebabs & Burgers · 2026</p>
+    <input type="password" id="pass-input" placeholder="Enter password" />
+    <div class="err" id="err-msg" style="display:none">Wrong password!</div>
+    <button onclick="doLogin()">View Report →</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="navbar">
+    <div class="nav-left">
+      <img src="/logo.jpg" alt="logo" onclick="window.location.href='/'" />
+      <div class="nav-info">
+        <div class="title">P&L Dashboard</div>
+        <div class="sub">Angie's Kebabs & Burgers · 2026</div>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
+      <button class="tab-btn" onclick="showTab('weekly')">Weekly</button>
+      <button class="tab-btn" onclick="showTab('stores')">Stores</button>
+      <button class="tab-btn" onclick="showTab('online')">Online</button>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </div>
+
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div id="tab-overview" class="tab-content active fade-up">
+      <div class="kpi-grid">
+        <div class="kpi-card" style="background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.2)">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-value" style="color:#14b8a6">$390,375</div>
+          <div class="kpi-label">Gross Revenue</div>
+          <div class="kpi-sub">2026 YTD</div>
+        </div>
+        <div class="kpi-card" style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2)">
+          <div class="kpi-icon">📊</div>
+          <div class="kpi-value" style="color:#6366f1">$290,728</div>
+          <div class="kpi-label">Net Revenue</div>
+          <div class="kpi-sub">After platform fees</div>
+        </div>
+        <div class="kpi-card" style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.2)">
+          <div class="kpi-icon">💸</div>
+          <div class="kpi-value" style="color:#f43f5e">$312,699</div>
+          <div class="kpi-label">Total Cost</div>
+          <div class="kpi-sub">Food + Staff + Ops</div>
+        </div>
+        <div class="kpi-card" style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.2)">
+          <div class="kpi-icon">📉</div>
+          <div class="kpi-value" style="color:#f43f5e">-$21,971</div>
+          <div class="kpi-label">Net Profit</div>
+          <div class="kpi-sub">-7.6% margin</div>
+        </div>
+        <div class="kpi-card" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2)">
+          <div class="kpi-icon">🧾</div>
+          <div class="kpi-value" style="color:#f59e0b">13,335</div>
+          <div class="kpi-label">Transactions</div>
+          <div class="kpi-sub">Total orders</div>
+        </div>
+        <div class="kpi-card" style="background:rgba(236,72,153,0.1);border:1px solid rgba(236,72,153,0.2)">
+          <div class="kpi-icon">🍔</div>
+          <div class="kpi-value" style="color:#ec4899">$29.27</div>
+          <div class="kpi-label">Avg. Order Value</div>
+          <div class="kpi-sub">Per transaction</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">💸 Cost Breakdown</div>
+        <div class="cost-item">
+          <div class="cost-row">
+            <span class="cost-name">Food Cost</span>
+            <span class="cost-val" style="color:#f59e0b">$86,555 <span style="color:#555">(29.8%)</span></span>
+          </div>
+          <div class="cost-bar-bg"><div class="cost-bar" style="background:#f59e0b;width:29.8%"></div></div>
+        </div>
+        <div class="cost-item">
+          <div class="cost-row">
+            <span class="cost-name">Staff Cost</span>
+            <span class="cost-val" style="color:#6366f1">$67,681 <span style="color:#555">(23.3%)</span></span>
+          </div>
+          <div class="cost-bar-bg"><div class="cost-bar" style="background:#6366f1;width:23.3%"></div></div>
+        </div>
+        <div class="cost-item">
+          <div class="cost-row">
+            <span class="cost-name">Operation Cost</span>
+            <span class="cost-val" style="color:#f43f5e">$158,463 <span style="color:#555">(54.5%)</span></span>
+          </div>
+          <div class="cost-bar-bg"><div class="cost-bar" style="background:#f43f5e;width:54.5%"></div></div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">📅 Monthly P&L</div>
+        <div class="chart-container"><canvas id="monthlyChart" height="200"></canvas></div>
+      </div>
+    </div>
+
+    <!-- WEEKLY -->
+    <div id="tab-weekly" class="tab-content fade-up">
+      <div class="chart-card">
+        <div class="chart-title">📈 Weekly Revenue & Profit Trend</div>
+        <div class="chart-container"><canvas id="weeklyChart" height="200"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">📋 Weekly Breakdown</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="text-align:left">Week</th>
+                <th>Transactions</th>
+                <th>Gross Rev</th>
+                <th>Net Rev</th>
+                <th>Food</th>
+                <th>Staff</th>
+                <th>Ops</th>
+                <th>Net Profit</th>
+              </tr>
+            </thead>
+            <tbody id="weekly-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORES -->
+    <div id="tab-stores" class="tab-content fade-up">
+      <div id="store-cards"></div>
+      <div class="chart-card">
+        <div class="chart-title">🏪 Store Revenue Comparison</div>
+        <div class="chart-container"><canvas id="storeChart" height="160"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ONLINE -->
+    <div id="tab-online" class="tab-content fade-up">
+      <div class="online-grid" id="online-cards"></div>
+      <div class="chart-card">
+        <div class="chart-title">🥧 Revenue Split</div>
+        <div class="chart-container" style="max-width:300px;margin:0 auto"><canvas id="pieChart" height="200"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">📋 Commission Impact</div>
+        <div id="commission-rows"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PASSWORD = "angies2024";
+
+const WEEKLY = [
+  {week:"W1 Jan",rev:46276,net:34108,cost:24196,food:9727,staff:7578,ops:6891,profit:9912,txn:1483},
+  {week:"W2 Jan",rev:43179,net:30502,cost:23712,food:9572,staff:7249,ops:6891,profit:6790,txn:1399},
+  {week:"W3 Jan",rev:37198,net:27970,cost:23105,food:9530,staff:6714,ops:6861,profit:4865,txn:1259},
+  {week:"W4 Jan",rev:35442,net:26496,cost:22501,food:8710,staff:6900,ops:6891,profit:3995,txn:1213},
+  {week:"W5 Feb",rev:38166,net:28975,cost:21298,food:7285,staff:7122,ops:6891,profit:7677,txn:1257},
+  {week:"W6 Feb",rev:34314,net:26046,cost:22911,food:9594,staff:6426,ops:6891,profit:3135,txn:1215},
+  {week:"W7 Feb",rev:34756,net:26075,cost:23229,food:9618,staff:6720,ops:6891,profit:2846,txn:1233},
+  {week:"W8 Feb",rev:30210,net:22684,cost:20365,food:7144,staff:6330,ops:6891,profit:2319,txn:1084},
+  {week:"W9 Mar",rev:30024,net:23069,cost:21098,food:7879,staff:6328,ops:6891,profit:1971,txn:1075},
+  {week:"W10 Mar",rev:29292,net:21641,cost:20701,food:7496,staff:6314,ops:6891,profit:940,txn:1035},
+  {week:"W11 Mar",rev:31518,net:23162,cost:6891,food:0,staff:0,ops:6891,profit:16271,txn:1082},
+];
+
+const MONTHLY = [
+  {month:"January",rev:200261,net:148051,cost:114812,food:44824,staff:35563,ops:34425,profit:33239,txn:6611},
+  {month:"February",rev:129304,net:97874,cost:87603,food:34235,staff:25804,ops:27564,profit:10271,txn:4607},
+  {month:"March",rev:60810,net:44803,cost:41374,food:7496,staff:6314,ops:27564,profit:3429,txn:2117},
+];
+
+const STORES = [
+  {name:"Ascot Vale",rev:324808,net:246280,cost:265908,food:80422,staff:69496,ops:115990,grossProfit:58900,profit:-19628,txn:11388,pct:-6.04,color:"#e8520a"},
+  {name:"St Albans",rev:186948,net:131729,cost:116662,food:43263,staff:26640,ops:46759,grossProfit:70286,profit:15067,txn:5758,pct:8.06,color:"#f5c842"},
+  {name:"Fitzroy North",rev:68584,net:57995,cost:65151,food:10780,staff:12713,ops:41658,grossProfit:3433,profit:-7156,txn:2930,pct:-10.43,color:"#22c55e"},
+];
+
+const ONLINE = [
+  {name:"Uber Eats",txn:1767,gross:66303,net:35785,color:"#06c167"},
+  {name:"DoorDash",txn:1279,gross:36703,net:20722,color:"#ff3008"},
+];
+
+const fmt = n => n >= 0 ? `$${n.toLocaleString()}` : `-$${Math.abs(n).toLocaleString()}`;
+
+function doLogin() {
+  const val = document.getElementById('pass-input').value;
+  if (val === PASSWORD) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    initCharts();
+    buildTables();
+  } else {
+    document.getElementById('err-msg').style.display = 'block';
+  }
+}
+
+document.getElementById('pass-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+function doLogout() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('pass-input').value = '';
+}
+
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function initCharts() {
+  const darkGrid = 'rgba(255,255,255,0.05)';
+  const darkTick = '#475569';
+
+  // Monthly Chart
+  new Chart(document.getElementById('monthlyChart'), {
+    type: 'bar',
+    data: {
+      labels: MONTHLY.map(m => m.month),
+      datasets: [
+        { label: 'Net Revenue', data: MONTHLY.map(m => m.net), backgroundColor: '#14b8a6', borderRadius: 4 },
+        { label: 'Total Cost', data: MONTHLY.map(m => m.cost), backgroundColor: '#f43f5e', borderRadius: 4 },
+        { label: 'Net Profit', data: MONTHLY.map(m => m.profit), backgroundColor: '#6366f1', borderRadius: 4 },
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } },
+      scales: {
+        x: { grid: { color: darkGrid }, ticks: { color: darkTick } },
+        y: { grid: { color: darkGrid }, ticks: { color: darkTick, callback: v => `$${(v/1000).toFixed(0)}k` } }
+      }
+    }
+  });
+
+  // Weekly Chart
+  new Chart(document.getElementById('weeklyChart'), {
+    type: 'line',
+    data: {
+      labels: WEEKLY.map(w => w.week),
+      datasets: [
+        { label: 'Net Revenue', data: WEEKLY.map(w => w.net), borderColor: '#14b8a6', borderWidth: 2, pointRadius: 0, tension: 0.3 },
+        { label: 'Cost', data: WEEKLY.map(w => w.cost), borderColor: '#f43f5e', borderWidth: 2, pointRadius: 0, tension: 0.3 },
+        { label: 'Net Profit', data: WEEKLY.map(w => w.profit), borderColor: '#6366f1', borderWidth: 2.5, pointRadius: 0, tension: 0.3, borderDash: [4,2] },
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } },
+      scales: {
+        x: { grid: { color: darkGrid }, ticks: { color: darkTick, font: { size: 10 } } },
+        y: { grid: { color: darkGrid }, ticks: { color: darkTick, callback: v => `$${(v/1000).toFixed(0)}k` } }
+      }
+    }
+  });
+
+  // Store Chart
+  new Chart(document.getElementById('storeChart'), {
+    type: 'bar',
+    data: {
+      labels: STORES.map(s => s.name),
+      datasets: [
+        { label: 'Net Revenue', data: STORES.map(s => s.net), backgroundColor: STORES.map(s => s.color), borderRadius: 4 },
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: darkGrid }, ticks: { color: darkTick, callback: v => `$${(v/1000).toFixed(0)}k` } },
+        y: { grid: { color: darkGrid }, ticks: { color: '#94a3b8' } }
+      }
+    }
+  });
+
+  // Pie Chart
+  new Chart(document.getElementById('pieChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ONLINE.map(o => o.name),
+      datasets: [{ data: ONLINE.map(o => o.gross), backgroundColor: ONLINE.map(o => o.color), borderWidth: 0 }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#94a3b8', font: { size: 12 } } } }
+    }
+  });
+}
+
+function buildTables() {
+  // Weekly table
+  const tbody = document.getElementById('weekly-table-body');
+  WEEKLY.forEach((w, i) => {
+    const color = w.profit >= 0 ? '#22c55e' : '#f43f5e';
+    tbody.innerHTML += `
+      <tr>
+        <td>${w.week}</td>
+        <td style="font-family:'Space Mono',monospace;font-size:11px">${w.txn.toLocaleString()}</td>
+        <td style="font-family:'Space Mono',monospace;font-size:11px;color:#14b8a6">${fmt(w.rev)}</td>
+        <td style="font-family:'Space Mono',monospace;font-size:11px;color:#6366f1">${fmt(w.net)}</td>
+        <td style="font-family:'Space Mono',monospace;font-size:11px;color:#f59e0b">${fmt(w.food)}</td>
+        <td style="font-family:'Space Mono',monospace;font-size:11px;color:#ec4899">${fmt(w.staff)}</td>
+        <td style="font-family:'Space Mono',monospace;font-size:11px;color:#f43f5e">${fmt(w.ops)}</td>
+        <td style="font-family:'Space Mono',monospace;font-size:11px;color:${color};font-weight:700">${fmt(w.profit)}</td>
+      </tr>`;
+  });
+
+  // Store cards
+  const storeDiv = document.getElementById('store-cards');
+  STORES.forEach(s => {
+    storeDiv.innerHTML += `
+      <div class="store-card" style="background:${s.color}18;border:1px solid ${s.color}30">
+        <div class="store-header">
+          <div>
+            <div class="store-name" style="color:${s.color}">${s.name}</div>
+            <div class="store-txn">${s.txn.toLocaleString()} transactions</div>
+          </div>
+          <div>
+            <div class="store-profit" style="color:${s.profit>=0?'#22c55e':'#f43f5e'}">${fmt(s.profit)}</div>
+            <div class="store-profit-sub">Net Profit (${s.pct>0?'+':''}${s.pct.toFixed(1)}%)</div>
+          </div>
+        </div>
+        <div class="store-metrics">
+          <div class="metric-box"><div class="metric-label">Gross Revenue</div><div class="metric-val" style="color:#14b8a6">${fmt(s.rev)}</div></div>
+          <div class="metric-box"><div class="metric-label">Net Revenue</div><div class="metric-val" style="color:#6366f1">${fmt(s.net)}</div></div>
+          <div class="metric-box"><div class="metric-label">Total Cost</div><div class="metric-val" style="color:#f43f5e">${fmt(s.cost)}</div></div>
+          <div class="metric-box"><div class="metric-label">Food Cost</div><div class="metric-val" style="color:#f59e0b">${fmt(s.food)}</div></div>
+          <div class="metric-box"><div class="metric-label">Staff Cost</div><div class="metric-val" style="color:#ec4899">${fmt(s.staff)}</div></div>
+          <div class="metric-box"><div class="metric-label">Operation</div><div class="metric-val" style="color:#8b5cf6">${fmt(s.ops)}</div></div>
+        </div>
+      </div>`;
+  });
+
+  // Online cards
+  const onlineDiv = document.getElementById('online-cards');
+  ONLINE.forEach(o => {
+    onlineDiv.innerHTML += `
+      <div class="online-card" style="background:${o.color}15;border:1px solid ${o.color}30">
+        <div class="online-name" style="color:${o.color}">${o.name}</div>
+        <div class="online-row"><div class="online-row-label">Transactions</div><div class="online-row-val" style="color:#e2e8f0">${o.txn.toLocaleString()}</div></div>
+        <div class="online-row"><div class="online-row-label">Gross Revenue</div><div class="online-row-val" style="color:${o.color}">${fmt(o.gross)}</div></div>
+        <div class="online-row"><div class="online-row-label">Net (After Commission)</div><div class="online-row-val" style="color:#22c55e">${fmt(o.net)}</div></div>
+      </div>`;
+  });
+
+  // Commission rows
+  const commDiv = document.getElementById('commission-rows');
+  ONLINE.forEach(o => {
+    const commission = o.gross - o.net;
+    const rate = ((commission / o.gross) * 100).toFixed(1);
+    commDiv.innerHTML += `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <span style="font-size:14px;font-weight:700;color:${o.color}">${o.name}</span>
+        <div style="text-align:right">
+          <div style="font-family:'Space Mono',monospace;font-size:13px;color:#f43f5e">-${fmt(commission)} commission</div>
+          <div style="font-size:11px;color:#555">${rate}% rate</div>
+        </div>
+      </div>`;
+  });
+}
+</script>
+</body>
+</html>
