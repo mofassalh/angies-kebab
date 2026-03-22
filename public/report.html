@@ -5,357 +5,418 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>P&L Report — Angie's</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #f5f5f5; font-family: 'Nunito', sans-serif; }
-    input { outline: none; }
+    body { background: #f5f0e8; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+    input, button { outline: none; font-family: 'Nunito', sans-serif; }
 
-    /* LOGIN */
     #login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #1a0a00; }
-    .login-box { background: #fff; border-radius: 20px; padding: 40px; width: 360px; text-align: center; }
+    .login-box { background: #fff; border-radius: 20px; padding: 40px; width: 360px; text-align: center; box-shadow: 0 8px 40px rgba(0,0,0,0.3); }
     .login-box img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #f5c842; }
-    .login-box h2 { font-size: 22px; font-weight: 900; margin-top: 12px; }
+    .login-box h2 { font-size: 22px; font-weight: 900; margin-top: 12px; color: #1a0a00; }
     .login-box p { font-size: 13px; color: #888; margin-top: 4px; margin-bottom: 24px; }
-    .login-box input { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid #e0e0e0; font-size: 14px; font-family: 'Nunito',sans-serif; margin-bottom: 10px; }
-    .login-box .err { color: #e8520a; font-size: 13px; margin-bottom: 8px; }
+    .login-box input { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid #e0e0e0; font-size: 14px; margin-bottom: 10px; }
+    .login-box .err { color: #c0392b; font-size: 13px; margin-bottom: 8px; display: none; }
     .login-box button { width: 100%; padding: 12px; border-radius: 10px; background: #b8860b; color: #fff; font-size: 15px; font-weight: 800; border: none; cursor: pointer; }
 
-    /* DASHBOARD */
     #dashboard { display: none; }
-    .topbar { background: #7a5c00; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-    .topbar-left { display: flex; align-items: center; gap: 12px; }
-    .topbar-left img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #f5c842; cursor: pointer; }
-    .topbar-title { color: #fff; font-weight: 900; font-size: 16px; }
-    .topbar-sub { color: rgba(255,255,255,0.6); font-size: 11px; }
-    .sheet-tabs { display: flex; gap: 6px; }
-    .sheet-tab { padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; font-family: 'Nunito',sans-serif; transition: all 0.15s; }
+
+    .topbar { background: #7a5c00; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-left img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #f5c842; cursor: pointer; }
+    .topbar-title { color: #fff; font-weight: 900; font-size: 15px; }
+    .topbar-sub { color: rgba(255,255,255,0.6); font-size: 10px; }
+    .sheet-tabs { display: flex; gap: 4px; }
+    .sheet-tab { padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; border: none; cursor: pointer; transition: all 0.15s; }
     .sheet-tab.active { background: #f5c842; color: #1a0a00; }
     .sheet-tab:not(.active) { background: rgba(255,255,255,0.15); color: #fff; }
-    .logout-btn { padding: 6px 14px; border-radius: 8px; background: rgba(255,255,255,0.15); color: #fff; border: none; cursor: pointer; font-size: 12px; font-family: 'Nunito',sans-serif; }
+    .topbar-right { display: flex; gap: 8px; align-items: center; }
+    .upload-btn { padding: 6px 14px; border-radius: 8px; background: #f5c842; color: #1a0a00; border: none; cursor: pointer; font-size: 12px; font-weight: 800; }
+    .logout-btn { padding: 6px 12px; border-radius: 8px; background: rgba(255,255,255,0.15); color: #fff; border: none; cursor: pointer; font-size: 12px; }
 
-    .sheet-content { display: none; padding: 16px; overflow-x: auto; }
+    .sheet-content { display: none; padding: 16px; }
     .sheet-content.active { display: block; }
+
+    /* UPLOAD AREA */
+    .upload-area { background: #fff; border: 2px dashed #b8860b; border-radius: 16px; padding: 32px; text-align: center; margin-bottom: 20px; cursor: pointer; transition: all 0.2s; }
+    .upload-area:hover { background: #fff9e8; }
+    .upload-area h3 { font-size: 16px; font-weight: 800; color: #7a5c00; margin-bottom: 8px; }
+    .upload-area p { font-size: 13px; color: #888; margin-bottom: 16px; }
+    .upload-area .format { background: #f9f5e8; border-radius: 10px; padding: 12px; text-align: left; font-size: 11px; font-family: monospace; color: #555; line-height: 1.8; margin-top: 12px; }
+    .upload-btn-big { padding: 10px 24px; background: #b8860b; color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; }
+    .success-msg { background: #d4edda; color: #2d6a4f; border-radius: 10px; padding: 10px 16px; font-size: 13px; font-weight: 700; margin-bottom: 16px; display: none; }
 
     /* EXCEL TABLE */
     .excel-wrap { overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
     table { border-collapse: collapse; min-width: 100%; font-size: 12px; background: #fff; }
-    
-    /* Header rows */
-    .row-header-top { background: #7a5c00 !important; }
-    .row-header-top td { color: #fff !important; font-weight: 800 !important; text-align: center !important; padding: 8px 12px !important; border: 1px solid #5a4200 !important; font-size: 13px !important; }
-    .row-date { background: #b8860b !important; }
-    .row-date td { color: #fff !important; font-weight: 700 !important; text-align: center !important; padding: 6px 12px !important; border: 1px solid #8a6200 !important; font-size: 11px !important; }
-    
-    /* Monthly columns */
-    .col-monthly { background: #f5c842 !important; color: #1a0a00 !important; font-weight: 800 !important; }
-    
-    /* Row label */
-    .row-label { background: #7a5c00; color: #fff; font-weight: 700; text-align: right; padding: 7px 12px; border: 1px solid #5a4200; white-space: nowrap; min-width: 180px; }
-    
-    /* Data cells */
-    td.data { text-align: right; padding: 6px 10px; border: 1px solid #e0d0a0; font-family: monospace; font-size: 12px; color: #333; }
-    td.data-monthly { text-align: right; padding: 6px 10px; border: 1px solid #c8a800; font-family: monospace; font-size: 12px; background: #fff9e0; font-weight: 700; color: #7a5c00; }
-    
-    /* Row categories */
-    .row-section { background: #5a4000 !important; }
-    .row-section .row-label { background: #5a4000 !important; font-size: 11px; color: rgba(255,255,255,0.8) !important; }
-    .row-empty td { height: 12px; background: #f9f5e8; border: 1px solid #e8ddb0; }
-    
-    /* Profit row */
-    .row-profit .row-label { background: #3d2b00 !important; }
-    .row-profit td.data { font-weight: 800; color: #2d6a4f; }
-    .row-profit td.data-monthly { color: #2d6a4f; }
-    .row-profit-pct .row-label { background: #3d2b00 !important; }
-    .row-profit-pct td.data { font-weight: 800; color: #2d6a4f; background: #e8f5e9; }
-    .row-profit-pct td.data-monthly { color: #2d6a4f; background: #d4edda; }
+    .th-label { background: #5a4000; color: #f5c842; font-weight: 900; font-size: 13px; text-align: right; padding: 9px 14px; border: 1px solid #3a2800; white-space: nowrap; min-width: 200px; position: sticky; left: 0; z-index: 2; }
+    .th-week { background: #7a5c00; color: #fff; font-weight: 800; font-size: 12px; text-align: center; padding: 8px 10px; border: 1px solid #5a4200; white-space: nowrap; min-width: 80px; }
+    .th-month { background: #b8860b; color: #fff; font-weight: 800; font-size: 12px; text-align: center; padding: 8px 10px; border: 1px solid #8a6200; white-space: nowrap; min-width: 90px; }
+    .td-date-week { background: #b8860b; color: #fff; font-size: 10px; text-align: center; padding: 5px 8px; border: 1px solid #8a6200; }
+    .td-date-month { background: #d4a800; color: #fff; font-size: 10px; text-align: center; padding: 5px 8px; border: 1px solid #a07800; }
+    .td-label { background: #7a5c00; color: #fff; font-weight: 700; text-align: right; padding: 6px 14px; border: 1px solid #5a4200; white-space: nowrap; position: sticky; left: 0; z-index: 1; font-size: 12px; }
+    .td-label-sub { background: #8a6c10; color: rgba(255,255,255,0.85); font-weight: 600; text-align: right; padding: 6px 14px 6px 24px; border: 1px solid #6a4c00; white-space: nowrap; position: sticky; left: 0; z-index: 1; font-size: 11px; }
+    .td-data { text-align: right; padding: 6px 10px; border: 1px solid #e0d0a0; font-family: monospace; color: #333; }
+    .td-month { text-align: right; padding: 6px 10px; border: 1px solid #c8a800; font-family: monospace; color: #7a5c00; font-weight: 700; background: #fff9e0; }
+    .td-profit { color: #2d6a4f; font-weight: 800; }
+    .td-loss { color: #c0392b; font-weight: 800; }
+    .td-pct { font-size: 11px; }
+    .tr-empty td { height: 10px; background: #f9f5e8; border: 1px solid #ede0b0; }
+    .tr-section .td-label { background: #4a3400; font-size: 11px; }
+    .tr-section .td-label-sub { background: #5a4400; }
 
-    /* Positive/Negative */
-    .neg { color: #c0392b !important; }
-    .pos { color: #2d6a4f !important; }
+    .page-title { padding: 14px 16px 4px; font-size: 17px; font-weight: 900; color: #5a4000; }
+    .page-sub { padding: 0 16px 12px; font-size: 12px; color: #999; }
 
-    .page-title { padding: 16px 16px 8px; font-size: 18px; font-weight: 900; color: #5a4000; }
-    .page-sub { padding: 0 16px 12px; font-size: 13px; color: #888; }
+    .no-data { text-align: center; padding: 60px 20px; color: #aaa; }
+    .no-data h3 { font-size: 18px; margin-bottom: 8px; }
   </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <img src="/logo.jpg" alt="logo" />
-    <h2>Profit & Loss Report</h2>
+    <h2>P&L Report</h2>
     <p>Angie's Kebabs & Burgers · 2026</p>
     <input type="password" id="pass-input" placeholder="Enter password" />
-    <div class="err" id="err-msg" style="display:none">❌ Wrong password!</div>
+    <div class="err" id="err-msg">❌ Wrong password!</div>
     <button onclick="doLogin()">View Report →</button>
   </div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard">
   <div class="topbar">
     <div class="topbar-left">
       <img src="/logo.jpg" onclick="window.location.href='/'" />
       <div>
-        <div class="topbar-title">Angie's Profit & Loss 2026</div>
-        <div class="topbar-sub">Version 2.0 · Confidential</div>
+        <div class="topbar-title">Angie's P&L 2026</div>
+        <div class="topbar-sub">Real-time · Auto calculated</div>
       </div>
     </div>
     <div class="sheet-tabs">
-      <button class="sheet-tab active" onclick="showSheet('overall')">📊 Overall</button>
-      <button class="sheet-tab" onclick="showSheet('stalbans')">🏪 ST ALBANS</button>
-      <button class="sheet-tab" onclick="showSheet('fitzroy')">🏪 FITZROY NORTH</button>
-      <button class="sheet-tab" onclick="showSheet('ascot')">🏪 ASCOT VALE</button>
+      <button class="sheet-tab active" onclick="showSheet('overall', this)">📊 Overall</button>
+      <button class="sheet-tab" onclick="showSheet('stalbans', this)">ST ALBANS</button>
+      <button class="sheet-tab" onclick="showSheet('fitzroy', this)">FITZROY NORTH</button>
+      <button class="sheet-tab" onclick="showSheet('ascot', this)">ASCOT VALE</button>
+      <button class="sheet-tab" onclick="showSheet('upload', this)">📤 Upload</button>
     </div>
-    <button class="logout-btn" onclick="doLogout()">Logout</button>
+    <div class="topbar-right">
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
   </div>
 
-  <!-- OVERALL SHEET -->
   <div id="sheet-overall" class="sheet-content active">
     <div class="page-title">📊 Overall — Profit & Loss Summary</div>
-    <div class="page-sub">All stores combined · Weekly & Monthly breakdown</div>
-    <div class="excel-wrap">
-      <table id="overall-table"></table>
-    </div>
+    <div class="page-sub">All stores combined · Auto calculated from uploaded data</div>
+    <div id="overall-content"><div class="no-data"><h3>📤 No data yet</h3><p>Upload a CSV file to see the report</p></div></div>
   </div>
 
-  <!-- ST ALBANS -->
   <div id="sheet-stalbans" class="sheet-content">
-    <div class="page-title">🏪 ST ALBANS — Profit & Loss</div>
-    <div class="page-sub">Store breakdown · Weekly & Monthly</div>
-    <div class="excel-wrap">
-      <table id="stalbans-table"></table>
-    </div>
+    <div class="page-title">🏪 ST ALBANS</div>
+    <div class="page-sub">Store breakdown · Auto calculated</div>
+    <div id="stalbans-content"><div class="no-data"><h3>📤 No data yet</h3><p>Upload a CSV file to see the report</p></div></div>
   </div>
 
-  <!-- FITZROY NORTH -->
   <div id="sheet-fitzroy" class="sheet-content">
-    <div class="page-title">🏪 FITZROY NORTH — Profit & Loss</div>
-    <div class="page-sub">Store breakdown · Weekly & Monthly</div>
-    <div class="excel-wrap">
-      <table id="fitzroy-table"></table>
-    </div>
+    <div class="page-title">🏪 FITZROY NORTH</div>
+    <div class="page-sub">Store breakdown · Auto calculated</div>
+    <div id="fitzroy-content"><div class="no-data"><h3>📤 No data yet</h3><p>Upload a CSV file to see the report</p></div></div>
   </div>
 
-  <!-- ASCOT VALE -->
   <div id="sheet-ascot" class="sheet-content">
-    <div class="page-title">🏪 ASCOT VALE — Profit & Loss</div>
-    <div class="page-sub">Store breakdown · Weekly & Monthly</div>
-    <div class="excel-wrap">
-      <table id="ascot-table"></table>
+    <div class="page-title">🏪 ASCOT VALE</div>
+    <div class="page-sub">Store breakdown · Auto calculated</div>
+    <div id="ascot-content"><div class="no-data"><h3>📤 No data yet</h3><p>Upload a CSV file to see the report</p></div></div>
+  </div>
+
+  <div id="sheet-upload" class="sheet-content">
+    <div class="page-title">📤 Upload Sales Data</div>
+    <div class="page-sub">CSV upload করলে সব calculation automatic হবে</div>
+    <div class="success-msg" id="success-msg">✅ Data uploaded successfully! Report updated.</div>
+    <div class="upload-area" onclick="document.getElementById('csv-input').click()">
+      <div style="font-size:48px;margin-bottom:12px">📂</div>
+      <h3>Click to upload CSV file</h3>
+      <p>Sales data upload করো — বাকি সব automatic calculate হবে</p>
+      <button class="upload-btn-big" onclick="event.stopPropagation();document.getElementById('csv-input').click()">📤 Choose CSV File</button>
+      <div class="format">
+        <strong>CSV Format (এই columns থাকতে হবে):</strong><br/>
+        date, store, transactions, revenue, food_cost, staff_cost, operation_cost, uber_txn, doordash_txn, uber_revenue, doordash_revenue<br/><br/>
+        <strong>Example:</strong><br/>
+        04/01/2026, ST ALBANS, 614, 19474, 4098, 2735, 2804, 233, 92, 9121, 2736<br/>
+        04/01/2026, ASCOT VALE, 600, 59400, 12100, 11800, 7300, 310, 63, 13188, 2228<br/>
+        04/01/2026, FITZROY NORTH, 269, 8088, 1396, 2114, 1451, 310, 63, 7016, 1462
+      </div>
     </div>
+    <input type="file" id="csv-input" accept=".csv" style="display:none" onchange="handleUpload(event)" />
   </div>
 </div>
 
 <script>
 const PASSWORD = "angies2024";
+let reportData = null;
 
-// ===================== DATA =====================
-const OVERALL = {
-  cols: [
-    {label:"Week-1", date:"04/01/2026", monthly:false},
-    {label:"Week-2", date:"11/01/2026", monthly:false},
-    {label:"Week-3", date:"18/01/2026", monthly:false},
-    {label:"Week-4", date:"25/01/2026", monthly:false},
-    {label:"Week-5", date:"01/02/2026", monthly:false},
-    {label:"January", date:"", monthly:true},
-    {label:"Week-6", date:"08/02/2026", monthly:false},
-    {label:"Week-7", date:"15/02/2026", monthly:false},
-    {label:"Week-8", date:"22/02/2026", monthly:false},
-    {label:"Week-9", date:"01/03/2026", monthly:false},
-    {label:"February", date:"", monthly:true},
-    {label:"Week-10", date:"08/03/2026", monthly:false},
-    {label:"Week-11", date:"15/03/2026", monthly:false},
-    {label:"March", date:"", monthly:true},
-    {label:"YEAR 2026", date:"", monthly:true},
-  ],
-  rows: [
-    {label:"Total Number of Transaction", type:"num", vals:[1483,1399,1259,1213,1257,6611,1215,1233,1084,1075,4607,1035,1082,2117,13335]},
-    {label:"Per Transaction Revenue", type:"cur", vals:[89,86,85,83,86,30,81,83,79,81,28,82,86,29,29]},
-    {label:"Staff Cost %", type:"pct", vals:[0.2222,0.2377,0.2400,0.2604,0.2458,0.2402,0.2467,0.2577,0.2791,0.2743,0.2636,0.2918,0,0.1409,0.2328]},
-    {label:"Gross Food Cost %", type:"pct", vals:[0.2102,0.2217,0.2562,0.2458,0.1909,0.2238,0.2796,0.2767,0.2365,0.2624,0.2648,0.2559,0,0.1233,0.2217]},
-    {label:"Net Food Cost %", type:"pct", vals:[0.2852,0.3138,0.3407,0.3287,0.2514,0.3028,0.3683,0.3689,0.3149,0.3415,0.3498,0.3464,0,0.1673,0.2977]},
-    {label:"Operation Cost %", type:"pct", vals:[0.2020,0.2259,0.2453,0.2601,0.2378,0.2325,0.2646,0.2643,0.3038,0.2987,0.2816,0.3184,0.2975,0.6152,0.5451]},
-    {label:"", type:"empty", vals:[]},
-    {label:"Total Revenue Gross", type:"cur", vals:[46276,43179,37198,35442,38166,200261,34314,34756,30210,30024,129304,29292,31518,60810,390375]},
-    {label:"Total Net Revenue", type:"cur", vals:[34108,30502,27970,26496,28975,148051,26046,26075,22684,23069,97874,21641,23162,44803,290728]},
-    {label:"Total - Cost", type:"cur", vals:[24196,23712,23105,22501,21298,114812,22911,23229,20365,21098,87603,20701,6891,41374,312699]},
-    {label:"Food", type:"cur", vals:[9727,9572,9530,8710,7285,44824,9594,9618,7144,7879,34235,7496,0,7496,86555]},
-    {label:"Staff", type:"cur", vals:[7578,7249,6714,6900,7122,35563,6426,6720,6330,6328,25804,6314,0,6314,67681]},
-    {label:"Operation", type:"cur", vals:[6891,6891,6861,6891,6891,34425,6891,6891,6891,6891,27564,6891,6891,27564,158463]},
-    {label:"Gross Profit", type:"cur", vals:[22080,19467,14093,12941,16868,85449,11403,11527,9845,8926,41701,8591,24627,19436,77676]},
-    {label:"Net Profit", type:"cur", vals:[9912,6790,4865,3995,7677,33239,3135,2846,2319,1971,10271,940,16271,3429,-21971], profit:true},
-    {label:"Profit %", type:"pct", vals:[0.2142,0.1573,0.1308,0.1127,0.2011,0.1660,0.0914,0.0819,0.0768,0.0656,0.0794,0.0321,0.5162,0.0564,-0.0563], profitpct:true},
-    {label:"", type:"empty", vals:[]},
-    {label:"# of Transaction Store", type:"num", vals:[785,641,697,682,711,3516,684,680,593,612,2569,535,562,1097,7182]},
-    {label:"Net Revenue Store", type:"cur", vals:[19003,15618,16818,16122,17326,84887,15785,15933,13480,14320,59518,12532,13850,26382,170787]},
-    {label:"Per Transaction Store Revenue", type:"cur", vals:[71,73,72,71,72,24,69,70,67,70,23,69,73,24,24]},
-    {label:"", type:"empty", vals:[]},
-    {label:"# of Transaction Online", type:"num", vals:[325,363,271,257,289,1505,261,280,240,246,1027,243,271,514,3046]},
-    {label:"Uber", type:"num", vals:[233,220,148,143,171,915,166,153,125,137,581,128,143,271,1767]},
-    {label:"DoorDash", type:"num", vals:[92,143,123,114,118,590,95,127,115,109,446,115,128,243,1279]},
-    {label:"", type:"empty", vals:[]},
-    {label:"Gross Revenue Online", type:"cur", vals:[11857,12550,9430,8970,10320,53127,8760,8919,7617,8178,33474,7534,8871,16405,103006]},
-    {label:"Uber", type:"cur", vals:[9121,8650,5650,5470,6800,35691,6360,5339,4344,5004,21047,4220,5345,9565,66303]},
-    {label:"DoorDash", type:"cur", vals:[2736,3900,3780,3500,3520,17436,2400,3580,3273,3174,12427,3314,3526,6840,36703]},
-    {label:"", type:"empty", vals:[]},
-    {label:"Net Revenue (After Commission)", type:"cur", vals:[6627,6707,5212,4798,5781,29125,4937,4874,4222,4578,18611,4019,4752,8771,56507]},
-    {label:"Uber", type:"cur", vals:[5054,4373,3055,2844,3760,19086,3489,2904,2447,2798,11638,2220,2841,5061,35785]},
-    {label:"DoorDash", type:"cur", vals:[1573,2334,2157,1954,2021,10039,1448,1970,1775,1780,6973,1799,1911,3710,20722]},
-  ]
+// Week dates mapping
+const WEEK_DATES = {
+  "04/01/2026": {week: "Week-1", month: "January"},
+  "11/01/2026": {week: "Week-2", month: "January"},
+  "18/01/2026": {week: "Week-3", month: "January"},
+  "25/01/2026": {week: "Week-4", month: "January"},
+  "01/02/2026": {week: "Week-5", month: "January"},
+  "08/02/2026": {week: "Week-6", month: "February"},
+  "15/02/2026": {week: "Week-7", month: "February"},
+  "22/02/2026": {week: "Week-8", month: "February"},
+  "01/03/2026": {week: "Week-9", month: "February"},
+  "08/03/2026": {week: "Week-10", month: "March"},
+  "15/03/2026": {week: "Week-11", month: "March"},
+  "22/03/2026": {week: "Week-12", month: "March"},
+  "29/03/2026": {week: "Week-13", month: "March"},
 };
 
-const STALBANS = {
-  cols: OVERALL.cols,
-  rows: [
-    {label:"Total Number of Transaction", type:"num", vals:[614,544,453,423,490,2524,448,466,382,420,1716,381,393,774,5758]},
-    {label:"Per Transaction Revenue", type:"cur", vals:[95,94,93,90,93,32,91,93,87,92,30,92,95,31,32]},
-    {label:"Staff Cost %", type:"pct", vals:[0.1894,0.1949,0.1979,0.2148,0.2017,0.1994,0.2035,0.2137,0.2348,0.2271,0.2196,0.2462,0,0.1244,0.2022]},
-    {label:"Gross Food Cost %", type:"pct", vals:[0.2189,0.2217,0.2614,0.2462,0.1864,0.2259,0.2865,0.2803,0.2439,0.2688,0.2704,0.2600,0,0.1273,0.2314]},
-    {label:"Net Food Cost %", type:"pct", vals:[0.2843,0.2961,0.3320,0.3155,0.2395,0.2927,0.3622,0.3548,0.3096,0.3346,0.3426,0.3284,0,0.1623,0.3284]},
-    {label:"Operation Cost %", type:"pct", vals:[0.1675,0.1849,0.2057,0.2162,0.1941,0.1933,0.2162,0.2160,0.2565,0.2471,0.2317,0.2745,0.2745,0.3060,0.3550]},
-    {label:"", type:"empty", vals:[]},
-    {label:"Total Revenue Gross", type:"cur", vals:[19474,17119,14150,12768,15241,78752,13614,14469,11144,12940,52167,11695,12453,24148,186948]},
-    {label:"Total Net Revenue", type:"cur", vals:[14443,12716,10526,9538,11407,58630,10154,10762,8308,9670,38894,8695,9285,17980,131729]},
-    {label:"Total - Cost", type:"cur", vals:[9637,9540,9218,9018,8459,45872,9105,9276,8148,8410,34939,8311,2752,11063,116662]},
-    {label:"Food", type:"cur", vals:[4098,3750,3498,3012,2735,17093,3683,3810,2572,3240,13305,2855,0,2855,43263]},
-    {label:"Staff", type:"cur", vals:[2735,2479,2083,2052,2301,11650,2068,2298,1951,2196,8513,2132,0,2132,26640]},
-    {label:"Operation", type:"cur", vals:[2804,3311,3637,3954,3423,17129,3354,3168,3625,2974,13121,3324,2752,6076,46759]},
-    {label:"Gross Profit", type:"cur", vals:[9837,8179,5308,3750,7948,35022,5049,5193,3536,4260,18038,3520,9701,13085,70286]},
-    {label:"Net Profit", type:"cur", vals:[4806,3176,1308,-1520,4948,13738,1049,1486,160,1260,3955,384,6533,6917,15067], profit:true},
-    {label:"Profit %", type:"pct", vals:[0.2469,0.1854,0.0923,-0.1193,0.3252,0.1745,0.0775,0.1036,0.0143,0.0977,0.0762,0.0329,0.5267,0.2849,0.0806], profitpct:true},
-  ]
-};
+const MONTH_ORDER = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const STORES = ["ST ALBANS", "ASCOT VALE", "FITZROY NORTH"];
 
-const FITZROY = {
-  cols: OVERALL.cols,
-  rows: [
-    {label:"Total Number of Transaction", type:"num", vals:[269,214,109,90,76,758,67,87,102,55,311,119,127,246,2930]},
-    {label:"Per Transaction Revenue", type:"cur", vals:[71,68,72,70,69,24,69,64,62,55,22,60,67,21,23]},
-    {label:"Staff Cost %", type:"pct", vals:[0.2785,0.2974,0.3102,0.3416,0.3252,0.3050,0.3270,0.3474,0.3754,0.3946,0.3637,0.3793,0,0.1935,0.2192]},
-    {label:"Gross Food Cost %", type:"pct", vals:[0.1588,0.1549,0.1693,0.1715,0.1521,0.1601,0.1714,0.1648,0.1535,0.1542,0.1614,0.1565,0,0.0783,0.1572]},
-    {label:"Net Food Cost %", type:"pct", vals:[0.1844,0.1815,0.2023,0.2070,0.1807,0.1905,0.2047,0.1983,0.1835,0.1821,0.1929,0.1876,0,0.0933,0.1859]},
-    {label:"Operation Cost %", type:"pct", vals:[0.5149,0.5775,0.6878,0.7524,0.8333,0.6424,0.9362,0.8241,0.7059,0.9818,0.8551,0.5756,0.5756,0.5756,0.7183]},
-    {label:"", type:"empty", vals:[]},
-    {label:"Total Revenue Gross", type:"cur", vals:[8088,6132,3344,2724,2805,23093,2310,2354,2254,1510,8428,2065,2931,4996,68584]},
-    {label:"Total Net Revenue", type:"cur", vals:[7587,5737,3121,2541,2610,21596,2162,2196,2102,1402,7862,1947,2754,4701,57995]},
-    {label:"Total - Cost", type:"cur", vals:[4961,4664,3083,2882,2652,18242,2899,2897,2625,2632,11053,2616,1707,4323,65151]},
-    {label:"Food", type:"cur", vals:[1396,1042,631,527,472,4068,468,436,385,256,1545,365,0,365,10780]},
-    {label:"Staff", type:"cur", vals:[2114,1706,974,867,680,6341,709,766,789,554,2818,757,0,757,12713]},
-    {label:"Operation", type:"cur", vals:[1451,1916,1478,1488,1500,7833,1722,1695,1451,1822,6690,1494,1707,3201,41658]},
-    {label:"Gross Profit", type:"cur", vals:[3127,1468,261,-341,153,4851,-589,-341,-371,-1220,-2521,-551,1224,673,3433]},
-    {label:"Net Profit", type:"cur", vals:[2626,1073,-38,-882,-42,2737,-737,-701,-523,-1230,-3191,-669,-453,-1122,-7156], profit:true},
-    {label:"Profit %", type:"pct", vals:[0.2578,0.1400,-0.0092,-0.2593,-0.0117,0.0950,-0.2541,-0.2388,-0.1866,-0.6549,-0.3059,-0.2569,-0.1227,-0.1783,-0.1043], profitpct:true},
-  ]
-};
-
-const ASCOT = {
-  cols: OVERALL.cols,
-  rows: [
-    {label:"Total Number of Transaction", type:"num", vals:[600,641,697,700,691,3329,700,680,600,600,2580,535,562,1097,11388]},
-    {label:"Per Transaction Revenue", type:"cur", vals:[99,86,85,84,88,30,82,88,83,86,27,82,86,28,29]},
-    {label:"Staff Cost %", type:"pct", vals:[0.2678,0.2910,0.2923,0.3205,0.3006,0.2943,0.3046,0.3155,0.3480,0.3478,0.3303,0.3722,0,0.1784,0.2822]},
-    {label:"Gross Food Cost %", type:"pct", vals:[0.1984,0.2183,0.2501,0.2371,0.1880,0.2178,0.2745,0.2707,0.2273,0.2534,0.2573,0.2477,0,0.1197,0.2476]},
-    {label:"Net Food Cost %", type:"pct", vals:[0.2739,0.3086,0.3339,0.3220,0.2486,0.2980,0.3615,0.3648,0.3110,0.3391,0.3477,0.3438,0,0.1661,0.3265]},
-    {label:"Operation Cost %", type:"pct", vals:[0.1783,0.1945,0.2122,0.2139,0.1944,0.1981,0.2194,0.2183,0.2554,0.2521,0.2355,0.2726,0.2726,0.2726,0.4710]},
-    {label:"", type:"empty", vals:[]},
-    {label:"Total Revenue Gross", type:"cur", vals:[59400,55148,47100,45000,48800,255448,43800,44690,38560,38440,165490,37440,40280,77720,324808]},
-    {label:"Total Net Revenue", type:"cur", vals:[44200,41040,35060,33560,36350,190210,33000,33300,28700,29000,124000,27000,29500,56500,246280]},
-    {label:"Total - Cost", type:"cur", vals:[31200,30300,29700,28900,27000,147100,29100,29600,26000,27000,111700,26500,8500,35000,265908]},
-    {label:"Food", type:"cur", vals:[12100,12100,12200,11500,9600,57500,12200,12200,9200,10100,43700,9800,0,9800,80422]},
-    {label:"Staff", type:"cur", vals:[11800,11900,10260,10750,11200,45910,10100,10500,9900,9900,40400,10050,0,10050,69496]},
-    {label:"Operation", type:"cur", vals:[7300,6300,7240,6650,6200,43690,6800,6900,6900,7000,27600,6650,8500,15150,115990]},
-    {label:"Gross Profit", type:"cur", vals:[28200,24848,17400,16100,21800,108348,14700,15090,12560,11440,53790,10940,31780,42720,58900]},
-    {label:"Net Profit", type:"cur", vals:[13000,10740,5360,4678,9350,43128,3900,3700,2700,2000,12400,500,21000,21500,-19628], profit:true},
-    {label:"Profit %", type:"pct", vals:[0.2218,0.1950,0.1138,0.1041,0.1919,0.1690,0.0886,0.0833,0.0704,0.0519,0.0750,0.0138,0.5310,0.2851,-0.0604], profitpct:true},
-  ]
-};
-
-// ===================== FUNCTIONS =====================
 function doLogin() {
   const val = document.getElementById('pass-input').value;
   if (val === PASSWORD) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
-    buildTable('overall-table', OVERALL);
-    buildTable('stalbans-table', STALBANS);
-    buildTable('fitzroy-table', FITZROY);
-    buildTable('ascot-table', ASCOT);
   } else {
     document.getElementById('err-msg').style.display = 'block';
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('pass-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') doLogin();
-  });
+  document.getElementById('pass-input').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 });
 
 function doLogout() {
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('pass-input').value = '';
 }
 
-function showSheet(name) {
+function showSheet(name, btn) {
   document.querySelectorAll('.sheet-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.sheet-tab').forEach(el => el.classList.remove('active'));
   document.getElementById('sheet-' + name).classList.add('active');
-  event.target.classList.add('active');
+  btn.classList.add('active');
 }
 
-function fmtVal(val, type) {
-  if (val === 0 && type !== 'pct') return '-';
-  if (type === 'pct') return (val * 100).toFixed(2) + '%';
-  if (type === 'cur') return '£' + Math.abs(val).toLocaleString();
-  return val.toLocaleString();
-}
-
-function buildTable(tableId, data) {
-  const table = document.getElementById(tableId);
-  let html = '';
-
-  // Header row 1 — Week labels
-  html += '<tr class="row-header-top"><td class="row-label" style="background:#5a4000;color:#f5c842;font-size:14px">Profit & Loss Summary</td>';
-  data.cols.forEach(col => {
-    const cls = col.monthly ? ' col-monthly' : '';
-    html += `<td class="${cls}" style="${col.monthly ? 'background:#b8860b;color:#fff' : 'background:#7a5c00;color:#fff'};text-align:center;padding:8px 10px;border:1px solid #5a4200;font-weight:800;font-size:12px;white-space:nowrap">${col.label}</td>`;
-  });
-  html += '</tr>';
-
-  // Header row 2 — Dates
-  html += '<tr class="row-date"><td style="background:#8a6200;border:1px solid #5a4200"></td>';
-  data.cols.forEach(col => {
-    const cls = col.monthly ? ' col-monthly' : '';
-    html += `<td style="${col.monthly ? 'background:#d4a800' : 'background:#b8860b'};color:#fff;text-align:center;padding:5px 8px;border:1px solid #8a6200;font-size:10px">${col.date}</td>`;
-  });
-  html += '</tr>';
-
-  // Data rows
-  data.rows.forEach(row => {
-    if (row.type === 'empty') {
-      html += `<tr class="row-empty"><td style="border:1px solid #e8ddb0;background:#f9f5e8" colspan="${data.cols.length + 1}"></td></tr>`;
-      return;
+function handleUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    transformHeader: h => h.trim().toLowerCase().replace(/ /g,'_'),
+    complete: function(results) {
+      processData(results.data);
+      document.getElementById('success-msg').style.display = 'block';
+      showSheet('overall', document.querySelector('.sheet-tab'));
+      document.querySelectorAll('.sheet-tab')[0].classList.add('active');
     }
+  });
+}
 
-    const rowClass = row.profit ? 'row-profit' : row.profitpct ? 'row-profit-pct' : '';
-    html += `<tr class="${rowClass}"><td class="row-label">${row.label}</td>`;
+function processData(rows) {
+  // Normalize rows
+  const data = rows.map(r => ({
+    date: (r.date || '').trim(),
+    store: (r.store || '').trim().toUpperCase(),
+    transactions: +r.transactions || 0,
+    revenue: +r.revenue || 0,
+    food_cost: +r.food_cost || 0,
+    staff_cost: +r.staff_cost || 0,
+    operation_cost: +r.operation_cost || 0,
+    uber_txn: +r.uber_txn || 0,
+    doordash_txn: +r.doordash_txn || 0,
+    uber_revenue: +r.uber_revenue || 0,
+    doordash_revenue: +r.doordash_revenue || 0,
+  }));
 
-    data.cols.forEach((col, i) => {
-      const val = row.vals[i] !== undefined ? row.vals[i] : 0;
-      const formatted = fmtVal(val, row.type);
-      const isNeg = val < 0;
-      const isMon = col.monthly;
-      const cellClass = isMon ? 'data-monthly' : 'data';
-      const negClass = isNeg ? ' neg' : '';
-      html += `<td class="${cellClass}${negClass}">${formatted}</td>`;
-    });
-
-    html += '</tr>';
+  // Get unique dates sorted
+  const allDates = [...new Set(data.map(r => r.date))].sort((a, b) => {
+    const [da, ma, ya] = a.split('/').map(Number);
+    const [db, mb, yb] = b.split('/').map(Number);
+    return new Date(ya, ma-1, da) - new Date(yb, mb-1, db);
   });
 
-  table.innerHTML = html;
+  // Build column structure: weeks + monthly summaries
+  const cols = buildCols(allDates);
+
+  // Build store data
+  const storeMap = {};
+  STORES.forEach(s => { storeMap[s] = data.filter(r => r.store === s); });
+
+  // Overall = sum all stores
+  const overallByDate = {};
+  allDates.forEach(date => {
+    const rows = data.filter(r => r.date === date);
+    overallByDate[date] = {
+      date, store: 'OVERALL',
+      transactions: rows.reduce((s,r) => s + r.transactions, 0),
+      revenue: rows.reduce((s,r) => s + r.revenue, 0),
+      food_cost: rows.reduce((s,r) => s + r.food_cost, 0),
+      staff_cost: rows.reduce((s,r) => s + r.staff_cost, 0),
+      operation_cost: rows.reduce((s,r) => s + r.operation_cost, 0),
+      uber_txn: rows.reduce((s,r) => s + r.uber_txn, 0),
+      doordash_txn: rows.reduce((s,r) => s + r.doordash_txn, 0),
+      uber_revenue: rows.reduce((s,r) => s + r.uber_revenue, 0),
+      doordash_revenue: rows.reduce((s,r) => s + r.doordash_revenue, 0),
+    };
+  });
+
+  renderReport('overall-content', cols, Object.values(overallByDate), allDates);
+  STORES.forEach((store, i) => {
+    const ids = ['stalbans-content', 'ascot-content', 'fitzroy-content'];
+    const storeData = allDates.map(date => {
+      const row = storeMap[store].find(r => r.date === date);
+      return row || {date, store, transactions:0, revenue:0, food_cost:0, staff_cost:0, operation_cost:0, uber_txn:0, doordash_txn:0, uber_revenue:0, doordash_revenue:0};
+    });
+    const contentId = store === 'ST ALBANS' ? 'stalbans-content' : store === 'ASCOT VALE' ? 'ascot-content' : 'fitzroy-content';
+    renderReport(contentId, cols, storeData, allDates);
+  });
+}
+
+function buildCols(dates) {
+  const cols = [];
+  const monthGroups = {};
+  dates.forEach(date => {
+    const info = WEEK_DATES[date] || {week: date, month: 'Other'};
+    const month = info.month;
+    if (!monthGroups[month]) monthGroups[month] = [];
+    monthGroups[month].push(date);
+    cols.push({type:'week', date, label: info.week});
+  });
+  // Insert monthly after each month's last week
+  const finalCols = [];
+  let lastMonth = null;
+  cols.forEach((col, i) => {
+    const info = WEEK_DATES[col.date] || {month:'Other'};
+    if (lastMonth && info.month !== lastMonth) {
+      finalCols.push({type:'month', label: lastMonth, dates: monthGroups[lastMonth]});
+    }
+    finalCols.push(col);
+    lastMonth = info.month;
+  });
+  if (lastMonth) finalCols.push({type:'month', label: lastMonth, dates: monthGroups[lastMonth]});
+  // Year total
+  finalCols.push({type:'year', label: 'YEAR 2026', dates});
+  return finalCols;
+}
+
+function getColVal(col, dataByDate, field) {
+  if (col.type === 'week') {
+    const row = dataByDate[col.date];
+    return row ? row[field] : 0;
+  }
+  const dates = col.dates || [];
+  return dates.reduce((s, d) => s + (dataByDate[d] ? dataByDate[d][field] : 0), 0);
+}
+
+function renderReport(containerId, cols, rows, allDates) {
+  const dataByDate = {};
+  rows.forEach(r => { dataByDate[r.date] = r; });
+
+  const calcCol = (col, field) => getColVal(col, dataByDate, field);
+
+  const fmt = (n, type) => {
+    if (n === 0 && type !== 'pct') return '-';
+    if (type === 'pct') {
+      const v = (n * 100).toFixed(2) + '%';
+      return v;
+    }
+    if (type === 'cur') return '£' + Math.abs(Math.round(n)).toLocaleString();
+    return Math.round(n).toLocaleString();
+  };
+
+  const cellClass = (col, val, type, isProfit) => {
+    const base = col.type === 'week' ? 'td-data' : 'td-month';
+    const profitClass = isProfit ? (val >= 0 ? ' td-profit' : ' td-loss') : '';
+    const pctClass = type === 'pct' ? ' td-pct' : '';
+    return base + profitClass + pctClass;
+  };
+
+  let html = '<div class="excel-wrap"><table>';
+
+  // Header row 1
+  html += '<tr><td class="th-label">Profit & Loss Summary</td>';
+  cols.forEach(col => {
+    html += `<td class="${col.type === 'week' ? 'th-week' : 'th-month'}">${col.label}</td>`;
+  });
+  html += '</tr>';
+
+  // Header row 2 (dates)
+  html += '<tr><td class="td-label" style="background:#5a4000;font-size:11px;color:rgba(255,255,255,0.7)">Date</td>';
+  cols.forEach(col => {
+    html += `<td class="${col.type === 'week' ? 'td-date-week' : 'td-date-month'}">${col.type === 'week' ? col.date : ''}</td>`;
+  });
+  html += '</tr>';
+
+  // ---- ROWS ----
+  const row = (label, field, type, isProfit=false, isSub=false) => {
+    const labelClass = isSub ? 'td-label-sub' : 'td-label';
+    let r = `<tr><td class="${labelClass}">${label}</td>`;
+    cols.forEach(col => {
+      let val = calcCol(col, field);
+      // Derived calculations
+      if (field === 'net_revenue') val = calcCol(col, 'revenue') * 0.735; // approx after platform fee
+      if (field === 'total_cost') val = calcCol(col, 'food_cost') + calcCol(col, 'staff_cost') + calcCol(col, 'operation_cost');
+      if (field === 'gross_profit') val = calcCol(col, 'revenue') - calcCol(col, 'food_cost') - calcCol(col, 'staff_cost') - calcCol(col, 'operation_cost');
+      if (field === 'net_profit') { const netRev = calcCol(col, 'revenue') * 0.735; val = netRev - calcCol(col, 'food_cost') - calcCol(col, 'staff_cost') - calcCol(col, 'operation_cost'); }
+      if (field === 'staff_pct') { const rev = calcCol(col, 'revenue'); val = rev > 0 ? calcCol(col, 'staff_cost') / rev : 0; }
+      if (field === 'food_pct') { const rev = calcCol(col, 'revenue'); val = rev > 0 ? calcCol(col, 'food_cost') / rev : 0; }
+      if (field === 'ops_pct') { const rev = calcCol(col, 'revenue'); val = rev > 0 ? calcCol(col, 'operation_cost') / rev : 0; }
+      if (field === 'profit_pct') { const netRev = calcCol(col, 'revenue') * 0.735; const netP = netRev - calcCol(col, 'food_cost') - calcCol(col, 'staff_cost') - calcCol(col, 'operation_cost'); val = netRev > 0 ? netP / netRev : 0; }
+      if (field === 'per_txn') { const txn = calcCol(col, 'transactions'); val = txn > 0 ? calcCol(col, 'revenue') / txn : 0; }
+      if (field === 'uber_net') val = calcCol(col, 'uber_revenue') * 0.54;
+      if (field === 'doordash_net') val = calcCol(col, 'doordash_revenue') * 0.565;
+      if (field === 'online_txn') val = calcCol(col, 'uber_txn') + calcCol(col, 'doordash_txn');
+      if (field === 'online_gross') val = calcCol(col, 'uber_revenue') + calcCol(col, 'doordash_revenue');
+      if (field === 'online_net') val = calcCol(col, 'uber_revenue') * 0.54 + calcCol(col, 'doordash_revenue') * 0.565;
+
+      const cls = cellClass(col, val, type, isProfit);
+      r += `<td class="${cls}">${fmt(val, type)}</td>`;
+    });
+    r += '</tr>';
+    return r;
+  };
+
+  const emptyRow = () => '<tr class="tr-empty"><td colspan="100"></td></tr>';
+
+  html += row('Total Number of Transactions', 'transactions', 'num');
+  html += row('Per Transaction Revenue', 'per_txn', 'cur');
+  html += row('Staff Cost %', 'staff_pct', 'pct');
+  html += row('Gross Food Cost %', 'food_pct', 'pct');
+  html += row('Operation Cost %', 'ops_pct', 'pct');
+  html += emptyRow();
+  html += row('Total Revenue Gross', 'revenue', 'cur');
+  html += row('Total Net Revenue', 'net_revenue', 'cur');
+  html += row('Total - Cost', 'total_cost', 'cur');
+  html += row('Food', 'food_cost', 'cur', false, true);
+  html += row('Staff', 'staff_cost', 'cur', false, true);
+  html += row('Operation', 'operation_cost', 'cur', false, true);
+  html += row('Gross Profit', 'gross_profit', 'cur', true);
+  html += row('Net Profit', 'net_profit', 'cur', true);
+  html += row('Profit %', 'profit_pct', 'pct', true);
+  html += emptyRow();
+  html += row('# of Transaction Store', 'transactions', 'num');
+  html += emptyRow();
+  html += row('# of Transaction Online', 'online_txn', 'num');
+  html += row('Uber Eats', 'uber_txn', 'num', false, true);
+  html += row('DoorDash', 'doordash_txn', 'num', false, true);
+  html += emptyRow();
+  html += row('Gross Revenue Online', 'online_gross', 'cur');
+  html += row('Uber Eats', 'uber_revenue', 'cur', false, true);
+  html += row('DoorDash', 'doordash_revenue', 'cur', false, true);
+  html += emptyRow();
+  html += row('Net Revenue (After Commission)', 'online_net', 'cur');
+  html += row('Uber Eats', 'uber_net', 'cur', false, true);
+  html += row('DoorDash', 'doordash_net', 'cur', false, true);
+
+  html += '</table></div>';
+  document.getElementById(containerId).innerHTML = html;
 }
 </script>
 </body>
