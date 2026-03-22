@@ -4,94 +4,77 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>P&L Report — Angie's</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #0a0a0f; color: #e2e8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: #111; }
-    ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+    body { background: #f5f5f5; font-family: 'Nunito', sans-serif; }
     input { outline: none; }
-    .fade-up { animation: fadeUp 0.4s ease forwards; }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
     /* LOGIN */
-    #login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-    .login-box { background: #111; border-radius: 20px; padding: 40px; width: 360px; border: 1px solid rgba(255,255,255,0.08); text-align: center; }
-    .login-box img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid #f5c842; }
-    .login-box h2 { font-size: 20px; font-weight: 900; margin-top: 12px; color: #fff; }
-    .login-box p { font-size: 13px; color: #666; margin-top: 4px; margin-bottom: 24px; }
-    .login-box input { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.06); color: #fff; font-size: 14px; font-family: 'Nunito',sans-serif; margin-bottom: 10px; }
+    #login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #1a0a00; }
+    .login-box { background: #fff; border-radius: 20px; padding: 40px; width: 360px; text-align: center; }
+    .login-box img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #f5c842; }
+    .login-box h2 { font-size: 22px; font-weight: 900; margin-top: 12px; }
+    .login-box p { font-size: 13px; color: #888; margin-top: 4px; margin-bottom: 24px; }
+    .login-box input { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid #e0e0e0; font-size: 14px; font-family: 'Nunito',sans-serif; margin-bottom: 10px; }
     .login-box .err { color: #e8520a; font-size: 13px; margin-bottom: 8px; }
-    .login-box button { width: 100%; padding: 12px; border-radius: 10px; background: #e8520a; color: #fff; font-size: 15px; font-weight: 800; border: none; cursor: pointer; font-family: 'Nunito',sans-serif; }
+    .login-box button { width: 100%; padding: 12px; border-radius: 10px; background: #b8860b; color: #fff; font-size: 15px; font-weight: 800; border: none; cursor: pointer; }
 
     /* DASHBOARD */
     #dashboard { display: none; }
-    .navbar { background: #111; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
-    .navbar img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid #f5c842; cursor: pointer; }
-    .nav-info { margin-left: 12px; }
-    .nav-info .title { font-size: 14px; font-weight: 800; color: #fff; }
-    .nav-info .sub { font-size: 11px; color: #555; }
-    .nav-left { display: flex; align-items: center; }
-    .tabs { display: flex; gap: 8px; }
-    .tab-btn { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; background: rgba(255,255,255,0.06); color: #666; border: none; cursor: pointer; font-family: 'Nunito',sans-serif; transition: all 0.15s; }
-    .tab-btn.active { background: #e8520a; color: #fff; }
-    .logout-btn { padding: 6px 14px; border-radius: 8px; background: rgba(255,255,255,0.06); color: #666; border: none; cursor: pointer; font-size: 12px; font-family: 'Nunito',sans-serif; }
+    .topbar { background: #7a5c00; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .topbar-left img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #f5c842; cursor: pointer; }
+    .topbar-title { color: #fff; font-weight: 900; font-size: 16px; }
+    .topbar-sub { color: rgba(255,255,255,0.6); font-size: 11px; }
+    .sheet-tabs { display: flex; gap: 6px; }
+    .sheet-tab { padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; font-family: 'Nunito',sans-serif; transition: all 0.15s; }
+    .sheet-tab.active { background: #f5c842; color: #1a0a00; }
+    .sheet-tab:not(.active) { background: rgba(255,255,255,0.15); color: #fff; }
+    .logout-btn { padding: 6px 14px; border-radius: 8px; background: rgba(255,255,255,0.15); color: #fff; border: none; cursor: pointer; font-size: 12px; font-family: 'Nunito',sans-serif; }
 
-    .content { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    .sheet-content { display: none; padding: 16px; overflow-x: auto; }
+    .sheet-content.active { display: block; }
 
-    /* KPI CARDS */
-    .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
-    .kpi-card { border-radius: 14px; padding: 16px 18px; }
-    .kpi-icon { font-size: 20px; margin-bottom: 6px; }
-    .kpi-value { font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; margin-bottom: 3px; }
-    .kpi-label { font-size: 12px; font-weight: 700; color: #e2e8f0; }
-    .kpi-sub { font-size: 11px; color: #555; margin-top: 2px; }
+    /* EXCEL TABLE */
+    .excel-wrap { overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
+    table { border-collapse: collapse; min-width: 100%; font-size: 12px; background: #fff; }
+    
+    /* Header rows */
+    .row-header-top { background: #7a5c00 !important; }
+    .row-header-top td { color: #fff !important; font-weight: 800 !important; text-align: center !important; padding: 8px 12px !important; border: 1px solid #5a4200 !important; font-size: 13px !important; }
+    .row-date { background: #b8860b !important; }
+    .row-date td { color: #fff !important; font-weight: 700 !important; text-align: center !important; padding: 6px 12px !important; border: 1px solid #8a6200 !important; font-size: 11px !important; }
+    
+    /* Monthly columns */
+    .col-monthly { background: #f5c842 !important; color: #1a0a00 !important; font-weight: 800 !important; }
+    
+    /* Row label */
+    .row-label { background: #7a5c00; color: #fff; font-weight: 700; text-align: right; padding: 7px 12px; border: 1px solid #5a4200; white-space: nowrap; min-width: 180px; }
+    
+    /* Data cells */
+    td.data { text-align: right; padding: 6px 10px; border: 1px solid #e0d0a0; font-family: monospace; font-size: 12px; color: #333; }
+    td.data-monthly { text-align: right; padding: 6px 10px; border: 1px solid #c8a800; font-family: monospace; font-size: 12px; background: #fff9e0; font-weight: 700; color: #7a5c00; }
+    
+    /* Row categories */
+    .row-section { background: #5a4000 !important; }
+    .row-section .row-label { background: #5a4000 !important; font-size: 11px; color: rgba(255,255,255,0.8) !important; }
+    .row-empty td { height: 12px; background: #f9f5e8; border: 1px solid #e8ddb0; }
+    
+    /* Profit row */
+    .row-profit .row-label { background: #3d2b00 !important; }
+    .row-profit td.data { font-weight: 800; color: #2d6a4f; }
+    .row-profit td.data-monthly { color: #2d6a4f; }
+    .row-profit-pct .row-label { background: #3d2b00 !important; }
+    .row-profit-pct td.data { font-weight: 800; color: #2d6a4f; background: #e8f5e9; }
+    .row-profit-pct td.data-monthly { color: #2d6a4f; background: #d4edda; }
 
-    /* CHART CARD */
-    .chart-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
-    .chart-title { font-size: 14px; font-weight: 800; margin-bottom: 16px; color: #94a3b8; }
-    .chart-container { position: relative; }
+    /* Positive/Negative */
+    .neg { color: #c0392b !important; }
+    .pos { color: #2d6a4f !important; }
 
-    /* COST BARS */
-    .cost-item { margin-bottom: 14px; }
-    .cost-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
-    .cost-name { font-size: 13px; font-weight: 700; }
-    .cost-val { font-family: 'Space Mono', monospace; font-size: 13px; }
-    .cost-bar-bg { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; }
-    .cost-bar { height: 6px; border-radius: 3px; transition: width 1s ease; }
-
-    /* TABLE */
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th { padding: 8px 10px; text-align: right; color: #475569; font-weight: 700; white-space: nowrap; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    th:first-child { text-align: left; }
-    td { padding: 8px 10px; text-align: right; border-bottom: 1px solid rgba(255,255,255,0.04); }
-    td:first-child { text-align: left; color: #94a3b8; font-weight: 700; }
-    tr:nth-child(even) td { background: rgba(255,255,255,0.01); }
-
-    /* STORE CARDS */
-    .store-card { border-radius: 16px; padding: 20px; margin-bottom: 16px; }
-    .store-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .store-name { font-size: 16px; font-weight: 900; }
-    .store-txn { font-size: 12px; color: #555; margin-top: 2px; }
-    .store-profit { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; text-align: right; }
-    .store-profit-sub { font-size: 11px; color: #555; }
-    .store-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .metric-box { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; }
-    .metric-label { font-size: 10px; color: #475569; margin-bottom: 3px; font-weight: 700; }
-    .metric-val { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; }
-
-    /* ONLINE CARDS */
-    .online-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-    .online-card { border-radius: 16px; padding: 20px; }
-    .online-name { font-size: 16px; font-weight: 900; margin-bottom: 12px; }
-    .online-row { margin-bottom: 8px; }
-    .online-row-label { font-size: 11px; color: #555; margin-bottom: 2px; }
-    .online-row-val { font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; }
+    .page-title { padding: 16px 16px 8px; font-size: 18px; font-weight: 900; color: #5a4000; }
+    .page-sub { padding: 0 16px 12px; font-size: 13px; color: #888; }
   </style>
 </head>
 <body>
@@ -100,210 +83,213 @@
 <div id="login-screen">
   <div class="login-box">
     <img src="/logo.jpg" alt="logo" />
-    <h2>P&L Report</h2>
+    <h2>Profit & Loss Report</h2>
     <p>Angie's Kebabs & Burgers · 2026</p>
     <input type="password" id="pass-input" placeholder="Enter password" />
-    <div class="err" id="err-msg" style="display:none">Wrong password!</div>
+    <div class="err" id="err-msg" style="display:none">❌ Wrong password!</div>
     <button onclick="doLogin()">View Report →</button>
   </div>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboard">
-  <div class="navbar">
-    <div class="nav-left">
-      <img src="/logo.jpg" alt="logo" onclick="window.location.href='/'" />
-      <div class="nav-info">
-        <div class="title">P&L Dashboard</div>
-        <div class="sub">Angie's Kebabs & Burgers · 2026</div>
+  <div class="topbar">
+    <div class="topbar-left">
+      <img src="/logo.jpg" onclick="window.location.href='/'" />
+      <div>
+        <div class="topbar-title">Angie's Profit & Loss 2026</div>
+        <div class="topbar-sub">Version 2.0 · Confidential</div>
       </div>
     </div>
-    <div class="tabs">
-      <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
-      <button class="tab-btn" onclick="showTab('weekly')">Weekly</button>
-      <button class="tab-btn" onclick="showTab('stores')">Stores</button>
-      <button class="tab-btn" onclick="showTab('online')">Online</button>
+    <div class="sheet-tabs">
+      <button class="sheet-tab active" onclick="showSheet('overall')">📊 Overall</button>
+      <button class="sheet-tab" onclick="showSheet('stalbans')">🏪 ST ALBANS</button>
+      <button class="sheet-tab" onclick="showSheet('fitzroy')">🏪 FITZROY NORTH</button>
+      <button class="sheet-tab" onclick="showSheet('ascot')">🏪 ASCOT VALE</button>
     </div>
     <button class="logout-btn" onclick="doLogout()">Logout</button>
   </div>
 
-  <div class="content">
-
-    <!-- OVERVIEW -->
-    <div id="tab-overview" class="tab-content active fade-up">
-      <div class="kpi-grid">
-        <div class="kpi-card" style="background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.2)">
-          <div class="kpi-icon">💰</div>
-          <div class="kpi-value" style="color:#14b8a6">$390,375</div>
-          <div class="kpi-label">Gross Revenue</div>
-          <div class="kpi-sub">2026 YTD</div>
-        </div>
-        <div class="kpi-card" style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2)">
-          <div class="kpi-icon">📊</div>
-          <div class="kpi-value" style="color:#6366f1">$290,728</div>
-          <div class="kpi-label">Net Revenue</div>
-          <div class="kpi-sub">After platform fees</div>
-        </div>
-        <div class="kpi-card" style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.2)">
-          <div class="kpi-icon">💸</div>
-          <div class="kpi-value" style="color:#f43f5e">$312,699</div>
-          <div class="kpi-label">Total Cost</div>
-          <div class="kpi-sub">Food + Staff + Ops</div>
-        </div>
-        <div class="kpi-card" style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.2)">
-          <div class="kpi-icon">📉</div>
-          <div class="kpi-value" style="color:#f43f5e">-$21,971</div>
-          <div class="kpi-label">Net Profit</div>
-          <div class="kpi-sub">-7.6% margin</div>
-        </div>
-        <div class="kpi-card" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2)">
-          <div class="kpi-icon">🧾</div>
-          <div class="kpi-value" style="color:#f59e0b">13,335</div>
-          <div class="kpi-label">Transactions</div>
-          <div class="kpi-sub">Total orders</div>
-        </div>
-        <div class="kpi-card" style="background:rgba(236,72,153,0.1);border:1px solid rgba(236,72,153,0.2)">
-          <div class="kpi-icon">🍔</div>
-          <div class="kpi-value" style="color:#ec4899">$29.27</div>
-          <div class="kpi-label">Avg. Order Value</div>
-          <div class="kpi-sub">Per transaction</div>
-        </div>
-      </div>
-
-      <div class="chart-card">
-        <div class="chart-title">💸 Cost Breakdown</div>
-        <div class="cost-item">
-          <div class="cost-row">
-            <span class="cost-name">Food Cost</span>
-            <span class="cost-val" style="color:#f59e0b">$86,555 <span style="color:#555">(29.8%)</span></span>
-          </div>
-          <div class="cost-bar-bg"><div class="cost-bar" style="background:#f59e0b;width:29.8%"></div></div>
-        </div>
-        <div class="cost-item">
-          <div class="cost-row">
-            <span class="cost-name">Staff Cost</span>
-            <span class="cost-val" style="color:#6366f1">$67,681 <span style="color:#555">(23.3%)</span></span>
-          </div>
-          <div class="cost-bar-bg"><div class="cost-bar" style="background:#6366f1;width:23.3%"></div></div>
-        </div>
-        <div class="cost-item">
-          <div class="cost-row">
-            <span class="cost-name">Operation Cost</span>
-            <span class="cost-val" style="color:#f43f5e">$158,463 <span style="color:#555">(54.5%)</span></span>
-          </div>
-          <div class="cost-bar-bg"><div class="cost-bar" style="background:#f43f5e;width:54.5%"></div></div>
-        </div>
-      </div>
-
-      <div class="chart-card">
-        <div class="chart-title">📅 Monthly P&L</div>
-        <div class="chart-container"><canvas id="monthlyChart" height="200"></canvas></div>
-      </div>
+  <!-- OVERALL SHEET -->
+  <div id="sheet-overall" class="sheet-content active">
+    <div class="page-title">📊 Overall — Profit & Loss Summary</div>
+    <div class="page-sub">All stores combined · Weekly & Monthly breakdown</div>
+    <div class="excel-wrap">
+      <table id="overall-table"></table>
     </div>
+  </div>
 
-    <!-- WEEKLY -->
-    <div id="tab-weekly" class="tab-content fade-up">
-      <div class="chart-card">
-        <div class="chart-title">📈 Weekly Revenue & Profit Trend</div>
-        <div class="chart-container"><canvas id="weeklyChart" height="200"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">📋 Weekly Breakdown</div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="text-align:left">Week</th>
-                <th>Transactions</th>
-                <th>Gross Rev</th>
-                <th>Net Rev</th>
-                <th>Food</th>
-                <th>Staff</th>
-                <th>Ops</th>
-                <th>Net Profit</th>
-              </tr>
-            </thead>
-            <tbody id="weekly-table-body"></tbody>
-          </table>
-        </div>
-      </div>
+  <!-- ST ALBANS -->
+  <div id="sheet-stalbans" class="sheet-content">
+    <div class="page-title">🏪 ST ALBANS — Profit & Loss</div>
+    <div class="page-sub">Store breakdown · Weekly & Monthly</div>
+    <div class="excel-wrap">
+      <table id="stalbans-table"></table>
     </div>
+  </div>
 
-    <!-- STORES -->
-    <div id="tab-stores" class="tab-content fade-up">
-      <div id="store-cards"></div>
-      <div class="chart-card">
-        <div class="chart-title">🏪 Store Revenue Comparison</div>
-        <div class="chart-container"><canvas id="storeChart" height="160"></canvas></div>
-      </div>
+  <!-- FITZROY NORTH -->
+  <div id="sheet-fitzroy" class="sheet-content">
+    <div class="page-title">🏪 FITZROY NORTH — Profit & Loss</div>
+    <div class="page-sub">Store breakdown · Weekly & Monthly</div>
+    <div class="excel-wrap">
+      <table id="fitzroy-table"></table>
     </div>
+  </div>
 
-    <!-- ONLINE -->
-    <div id="tab-online" class="tab-content fade-up">
-      <div class="online-grid" id="online-cards"></div>
-      <div class="chart-card">
-        <div class="chart-title">🥧 Revenue Split</div>
-        <div class="chart-container" style="max-width:300px;margin:0 auto"><canvas id="pieChart" height="200"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">📋 Commission Impact</div>
-        <div id="commission-rows"></div>
-      </div>
+  <!-- ASCOT VALE -->
+  <div id="sheet-ascot" class="sheet-content">
+    <div class="page-title">🏪 ASCOT VALE — Profit & Loss</div>
+    <div class="page-sub">Store breakdown · Weekly & Monthly</div>
+    <div class="excel-wrap">
+      <table id="ascot-table"></table>
     </div>
-
   </div>
 </div>
 
 <script>
 const PASSWORD = "angies2024";
 
-const WEEKLY = [
-  {week:"W1 Jan",rev:46276,net:34108,cost:24196,food:9727,staff:7578,ops:6891,profit:9912,txn:1483},
-  {week:"W2 Jan",rev:43179,net:30502,cost:23712,food:9572,staff:7249,ops:6891,profit:6790,txn:1399},
-  {week:"W3 Jan",rev:37198,net:27970,cost:23105,food:9530,staff:6714,ops:6861,profit:4865,txn:1259},
-  {week:"W4 Jan",rev:35442,net:26496,cost:22501,food:8710,staff:6900,ops:6891,profit:3995,txn:1213},
-  {week:"W5 Feb",rev:38166,net:28975,cost:21298,food:7285,staff:7122,ops:6891,profit:7677,txn:1257},
-  {week:"W6 Feb",rev:34314,net:26046,cost:22911,food:9594,staff:6426,ops:6891,profit:3135,txn:1215},
-  {week:"W7 Feb",rev:34756,net:26075,cost:23229,food:9618,staff:6720,ops:6891,profit:2846,txn:1233},
-  {week:"W8 Feb",rev:30210,net:22684,cost:20365,food:7144,staff:6330,ops:6891,profit:2319,txn:1084},
-  {week:"W9 Mar",rev:30024,net:23069,cost:21098,food:7879,staff:6328,ops:6891,profit:1971,txn:1075},
-  {week:"W10 Mar",rev:29292,net:21641,cost:20701,food:7496,staff:6314,ops:6891,profit:940,txn:1035},
-  {week:"W11 Mar",rev:31518,net:23162,cost:6891,food:0,staff:0,ops:6891,profit:16271,txn:1082},
-];
+// ===================== DATA =====================
+const OVERALL = {
+  cols: [
+    {label:"Week-1", date:"04/01/2026", monthly:false},
+    {label:"Week-2", date:"11/01/2026", monthly:false},
+    {label:"Week-3", date:"18/01/2026", monthly:false},
+    {label:"Week-4", date:"25/01/2026", monthly:false},
+    {label:"Week-5", date:"01/02/2026", monthly:false},
+    {label:"January", date:"", monthly:true},
+    {label:"Week-6", date:"08/02/2026", monthly:false},
+    {label:"Week-7", date:"15/02/2026", monthly:false},
+    {label:"Week-8", date:"22/02/2026", monthly:false},
+    {label:"Week-9", date:"01/03/2026", monthly:false},
+    {label:"February", date:"", monthly:true},
+    {label:"Week-10", date:"08/03/2026", monthly:false},
+    {label:"Week-11", date:"15/03/2026", monthly:false},
+    {label:"March", date:"", monthly:true},
+    {label:"YEAR 2026", date:"", monthly:true},
+  ],
+  rows: [
+    {label:"Total Number of Transaction", type:"num", vals:[1483,1399,1259,1213,1257,6611,1215,1233,1084,1075,4607,1035,1082,2117,13335]},
+    {label:"Per Transaction Revenue", type:"cur", vals:[89,86,85,83,86,30,81,83,79,81,28,82,86,29,29]},
+    {label:"Staff Cost %", type:"pct", vals:[0.2222,0.2377,0.2400,0.2604,0.2458,0.2402,0.2467,0.2577,0.2791,0.2743,0.2636,0.2918,0,0.1409,0.2328]},
+    {label:"Gross Food Cost %", type:"pct", vals:[0.2102,0.2217,0.2562,0.2458,0.1909,0.2238,0.2796,0.2767,0.2365,0.2624,0.2648,0.2559,0,0.1233,0.2217]},
+    {label:"Net Food Cost %", type:"pct", vals:[0.2852,0.3138,0.3407,0.3287,0.2514,0.3028,0.3683,0.3689,0.3149,0.3415,0.3498,0.3464,0,0.1673,0.2977]},
+    {label:"Operation Cost %", type:"pct", vals:[0.2020,0.2259,0.2453,0.2601,0.2378,0.2325,0.2646,0.2643,0.3038,0.2987,0.2816,0.3184,0.2975,0.6152,0.5451]},
+    {label:"", type:"empty", vals:[]},
+    {label:"Total Revenue Gross", type:"cur", vals:[46276,43179,37198,35442,38166,200261,34314,34756,30210,30024,129304,29292,31518,60810,390375]},
+    {label:"Total Net Revenue", type:"cur", vals:[34108,30502,27970,26496,28975,148051,26046,26075,22684,23069,97874,21641,23162,44803,290728]},
+    {label:"Total - Cost", type:"cur", vals:[24196,23712,23105,22501,21298,114812,22911,23229,20365,21098,87603,20701,6891,41374,312699]},
+    {label:"Food", type:"cur", vals:[9727,9572,9530,8710,7285,44824,9594,9618,7144,7879,34235,7496,0,7496,86555]},
+    {label:"Staff", type:"cur", vals:[7578,7249,6714,6900,7122,35563,6426,6720,6330,6328,25804,6314,0,6314,67681]},
+    {label:"Operation", type:"cur", vals:[6891,6891,6861,6891,6891,34425,6891,6891,6891,6891,27564,6891,6891,27564,158463]},
+    {label:"Gross Profit", type:"cur", vals:[22080,19467,14093,12941,16868,85449,11403,11527,9845,8926,41701,8591,24627,19436,77676]},
+    {label:"Net Profit", type:"cur", vals:[9912,6790,4865,3995,7677,33239,3135,2846,2319,1971,10271,940,16271,3429,-21971], profit:true},
+    {label:"Profit %", type:"pct", vals:[0.2142,0.1573,0.1308,0.1127,0.2011,0.1660,0.0914,0.0819,0.0768,0.0656,0.0794,0.0321,0.5162,0.0564,-0.0563], profitpct:true},
+    {label:"", type:"empty", vals:[]},
+    {label:"# of Transaction Store", type:"num", vals:[785,641,697,682,711,3516,684,680,593,612,2569,535,562,1097,7182]},
+    {label:"Net Revenue Store", type:"cur", vals:[19003,15618,16818,16122,17326,84887,15785,15933,13480,14320,59518,12532,13850,26382,170787]},
+    {label:"Per Transaction Store Revenue", type:"cur", vals:[71,73,72,71,72,24,69,70,67,70,23,69,73,24,24]},
+    {label:"", type:"empty", vals:[]},
+    {label:"# of Transaction Online", type:"num", vals:[325,363,271,257,289,1505,261,280,240,246,1027,243,271,514,3046]},
+    {label:"Uber", type:"num", vals:[233,220,148,143,171,915,166,153,125,137,581,128,143,271,1767]},
+    {label:"DoorDash", type:"num", vals:[92,143,123,114,118,590,95,127,115,109,446,115,128,243,1279]},
+    {label:"", type:"empty", vals:[]},
+    {label:"Gross Revenue Online", type:"cur", vals:[11857,12550,9430,8970,10320,53127,8760,8919,7617,8178,33474,7534,8871,16405,103006]},
+    {label:"Uber", type:"cur", vals:[9121,8650,5650,5470,6800,35691,6360,5339,4344,5004,21047,4220,5345,9565,66303]},
+    {label:"DoorDash", type:"cur", vals:[2736,3900,3780,3500,3520,17436,2400,3580,3273,3174,12427,3314,3526,6840,36703]},
+    {label:"", type:"empty", vals:[]},
+    {label:"Net Revenue (After Commission)", type:"cur", vals:[6627,6707,5212,4798,5781,29125,4937,4874,4222,4578,18611,4019,4752,8771,56507]},
+    {label:"Uber", type:"cur", vals:[5054,4373,3055,2844,3760,19086,3489,2904,2447,2798,11638,2220,2841,5061,35785]},
+    {label:"DoorDash", type:"cur", vals:[1573,2334,2157,1954,2021,10039,1448,1970,1775,1780,6973,1799,1911,3710,20722]},
+  ]
+};
 
-const MONTHLY = [
-  {month:"January",rev:200261,net:148051,cost:114812,food:44824,staff:35563,ops:34425,profit:33239,txn:6611},
-  {month:"February",rev:129304,net:97874,cost:87603,food:34235,staff:25804,ops:27564,profit:10271,txn:4607},
-  {month:"March",rev:60810,net:44803,cost:41374,food:7496,staff:6314,ops:27564,profit:3429,txn:2117},
-];
+const STALBANS = {
+  cols: OVERALL.cols,
+  rows: [
+    {label:"Total Number of Transaction", type:"num", vals:[614,544,453,423,490,2524,448,466,382,420,1716,381,393,774,5758]},
+    {label:"Per Transaction Revenue", type:"cur", vals:[95,94,93,90,93,32,91,93,87,92,30,92,95,31,32]},
+    {label:"Staff Cost %", type:"pct", vals:[0.1894,0.1949,0.1979,0.2148,0.2017,0.1994,0.2035,0.2137,0.2348,0.2271,0.2196,0.2462,0,0.1244,0.2022]},
+    {label:"Gross Food Cost %", type:"pct", vals:[0.2189,0.2217,0.2614,0.2462,0.1864,0.2259,0.2865,0.2803,0.2439,0.2688,0.2704,0.2600,0,0.1273,0.2314]},
+    {label:"Net Food Cost %", type:"pct", vals:[0.2843,0.2961,0.3320,0.3155,0.2395,0.2927,0.3622,0.3548,0.3096,0.3346,0.3426,0.3284,0,0.1623,0.3284]},
+    {label:"Operation Cost %", type:"pct", vals:[0.1675,0.1849,0.2057,0.2162,0.1941,0.1933,0.2162,0.2160,0.2565,0.2471,0.2317,0.2745,0.2745,0.3060,0.3550]},
+    {label:"", type:"empty", vals:[]},
+    {label:"Total Revenue Gross", type:"cur", vals:[19474,17119,14150,12768,15241,78752,13614,14469,11144,12940,52167,11695,12453,24148,186948]},
+    {label:"Total Net Revenue", type:"cur", vals:[14443,12716,10526,9538,11407,58630,10154,10762,8308,9670,38894,8695,9285,17980,131729]},
+    {label:"Total - Cost", type:"cur", vals:[9637,9540,9218,9018,8459,45872,9105,9276,8148,8410,34939,8311,2752,11063,116662]},
+    {label:"Food", type:"cur", vals:[4098,3750,3498,3012,2735,17093,3683,3810,2572,3240,13305,2855,0,2855,43263]},
+    {label:"Staff", type:"cur", vals:[2735,2479,2083,2052,2301,11650,2068,2298,1951,2196,8513,2132,0,2132,26640]},
+    {label:"Operation", type:"cur", vals:[2804,3311,3637,3954,3423,17129,3354,3168,3625,2974,13121,3324,2752,6076,46759]},
+    {label:"Gross Profit", type:"cur", vals:[9837,8179,5308,3750,7948,35022,5049,5193,3536,4260,18038,3520,9701,13085,70286]},
+    {label:"Net Profit", type:"cur", vals:[4806,3176,1308,-1520,4948,13738,1049,1486,160,1260,3955,384,6533,6917,15067], profit:true},
+    {label:"Profit %", type:"pct", vals:[0.2469,0.1854,0.0923,-0.1193,0.3252,0.1745,0.0775,0.1036,0.0143,0.0977,0.0762,0.0329,0.5267,0.2849,0.0806], profitpct:true},
+  ]
+};
 
-const STORES = [
-  {name:"Ascot Vale",rev:324808,net:246280,cost:265908,food:80422,staff:69496,ops:115990,grossProfit:58900,profit:-19628,txn:11388,pct:-6.04,color:"#e8520a"},
-  {name:"St Albans",rev:186948,net:131729,cost:116662,food:43263,staff:26640,ops:46759,grossProfit:70286,profit:15067,txn:5758,pct:8.06,color:"#f5c842"},
-  {name:"Fitzroy North",rev:68584,net:57995,cost:65151,food:10780,staff:12713,ops:41658,grossProfit:3433,profit:-7156,txn:2930,pct:-10.43,color:"#22c55e"},
-];
+const FITZROY = {
+  cols: OVERALL.cols,
+  rows: [
+    {label:"Total Number of Transaction", type:"num", vals:[269,214,109,90,76,758,67,87,102,55,311,119,127,246,2930]},
+    {label:"Per Transaction Revenue", type:"cur", vals:[71,68,72,70,69,24,69,64,62,55,22,60,67,21,23]},
+    {label:"Staff Cost %", type:"pct", vals:[0.2785,0.2974,0.3102,0.3416,0.3252,0.3050,0.3270,0.3474,0.3754,0.3946,0.3637,0.3793,0,0.1935,0.2192]},
+    {label:"Gross Food Cost %", type:"pct", vals:[0.1588,0.1549,0.1693,0.1715,0.1521,0.1601,0.1714,0.1648,0.1535,0.1542,0.1614,0.1565,0,0.0783,0.1572]},
+    {label:"Net Food Cost %", type:"pct", vals:[0.1844,0.1815,0.2023,0.2070,0.1807,0.1905,0.2047,0.1983,0.1835,0.1821,0.1929,0.1876,0,0.0933,0.1859]},
+    {label:"Operation Cost %", type:"pct", vals:[0.5149,0.5775,0.6878,0.7524,0.8333,0.6424,0.9362,0.8241,0.7059,0.9818,0.8551,0.5756,0.5756,0.5756,0.7183]},
+    {label:"", type:"empty", vals:[]},
+    {label:"Total Revenue Gross", type:"cur", vals:[8088,6132,3344,2724,2805,23093,2310,2354,2254,1510,8428,2065,2931,4996,68584]},
+    {label:"Total Net Revenue", type:"cur", vals:[7587,5737,3121,2541,2610,21596,2162,2196,2102,1402,7862,1947,2754,4701,57995]},
+    {label:"Total - Cost", type:"cur", vals:[4961,4664,3083,2882,2652,18242,2899,2897,2625,2632,11053,2616,1707,4323,65151]},
+    {label:"Food", type:"cur", vals:[1396,1042,631,527,472,4068,468,436,385,256,1545,365,0,365,10780]},
+    {label:"Staff", type:"cur", vals:[2114,1706,974,867,680,6341,709,766,789,554,2818,757,0,757,12713]},
+    {label:"Operation", type:"cur", vals:[1451,1916,1478,1488,1500,7833,1722,1695,1451,1822,6690,1494,1707,3201,41658]},
+    {label:"Gross Profit", type:"cur", vals:[3127,1468,261,-341,153,4851,-589,-341,-371,-1220,-2521,-551,1224,673,3433]},
+    {label:"Net Profit", type:"cur", vals:[2626,1073,-38,-882,-42,2737,-737,-701,-523,-1230,-3191,-669,-453,-1122,-7156], profit:true},
+    {label:"Profit %", type:"pct", vals:[0.2578,0.1400,-0.0092,-0.2593,-0.0117,0.0950,-0.2541,-0.2388,-0.1866,-0.6549,-0.3059,-0.2569,-0.1227,-0.1783,-0.1043], profitpct:true},
+  ]
+};
 
-const ONLINE = [
-  {name:"Uber Eats",txn:1767,gross:66303,net:35785,color:"#06c167"},
-  {name:"DoorDash",txn:1279,gross:36703,net:20722,color:"#ff3008"},
-];
+const ASCOT = {
+  cols: OVERALL.cols,
+  rows: [
+    {label:"Total Number of Transaction", type:"num", vals:[600,641,697,700,691,3329,700,680,600,600,2580,535,562,1097,11388]},
+    {label:"Per Transaction Revenue", type:"cur", vals:[99,86,85,84,88,30,82,88,83,86,27,82,86,28,29]},
+    {label:"Staff Cost %", type:"pct", vals:[0.2678,0.2910,0.2923,0.3205,0.3006,0.2943,0.3046,0.3155,0.3480,0.3478,0.3303,0.3722,0,0.1784,0.2822]},
+    {label:"Gross Food Cost %", type:"pct", vals:[0.1984,0.2183,0.2501,0.2371,0.1880,0.2178,0.2745,0.2707,0.2273,0.2534,0.2573,0.2477,0,0.1197,0.2476]},
+    {label:"Net Food Cost %", type:"pct", vals:[0.2739,0.3086,0.3339,0.3220,0.2486,0.2980,0.3615,0.3648,0.3110,0.3391,0.3477,0.3438,0,0.1661,0.3265]},
+    {label:"Operation Cost %", type:"pct", vals:[0.1783,0.1945,0.2122,0.2139,0.1944,0.1981,0.2194,0.2183,0.2554,0.2521,0.2355,0.2726,0.2726,0.2726,0.4710]},
+    {label:"", type:"empty", vals:[]},
+    {label:"Total Revenue Gross", type:"cur", vals:[59400,55148,47100,45000,48800,255448,43800,44690,38560,38440,165490,37440,40280,77720,324808]},
+    {label:"Total Net Revenue", type:"cur", vals:[44200,41040,35060,33560,36350,190210,33000,33300,28700,29000,124000,27000,29500,56500,246280]},
+    {label:"Total - Cost", type:"cur", vals:[31200,30300,29700,28900,27000,147100,29100,29600,26000,27000,111700,26500,8500,35000,265908]},
+    {label:"Food", type:"cur", vals:[12100,12100,12200,11500,9600,57500,12200,12200,9200,10100,43700,9800,0,9800,80422]},
+    {label:"Staff", type:"cur", vals:[11800,11900,10260,10750,11200,45910,10100,10500,9900,9900,40400,10050,0,10050,69496]},
+    {label:"Operation", type:"cur", vals:[7300,6300,7240,6650,6200,43690,6800,6900,6900,7000,27600,6650,8500,15150,115990]},
+    {label:"Gross Profit", type:"cur", vals:[28200,24848,17400,16100,21800,108348,14700,15090,12560,11440,53790,10940,31780,42720,58900]},
+    {label:"Net Profit", type:"cur", vals:[13000,10740,5360,4678,9350,43128,3900,3700,2700,2000,12400,500,21000,21500,-19628], profit:true},
+    {label:"Profit %", type:"pct", vals:[0.2218,0.1950,0.1138,0.1041,0.1919,0.1690,0.0886,0.0833,0.0704,0.0519,0.0750,0.0138,0.5310,0.2851,-0.0604], profitpct:true},
+  ]
+};
 
-const fmt = n => n >= 0 ? `$${n.toLocaleString()}` : `-$${Math.abs(n).toLocaleString()}`;
-
+// ===================== FUNCTIONS =====================
 function doLogin() {
   const val = document.getElementById('pass-input').value;
   if (val === PASSWORD) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
-    initCharts();
-    buildTables();
+    buildTable('overall-table', OVERALL);
+    buildTable('stalbans-table', STALBANS);
+    buildTable('fitzroy-table', FITZROY);
+    buildTable('ascot-table', ASCOT);
   } else {
     document.getElementById('err-msg').style.display = 'block';
   }
 }
 
-document.getElementById('pass-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('pass-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
 });
 
 function doLogout() {
@@ -312,163 +298,64 @@ function doLogout() {
   document.getElementById('pass-input').value = '';
 }
 
-function showTab(name) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
+function showSheet(name) {
+  document.querySelectorAll('.sheet-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.sheet-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('sheet-' + name).classList.add('active');
   event.target.classList.add('active');
 }
 
-function initCharts() {
-  const darkGrid = 'rgba(255,255,255,0.05)';
-  const darkTick = '#475569';
-
-  // Monthly Chart
-  new Chart(document.getElementById('monthlyChart'), {
-    type: 'bar',
-    data: {
-      labels: MONTHLY.map(m => m.month),
-      datasets: [
-        { label: 'Net Revenue', data: MONTHLY.map(m => m.net), backgroundColor: '#14b8a6', borderRadius: 4 },
-        { label: 'Total Cost', data: MONTHLY.map(m => m.cost), backgroundColor: '#f43f5e', borderRadius: 4 },
-        { label: 'Net Profit', data: MONTHLY.map(m => m.profit), backgroundColor: '#6366f1', borderRadius: 4 },
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } },
-      scales: {
-        x: { grid: { color: darkGrid }, ticks: { color: darkTick } },
-        y: { grid: { color: darkGrid }, ticks: { color: darkTick, callback: v => `$${(v/1000).toFixed(0)}k` } }
-      }
-    }
-  });
-
-  // Weekly Chart
-  new Chart(document.getElementById('weeklyChart'), {
-    type: 'line',
-    data: {
-      labels: WEEKLY.map(w => w.week),
-      datasets: [
-        { label: 'Net Revenue', data: WEEKLY.map(w => w.net), borderColor: '#14b8a6', borderWidth: 2, pointRadius: 0, tension: 0.3 },
-        { label: 'Cost', data: WEEKLY.map(w => w.cost), borderColor: '#f43f5e', borderWidth: 2, pointRadius: 0, tension: 0.3 },
-        { label: 'Net Profit', data: WEEKLY.map(w => w.profit), borderColor: '#6366f1', borderWidth: 2.5, pointRadius: 0, tension: 0.3, borderDash: [4,2] },
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { labels: { color: '#64748b', font: { size: 11 } } } },
-      scales: {
-        x: { grid: { color: darkGrid }, ticks: { color: darkTick, font: { size: 10 } } },
-        y: { grid: { color: darkGrid }, ticks: { color: darkTick, callback: v => `$${(v/1000).toFixed(0)}k` } }
-      }
-    }
-  });
-
-  // Store Chart
-  new Chart(document.getElementById('storeChart'), {
-    type: 'bar',
-    data: {
-      labels: STORES.map(s => s.name),
-      datasets: [
-        { label: 'Net Revenue', data: STORES.map(s => s.net), backgroundColor: STORES.map(s => s.color), borderRadius: 4 },
-      ]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { color: darkGrid }, ticks: { color: darkTick, callback: v => `$${(v/1000).toFixed(0)}k` } },
-        y: { grid: { color: darkGrid }, ticks: { color: '#94a3b8' } }
-      }
-    }
-  });
-
-  // Pie Chart
-  new Chart(document.getElementById('pieChart'), {
-    type: 'doughnut',
-    data: {
-      labels: ONLINE.map(o => o.name),
-      datasets: [{ data: ONLINE.map(o => o.gross), backgroundColor: ONLINE.map(o => o.color), borderWidth: 0 }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { labels: { color: '#94a3b8', font: { size: 12 } } } }
-    }
-  });
+function fmtVal(val, type) {
+  if (val === 0 && type !== 'pct') return '-';
+  if (type === 'pct') return (val * 100).toFixed(2) + '%';
+  if (type === 'cur') return '£' + Math.abs(val).toLocaleString();
+  return val.toLocaleString();
 }
 
-function buildTables() {
-  // Weekly table
-  const tbody = document.getElementById('weekly-table-body');
-  WEEKLY.forEach((w, i) => {
-    const color = w.profit >= 0 ? '#22c55e' : '#f43f5e';
-    tbody.innerHTML += `
-      <tr>
-        <td>${w.week}</td>
-        <td style="font-family:'Space Mono',monospace;font-size:11px">${w.txn.toLocaleString()}</td>
-        <td style="font-family:'Space Mono',monospace;font-size:11px;color:#14b8a6">${fmt(w.rev)}</td>
-        <td style="font-family:'Space Mono',monospace;font-size:11px;color:#6366f1">${fmt(w.net)}</td>
-        <td style="font-family:'Space Mono',monospace;font-size:11px;color:#f59e0b">${fmt(w.food)}</td>
-        <td style="font-family:'Space Mono',monospace;font-size:11px;color:#ec4899">${fmt(w.staff)}</td>
-        <td style="font-family:'Space Mono',monospace;font-size:11px;color:#f43f5e">${fmt(w.ops)}</td>
-        <td style="font-family:'Space Mono',monospace;font-size:11px;color:${color};font-weight:700">${fmt(w.profit)}</td>
-      </tr>`;
+function buildTable(tableId, data) {
+  const table = document.getElementById(tableId);
+  let html = '';
+
+  // Header row 1 — Week labels
+  html += '<tr class="row-header-top"><td class="row-label" style="background:#5a4000;color:#f5c842;font-size:14px">Profit & Loss Summary</td>';
+  data.cols.forEach(col => {
+    const cls = col.monthly ? ' col-monthly' : '';
+    html += `<td class="${cls}" style="${col.monthly ? 'background:#b8860b;color:#fff' : 'background:#7a5c00;color:#fff'};text-align:center;padding:8px 10px;border:1px solid #5a4200;font-weight:800;font-size:12px;white-space:nowrap">${col.label}</td>`;
+  });
+  html += '</tr>';
+
+  // Header row 2 — Dates
+  html += '<tr class="row-date"><td style="background:#8a6200;border:1px solid #5a4200"></td>';
+  data.cols.forEach(col => {
+    const cls = col.monthly ? ' col-monthly' : '';
+    html += `<td style="${col.monthly ? 'background:#d4a800' : 'background:#b8860b'};color:#fff;text-align:center;padding:5px 8px;border:1px solid #8a6200;font-size:10px">${col.date}</td>`;
+  });
+  html += '</tr>';
+
+  // Data rows
+  data.rows.forEach(row => {
+    if (row.type === 'empty') {
+      html += `<tr class="row-empty"><td style="border:1px solid #e8ddb0;background:#f9f5e8" colspan="${data.cols.length + 1}"></td></tr>`;
+      return;
+    }
+
+    const rowClass = row.profit ? 'row-profit' : row.profitpct ? 'row-profit-pct' : '';
+    html += `<tr class="${rowClass}"><td class="row-label">${row.label}</td>`;
+
+    data.cols.forEach((col, i) => {
+      const val = row.vals[i] !== undefined ? row.vals[i] : 0;
+      const formatted = fmtVal(val, row.type);
+      const isNeg = val < 0;
+      const isMon = col.monthly;
+      const cellClass = isMon ? 'data-monthly' : 'data';
+      const negClass = isNeg ? ' neg' : '';
+      html += `<td class="${cellClass}${negClass}">${formatted}</td>`;
+    });
+
+    html += '</tr>';
   });
 
-  // Store cards
-  const storeDiv = document.getElementById('store-cards');
-  STORES.forEach(s => {
-    storeDiv.innerHTML += `
-      <div class="store-card" style="background:${s.color}18;border:1px solid ${s.color}30">
-        <div class="store-header">
-          <div>
-            <div class="store-name" style="color:${s.color}">${s.name}</div>
-            <div class="store-txn">${s.txn.toLocaleString()} transactions</div>
-          </div>
-          <div>
-            <div class="store-profit" style="color:${s.profit>=0?'#22c55e':'#f43f5e'}">${fmt(s.profit)}</div>
-            <div class="store-profit-sub">Net Profit (${s.pct>0?'+':''}${s.pct.toFixed(1)}%)</div>
-          </div>
-        </div>
-        <div class="store-metrics">
-          <div class="metric-box"><div class="metric-label">Gross Revenue</div><div class="metric-val" style="color:#14b8a6">${fmt(s.rev)}</div></div>
-          <div class="metric-box"><div class="metric-label">Net Revenue</div><div class="metric-val" style="color:#6366f1">${fmt(s.net)}</div></div>
-          <div class="metric-box"><div class="metric-label">Total Cost</div><div class="metric-val" style="color:#f43f5e">${fmt(s.cost)}</div></div>
-          <div class="metric-box"><div class="metric-label">Food Cost</div><div class="metric-val" style="color:#f59e0b">${fmt(s.food)}</div></div>
-          <div class="metric-box"><div class="metric-label">Staff Cost</div><div class="metric-val" style="color:#ec4899">${fmt(s.staff)}</div></div>
-          <div class="metric-box"><div class="metric-label">Operation</div><div class="metric-val" style="color:#8b5cf6">${fmt(s.ops)}</div></div>
-        </div>
-      </div>`;
-  });
-
-  // Online cards
-  const onlineDiv = document.getElementById('online-cards');
-  ONLINE.forEach(o => {
-    onlineDiv.innerHTML += `
-      <div class="online-card" style="background:${o.color}15;border:1px solid ${o.color}30">
-        <div class="online-name" style="color:${o.color}">${o.name}</div>
-        <div class="online-row"><div class="online-row-label">Transactions</div><div class="online-row-val" style="color:#e2e8f0">${o.txn.toLocaleString()}</div></div>
-        <div class="online-row"><div class="online-row-label">Gross Revenue</div><div class="online-row-val" style="color:${o.color}">${fmt(o.gross)}</div></div>
-        <div class="online-row"><div class="online-row-label">Net (After Commission)</div><div class="online-row-val" style="color:#22c55e">${fmt(o.net)}</div></div>
-      </div>`;
-  });
-
-  // Commission rows
-  const commDiv = document.getElementById('commission-rows');
-  ONLINE.forEach(o => {
-    const commission = o.gross - o.net;
-    const rate = ((commission / o.gross) * 100).toFixed(1);
-    commDiv.innerHTML += `
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
-        <span style="font-size:14px;font-weight:700;color:${o.color}">${o.name}</span>
-        <div style="text-align:right">
-          <div style="font-family:'Space Mono',monospace;font-size:13px;color:#f43f5e">-${fmt(commission)} commission</div>
-          <div style="font-size:11px;color:#555">${rate}% rate</div>
-        </div>
-      </div>`;
-  });
+  table.innerHTML = html;
 }
 </script>
 </body>
