@@ -48,7 +48,7 @@ export default function App() {
 
   async function fetchMenu() {
     setLoading(true);
-    const { data, error } = await supabase
+      let { data } = await supabase
       .from("menu_items")
       .select("*")
       .eq("available", true)
