@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angie's Kebab - Admin Panel</title>
+    <style>
+        body { font-family: 'Nunito', sans-serif; background: #f7f7f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 320px; text-align: center; }
+        h2 { color: #261a1a; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #ffcc00; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #e6b800; }
+        .logo { width: 80px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <img src="https://angiesknb.com/logo.png" alt="Logo" class="logo"> <h2>Admin Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <script>
+        function login() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            // এখানে আপনার আগের পাসওয়ার্ডটি দিন
+            if(user === "admin" && pass === "yourpassword") { 
+                alert("Login Successful! Redirecting...");
+                // লগইন সফল হলে ড্যাশবোর্ডে পাঠাতে পারেন
+            } else {
+                alert("Wrong credentials!");
+            }
+        }
+    </script>
+</body>
+</html>
