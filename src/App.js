@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = "https://egyxvzjfqnpcfdnwusxn.supabase.co";
@@ -12,15 +12,8 @@ const DELIVERY_PARTNERS = [
 ];
 
 const LOCATIONS = [
-  { id: 1, name: "Ascot Vale", address: "2 Epsom Road, Ascot Vale, 3032", time: "15 Minutes" },
-  { id: 2, name: "Shop 2", address: "Address coming soon", time: "20 Minutes" },
-];
-
-const SLIDER_IMAGES = [
-  "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=1200&q=80",
-  "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&q=80",
-  "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1200&q=80",
-  "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80",
+  { id: 1, name: "Angies Kebabs & Burgers", address: "2 Epsom Road, Ascot Vale, 3032", time: "11:15 AM" },
+  { id: 2, name: "Shop 2", address: "Address coming soon", time: "11:30 AM" },
 ];
 
 export default function App() {
@@ -31,9 +24,9 @@ export default function App() {
   const [activePage, setActivePage] = useState("home");
   const [activeCategory, setActiveCategory] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(LOCATIONS[0]);
-  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+  const [showLocationModal, setShowLocationModal] = useState(false);
   const [search, setSearch] = useState("");
-  const [checkoutPage, setCheckoutPage] = useState("menu");
+  const [appPage, setAppPage] = useState("menu");
   const [paying, setPaying] = useState(false);
   const [showDeliveryModal, setShowDeliveryModal] = useState(false);
   const [showCartMobile, setShowCartMobile] = useState(false);
@@ -41,26 +34,16 @@ export default function App() {
   const [selectedAddons, setSelectedAddons] = useState([]);
   const [qty, setQty] = useState(1);
   const [orderNum] = useState(() => Math.floor(Math.random() * 90000) + 10000);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 900);
   const [loading, setLoading] = useState(true);
-  const [sliderIdx, setSliderIdx] = useState(0);
-  const sliderRef = useRef(null);
 
   useEffect(() => {
-    const h = () => setIsMobile(window.innerWidth < 768);
+    const h = () => setIsMobile(window.innerWidth < 900);
     window.addEventListener("resize", h);
     return () => window.removeEventListener("resize", h);
   }, []);
 
-  useEffect(() => {
-    fetchMenu();
-    fetchPages();
-  }, []);
-
-  useEffect(() => {
-    const t = setInterval(() => setSliderIdx(i => (i + 1) % SLIDER_IMAGES.length), 3500);
-    return () => clearInterval(t);
-  }, []);
+  useEffect(() => { fetchMenu(); fetchPages(); }, []);
 
   async function fetchMenu() {
     setLoading(true);
@@ -95,10 +78,7 @@ export default function App() {
   const subtotal = cart.reduce((s, c) => s + c.finalPrice * c.qty, 0);
   const cartCount = cart.reduce((s, c) => s + c.qty, 0);
 
-  const openItem = (item) => {
-    setSelectedItem(item); setSelectedAddons([]); setQty(1);
-  };
-
+  const openItem = (item) => { setSelectedItem(item); setSelectedAddons([]); setQty(1); };
   const addonExtra = selectedAddons.reduce((s, a) => s + (a.price || 0), 0);
   const itemTotal = selectedItem ? (selectedItem.price + addonExtra) * qty : 0;
 
@@ -113,8 +93,11 @@ export default function App() {
       order_number: `#${orderNum}`, order_type: orderType,
       items: cart, total: subtotal, status: "pending", payment_status: "paid",
     });
-    setTimeout(() => { setPaying(false); setCheckoutPage("confirmation"); setShowCartMobile(false); }, 1500);
+    setTimeout(() => { setPaying(false); setAppPage("confirmation"); setShowCartMobile(false); }, 1500);
   };
+
+  const allItems = Object.values(menu).flat();
+  const popularItems = allItems.slice(0, 4);
 
   const filteredMenu = search.trim()
     ? Object.entries(menu).reduce((acc, [cat, items]) => {
@@ -122,90 +105,103 @@ export default function App() {
         if (f.length) acc[cat] = f;
         return acc;
       }, {})
-    : activeCategory ? { [activeCategory]: menu[activeCategory] || [] } : {};
+    : activeCategory === "__popular__"
+      ? { "Popular": popularItems }
+      : activeCategory ? { [activeCategory]: menu[activeCategory] || [] } : {};
 
   const currentPage = pages.find(p => p.slug === activePage);
+  const menuCategories = Object.keys(menu);
+  const allNavCats = menuCategories.length > 0 ? ["Popular", ...menuCategories] : [];
 
   const OrderPanel = () => (
-    <div style={{ background: "#fff", borderRadius: isMobile ? 0 : 16, border: "1px solid #e8e8e8", overflow: "hidden" }}>
-      <div style={{ padding: "16px 20px", borderBottom: "1px solid #f0f0f0" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-          <span style={{ fontSize: 18, fontWeight: 900, fontFamily: "'Nunito',sans-serif" }}>Order</span>
-          <div style={{ display: "flex", gap: 6 }}>
-            <button onClick={() => setOrderType("pickup")} style={{ padding: "5px 14px", borderRadius: 20, fontSize: 13, fontWeight: 700, background: orderType === "pickup" ? "#1a1a1a" : "#fff", color: orderType === "pickup" ? "#fff" : "#555", border: "1px solid #e0e0e0", cursor: "pointer" }}>Pickup</button>
-            <button onClick={() => { setOrderType("delivery"); setShowDeliveryModal(true); }} style={{ padding: "5px 14px", borderRadius: 20, fontSize: 13, fontWeight: 700, background: orderType === "delivery" ? "#1a1a1a" : "#fff", color: orderType === "delivery" ? "#fff" : "#555", border: "1px solid #e0e0e0", cursor: "pointer" }}>Delivery</button>
+    <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #e8e8e8", overflow: "hidden", fontFamily: "inherit" }}>
+      {/* Order type toggle */}
+      <div style={{ padding: "16px 20px 12px", borderBottom: "1px solid #f0f0f0" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+          <span style={{ fontSize: 22, fontWeight: 800 }}>Order</span>
+          <div style={{ display: "flex", gap: 0, background: "#f0f0f0", borderRadius: 20, padding: 3 }}>
+            <button onClick={() => setOrderType("pickup")} style={{ padding: "5px 16px", borderRadius: 16, fontSize: 13, fontWeight: 700, background: orderType === "pickup" ? "#fff" : "transparent", color: "#1a1a1a", border: "none", cursor: "pointer", boxShadow: orderType === "pickup" ? "0 1px 4px rgba(0,0,0,0.15)" : "none", transition: "all 0.2s" }}>Pickup</button>
+            <button onClick={() => { setOrderType("delivery"); setShowDeliveryModal(true); }} style={{ padding: "5px 16px", borderRadius: 16, fontSize: 13, fontWeight: 700, background: orderType === "delivery" ? "#fff" : "transparent", color: "#1a1a1a", border: "none", cursor: "pointer", boxShadow: orderType === "delivery" ? "0 1px 4px rgba(0,0,0,0.15)" : "none", transition: "all 0.2s" }}>Delivery</button>
           </div>
         </div>
 
-        <div style={{ position: "relative", marginBottom: 10 }}>
-          <button onClick={() => setShowLocationDropdown(!showLocationDropdown)} style={{ width: "100%", display: "flex", gap: 10, alignItems: "center", background: "#f7f7f5", border: "1px solid #e0e0e0", borderRadius: 10, padding: "10px 14px", cursor: "pointer" }}>
-            <span>📍</span>
-            <div style={{ flex: 1, textAlign: "left" }}>
-              <div style={{ fontSize: 13, fontWeight: 800 }}>{selectedLocation.name}</div>
-              <div style={{ fontSize: 11, color: "#888" }}>{selectedLocation.address}</div>
-            </div>
-            <span style={{ color: "#888", fontSize: 12 }}>{showLocationDropdown ? "▲" : "▼"}</span>
-          </button>
-          {showLocationDropdown && (
-            <div style={{ position: "absolute", top: "100%", left: 0, right: 0, background: "#fff", border: "1px solid #e0e0e0", borderRadius: 10, zIndex: 200, boxShadow: "0 4px 20px rgba(0,0,0,0.1)", marginTop: 4 }}>
-              {LOCATIONS.map(loc => (
-                <button key={loc.id} onClick={() => { setSelectedLocation(loc); setShowLocationDropdown(false); }} style={{ width: "100%", padding: "12px 14px", display: "flex", alignItems: "center", gap: 10, background: selectedLocation.id === loc.id ? "#fff8f5" : "#fff", border: "none", borderBottom: "1px solid #f0f0f0", cursor: "pointer" }}>
-                  <span>📍</span>
-                  <div style={{ textAlign: "left" }}>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: selectedLocation.id === loc.id ? "#e8520a" : "#1a1a1a" }}>{loc.name}</div>
-                    <div style={{ fontSize: 11, color: "#888" }}>{loc.address}</div>
-                  </div>
-                  {selectedLocation.id === loc.id && <span style={{ marginLeft: "auto", color: "#e8520a" }}>✓</span>}
-                </button>
-              ))}
-            </div>
-          )}
+        {/* Location row */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: "1px solid #f5f5f5", marginBottom: 10 }}>
+          <div style={{ width: 36, height: 36, borderRadius: 8, background: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>🏪</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 700 }}>{selectedLocation.name}</div>
+            <div style={{ fontSize: 11, color: "#888" }}>{selectedLocation.address}</div>
+          </div>
         </div>
 
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <span>🕐</span>
-          <div>
+        {/* Pickup time row */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 36, height: 36, borderRadius: 8, background: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>🕐</div>
+          <div style={{ flex: 1 }}>
             <div style={{ fontSize: 12, color: "#888" }}>Pickup Time</div>
             <div style={{ fontSize: 13, fontWeight: 700 }}>Today - {selectedLocation.time}</div>
           </div>
+          <button onClick={() => setShowLocationModal(true)} style={{ padding: "5px 12px", borderRadius: 20, border: "1px solid #ddd", background: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", color: "#1a1a1a" }}>CHANGE</button>
         </div>
       </div>
 
-      <div style={{ padding: "16px 20px", borderBottom: "1px solid #f0f0f0", minHeight: 80 }}>
-        <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 12 }}>Items</div>
+      {/* Items */}
+      <div style={{ padding: "14px 20px", borderBottom: "1px solid #f0f0f0", minHeight: 80 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <span style={{ fontSize: 15, fontWeight: 800 }}>Items</span>
+          <button style={{ background: "none", border: "none", fontSize: 13, color: "#888", cursor: "pointer", fontWeight: 700 }}>+ Add Voucher</button>
+        </div>
         {cart.length === 0 ? (
-          <div style={{ textAlign: "center", color: "#bbb", fontSize: 13, padding: "20px 0" }}>Your cart is empty</div>
+          <div style={{ textAlign: "center", color: "#ccc", fontSize: 13, padding: "16px 0" }}>No items yet</div>
         ) : cart.map(item => (
-          <div key={item.cartId} style={{ marginBottom: 10, paddingBottom: 10, borderBottom: "1px solid #f5f5f5" }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 700 }}>{item.name} × {item.qty}</div>
-                {item.addons && item.addons.length > 0 && <div style={{ fontSize: 11, color: "#e8520a" }}>+{item.addons.map(a => a.name).join(", ")}</div>}
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 13, fontWeight: 700 }}>${(item.finalPrice * item.qty).toFixed(2)}</span>
-                <button onClick={() => removeFromCart(item.cartId)} style={{ width: 20, height: 20, borderRadius: "50%", background: "#fee", color: "#f43f5e", border: "none", cursor: "pointer", fontSize: 12 }}>✕</button>
-              </div>
+          <div key={item.cartId} style={{ marginBottom: 10, paddingBottom: 10, borderBottom: "1px solid #f5f5f5", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 700 }}>{item.name} × {item.qty}</div>
+              {item.addons && item.addons.length > 0 && <div style={{ fontSize: 11, color: "#e8520a" }}>+{item.addons.map(a => a.name).join(", ")}</div>}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 13, fontWeight: 700 }}>${(item.finalPrice * item.qty).toFixed(2)}</span>
+              <button onClick={() => removeFromCart(item.cartId)} style={{ width: 18, height: 18, borderRadius: "50%", background: "#f0f0f0", color: "#999", border: "none", cursor: "pointer", fontSize: 11, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
             </div>
           </div>
         ))}
       </div>
 
-      {cart.length > 0 && (
+      {/* Complement */}
+      {allItems.length > 0 && (
         <div style={{ padding: "12px 20px", borderBottom: "1px solid #f0f0f0" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 15, fontWeight: 900 }}>
-            <span>Total</span><span>${subtotal.toFixed(2)}</span>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#888", marginBottom: 10 }}>Complement your Order</div>
+          <div style={{ display: "flex", gap: 10, overflowX: "auto" }}>
+            {allItems.slice(0, 4).map(item => (
+              <div key={item.id} onClick={() => openItem(item)} style={{ flexShrink: 0, width: 80, cursor: "pointer" }}>
+                <div style={{ position: "relative", marginBottom: 4 }}>
+                  {item.image_url ? (
+                    <img src={item.image_url} alt={item.name} style={{ width: 80, height: 70, objectFit: "cover", borderRadius: 8, display: "block" }} />
+                  ) : (
+                    <div style={{ width: 80, height: 70, background: "#f5f5f5", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>🍔</div>
+                  )}
+                  <div style={{ position: "absolute", top: 4, left: 4, background: "rgba(0,0,0,0.7)", color: "#fff", fontSize: 9, fontWeight: 700, padding: "1px 5px", borderRadius: 4 }}>+ ${item.price.toFixed(2)}</div>
+                </div>
+                <div style={{ fontSize: 10, fontWeight: 600, color: "#555", lineHeight: 1.3 }}>{item.name.length > 12 ? item.name.slice(0, 12) + "..." : item.name}</div>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
+      {/* Checkout button */}
       <div style={{ padding: "12px 16px 16px" }}>
+        {cart.length > 0 && (
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, fontWeight: 800, marginBottom: 10, padding: "0 4px" }}>
+            <span>Total</span><span>${subtotal.toFixed(2)}</span>
+          </div>
+        )}
         {orderType === "pickup" ? (
-          <button onClick={() => { if (cart.length > 0) { setCheckoutPage("checkout"); setShowCartMobile(false); } }} style={{ width: "100%", padding: "14px", borderRadius: 12, background: cart.length > 0 ? "#1a1a1a" : "#ccc", color: "#fff", fontSize: 15, fontWeight: 800, border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between" }}>
-            <span>Order Pickup</span><span>→</span>
+          <button onClick={() => { if (cart.length > 0) { setAppPage("checkout"); setShowCartMobile(false); } }} style={{ width: "100%", padding: "15px", borderRadius: 10, background: cart.length > 0 ? "#1a1a1a" : "#ccc", color: "#fff", fontSize: 14, fontWeight: 800, border: "none", cursor: cart.length > 0 ? "pointer" : "default", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span>Pre-Order Pickup</span><span>→</span>
           </button>
         ) : (
-          <button onClick={() => setShowDeliveryModal(true)} style={{ width: "100%", padding: "14px", borderRadius: 12, background: "#e8520a", color: "#fff", fontSize: 15, fontWeight: 800, border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between" }}>
+          <button onClick={() => setShowDeliveryModal(true)} style={{ width: "100%", padding: "15px", borderRadius: 10, background: "#e8520a", color: "#fff", fontSize: 14, fontWeight: 800, border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span>Order Delivery 🛵</span><span>→</span>
           </button>
         )}
@@ -214,65 +210,66 @@ export default function App() {
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f7f7f5", fontFamily: "'Nunito', sans-serif", color: "#1a1a1a" }}>
+    <div style={{ minHeight: "100vh", background: "#fff", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", color: "#1a1a1a" }}>
       <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        .nav-tab { cursor: pointer; border: none; background: none; font-family: 'Nunito',sans-serif; transition: all 0.15s; }
-        .food-card { transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
-        .food-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.12); }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        .cat-tab { cursor: pointer; border: none; background: none; transition: all 0.15s; white-space: nowrap; }
+        .food-card { transition: box-shadow 0.2s; cursor: pointer; }
+        .food-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         ::-webkit-scrollbar { width: 0; height: 0; }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-        .fade-in { animation: fadeIn 0.3s ease forwards; }
-        @keyframes modalIn { from { opacity:0; transform:scale(0.96); } to { opacity:1; transform:scale(1); } }
-        .modal-in { animation: modalIn 0.25s ease forwards; }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        .fade-in { animation: fadeIn 0.2s ease; }
+        @keyframes modalIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        .modal-in { animation: modalIn 0.25s ease; }
         @keyframes slideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
-        .slide-up { animation: slideUp 0.3s ease forwards; }
+        .slide-up { animation: slideUp 0.3s ease; }
         @keyframes spin { to { transform:rotate(360deg); } }
         .spin { animation: spin 0.7s linear infinite; display:inline-block; }
       `}</style>
 
-      {/* ITEM MODAL */}
+      {/* ITEM DETAIL MODAL */}
       {selectedItem && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 2000, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={() => setSelectedItem(null)}>
-          <div className="modal-in" style={{ background: "#fff", borderRadius: "20px 20px 0 0", width: "100%", maxWidth: 560, maxHeight: "92vh", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 2000, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={() => setSelectedItem(null)}>
+          <div className="modal-in" style={{ background: "#fff", borderRadius: "20px 20px 0 0", width: "100%", maxWidth: 560, maxHeight: "90vh", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
             <div style={{ position: "relative" }}>
               {selectedItem.image_url ? (
-                <img src={selectedItem.image_url} alt={selectedItem.name} style={{ width: "100%", height: 240, objectFit: "cover" }} />
+                <img src={selectedItem.image_url} alt={selectedItem.name} style={{ width: "100%", height: 220, objectFit: "cover", display: "block" }} />
               ) : (
-                <div style={{ width: "100%", height: 240, background: "#f0f0f0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 60 }}>🍔</div>
+                <div style={{ width: "100%", height: 220, background: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 60 }}>🍔</div>
               )}
-              <button onClick={() => setSelectedItem(null)} style={{ position: "absolute", top: 12, right: 12, background: "rgba(255,255,255,0.9)", border: "none", borderRadius: "50%", width: 36, height: 36, cursor: "pointer", fontSize: 18 }}>✕</button>
+              <button onClick={() => setSelectedItem(null)} style={{ position: "absolute", top: 12, right: 12, background: "rgba(255,255,255,0.95)", border: "none", borderRadius: "50%", width: 34, height: 34, cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>✕</button>
             </div>
             <div style={{ padding: "20px 20px 100px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                <h2 style={{ fontSize: 20, fontWeight: 900 }}>{selectedItem.name}</h2>
-                <span style={{ fontSize: 20, fontWeight: 900, color: "#e8520a" }}>${selectedItem.price.toFixed(2)}</span>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                <h2 style={{ fontSize: 20, fontWeight: 800, flex: 1, marginRight: 12 }}>{selectedItem.name}</h2>
+                <span style={{ fontSize: 18, fontWeight: 800 }}>${selectedItem.price.toFixed(2)}</span>
               </div>
               <p style={{ fontSize: 14, color: "#666", lineHeight: 1.6, marginBottom: 16 }}>{selectedItem.description}</p>
 
               {selectedItem.ingredients && selectedItem.ingredients.length > 0 && (
                 <div style={{ marginBottom: 20 }}>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: "#888", marginBottom: 10 }}>INGREDIENTS</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#999", marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.5 }}>Ingredients</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                     {selectedItem.ingredients.map((ing, i) => (
-                      <span key={i} style={{ background: "#f7f7f5", border: "1px solid #e8e8e8", borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 600 }}>{ing}</span>
+                      <span key={i} style={{ background: "#f5f5f5", borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 500 }}>{ing}</span>
                     ))}
                   </div>
                 </div>
               )}
 
               {selectedItem.addons && selectedItem.addons.length > 0 && (
-                <div style={{ marginBottom: 20, background: "#f9f9f9", borderRadius: 14, padding: 16 }}>
-                  <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 12 }}>Customise</div>
+                <div style={{ marginBottom: 20 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#999", marginBottom: 12, textTransform: "uppercase", letterSpacing: 0.5 }}>Customise</div>
                   {selectedItem.addons.map((addon, i) => {
                     const selected = selectedAddons.find(a => a.name === addon.name);
                     return (
-                      <button key={i} onClick={() => setSelectedAddons(prev => selected ? prev.filter(a => a.name !== addon.name) : [...prev, addon])} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", background: "none", border: "none", borderBottom: "1px solid #eee", cursor: "pointer" }}>
-                        <span style={{ fontSize: 14, fontWeight: 600 }}>{addon.name}</span>
+                      <button key={i} onClick={() => setSelectedAddons(prev => selected ? prev.filter(a => a.name !== addon.name) : [...prev, addon])} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", background: "none", border: "none", borderBottom: "1px solid #f0f0f0", cursor: "pointer", textAlign: "left" }}>
+                        <span style={{ fontSize: 14 }}>{addon.name}</span>
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                          {addon.price > 0 && <span style={{ fontSize: 13, color: "#e8520a", fontWeight: 700 }}>+${addon.price.toFixed(2)}</span>}
-                          <div style={{ width: 22, height: 22, borderRadius: 6, border: `2px solid ${selected ? "#e8520a" : "#ccc"}`, background: selected ? "#e8520a" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14 }}>
+                          {addon.price > 0 && <span style={{ fontSize: 13, color: "#666" }}>+${addon.price.toFixed(2)}</span>}
+                          <div style={{ width: 22, height: 22, borderRadius: 6, border: `2px solid ${selected ? "#1a1a1a" : "#ddd"}`, background: selected ? "#1a1a1a" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12 }}>
                             {selected && "✓"}
                           </div>
                         </div>
@@ -282,14 +279,14 @@ export default function App() {
                 </div>
               )}
             </div>
-            <div style={{ position: "sticky", bottom: 0, background: "#fff", borderTop: "1px solid #eee", padding: "14px 20px", display: "flex", gap: 12 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, background: "#f5f5f5", borderRadius: 12, padding: "8px 12px" }}>
-                <button onClick={() => setQty(q => Math.max(1, q - 1))} style={{ width: 28, height: 28, borderRadius: "50%", background: qty > 1 ? "#e8520a" : "#e0e0e0", color: "#fff", border: "none", cursor: "pointer", fontSize: 18 }}>−</button>
-                <span style={{ fontWeight: 900, fontSize: 16, minWidth: 20, textAlign: "center" }}>{qty}</span>
-                <button onClick={() => setQty(q => q + 1)} style={{ width: 28, height: 28, borderRadius: "50%", background: "#e8520a", color: "#fff", border: "none", cursor: "pointer", fontSize: 18 }}>+</button>
+            <div style={{ position: "sticky", bottom: 0, background: "#fff", borderTop: "1px solid #f0f0f0", padding: "14px 20px", display: "flex", gap: 12, alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, border: "1px solid #e0e0e0", borderRadius: 8, padding: "6px 10px" }}>
+                <button onClick={() => setQty(q => Math.max(1, q - 1))} style={{ width: 26, height: 26, borderRadius: "50%", background: qty > 1 ? "#1a1a1a" : "#e0e0e0", color: "#fff", border: "none", cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
+                <span style={{ fontWeight: 800, fontSize: 15, minWidth: 20, textAlign: "center" }}>{qty}</span>
+                <button onClick={() => setQty(q => q + 1)} style={{ width: 26, height: 26, borderRadius: "50%", background: "#1a1a1a", color: "#fff", border: "none", cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
               </div>
-              <button onClick={addToCartFromModal} style={{ flex: 1, padding: "14px", borderRadius: 12, background: "#1a1a1a", color: "#fff", fontSize: 15, fontWeight: 800, border: "none", cursor: "pointer" }}>
-                Add to Cart — ${itemTotal.toFixed(2)}
+              <button onClick={addToCartFromModal} style={{ flex: 1, padding: "13px", borderRadius: 8, background: "#1a1a1a", color: "#fff", fontSize: 14, fontWeight: 700, border: "none", cursor: "pointer" }}>
+                Add to Order — ${itemTotal.toFixed(2)}
               </button>
             </div>
           </div>
@@ -299,23 +296,42 @@ export default function App() {
       {/* DELIVERY MODAL */}
       {showDeliveryModal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setShowDeliveryModal(false)}>
-          <div className="modal-in" style={{ background: "#fff", borderRadius: 20, padding: 28, maxWidth: 380, width: "100%" }} onClick={e => e.stopPropagation()}>
+          <div className="modal-in" style={{ background: "#fff", borderRadius: 16, padding: 28, maxWidth: 380, width: "100%" }} onClick={e => e.stopPropagation()}>
             <div style={{ textAlign: "center", marginBottom: 20 }}>
               <div style={{ fontSize: 36, marginBottom: 8 }}>🛵</div>
-              <h3 style={{ fontSize: 20, fontWeight: 900 }}>Order Delivery Via</h3>
+              <h3 style={{ fontSize: 18, fontWeight: 800 }}>Order Delivery Via</h3>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {DELIVERY_PARTNERS.map(partner => (
                 <a key={partner.name} href={partner.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-                  <button style={{ width: "100%", padding: "14px 20px", borderRadius: 14, background: "#fff", border: `2px solid ${partner.color}`, display: "flex", alignItems: "center", gap: 14, cursor: "pointer" }}>
-                    <span style={{ fontSize: 28 }}>{partner.emoji}</span>
-                    <span style={{ fontSize: 16, fontWeight: 800, color: partner.color }}>{partner.name}</span>
+                  <button style={{ width: "100%", padding: "13px 18px", borderRadius: 10, background: "#fff", border: `2px solid ${partner.color}`, display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}>
+                    <span style={{ fontSize: 24 }}>{partner.emoji}</span>
+                    <span style={{ fontSize: 15, fontWeight: 700, color: partner.color }}>{partner.name}</span>
                     <span style={{ marginLeft: "auto", color: "#ccc" }}>→</span>
                   </button>
                 </a>
               ))}
             </div>
-            <button onClick={() => setShowDeliveryModal(false)} style={{ width: "100%", marginTop: 16, padding: "10px", borderRadius: 10, background: "#f5f5f5", border: "none", fontSize: 14, fontWeight: 700, cursor: "pointer", color: "#555" }}>Cancel</button>
+            <button onClick={() => setShowDeliveryModal(false)} style={{ width: "100%", marginTop: 12, padding: "10px", borderRadius: 8, background: "#f5f5f5", border: "none", fontSize: 13, fontWeight: 700, cursor: "pointer", color: "#555" }}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* LOCATION CHANGE MODAL */}
+      {showLocationModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setShowLocationModal(false)}>
+          <div className="modal-in" style={{ background: "#fff", borderRadius: 16, padding: 24, maxWidth: 380, width: "100%" }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>Select Location</h3>
+            {LOCATIONS.map(loc => (
+              <button key={loc.id} onClick={() => { setSelectedLocation(loc); setShowLocationModal(false); }} style={{ width: "100%", padding: "12px 14px", display: "flex", alignItems: "center", gap: 10, background: selectedLocation.id === loc.id ? "#f5f5f5" : "#fff", border: "1px solid #e8e8e8", borderRadius: 10, cursor: "pointer", marginBottom: 8, textAlign: "left" }}>
+                <span style={{ fontSize: 20 }}>📍</span>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700 }}>{loc.name}</div>
+                  <div style={{ fontSize: 11, color: "#888" }}>{loc.address}</div>
+                </div>
+                {selectedLocation.id === loc.id && <span style={{ marginLeft: "auto", fontWeight: 800, fontSize: 16 }}>✓</span>}
+              </button>
+            ))}
           </div>
         </div>
       )}
@@ -323,49 +339,57 @@ export default function App() {
       {/* MOBILE CART */}
       {isMobile && showCartMobile && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 999 }} onClick={() => setShowCartMobile(false)}>
-          <div className="slide-up" style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "#f7f7f5", borderRadius: "20px 20px 0 0", maxHeight: "85vh", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
-            <div style={{ padding: "12px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #eee" }}>
-              <span style={{ fontSize: 16, fontWeight: 900 }}>Your Order</span>
-              <button onClick={() => setShowCartMobile(false)} style={{ background: "#f0f0f0", border: "none", borderRadius: "50%", width: 32, height: 32, cursor: "pointer", fontSize: 16 }}>✕</button>
+          <div className="slide-up" style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "#fff", borderRadius: "20px 20px 0 0", maxHeight: "88vh", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
+            <div style={{ padding: "12px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f0f0f0" }}>
+              <span style={{ fontSize: 16, fontWeight: 800 }}>Your Order</span>
+              <button onClick={() => setShowCartMobile(false)} style={{ background: "#f0f0f0", border: "none", borderRadius: "50%", width: 30, height: 30, cursor: "pointer", fontSize: 14 }}>✕</button>
             </div>
-            <OrderPanel />
+            <div style={{ padding: 16 }}><OrderPanel /></div>
           </div>
         </div>
       )}
 
-      {/* NAVBAR */}
-      <div style={{ background: "#fff", borderBottom: "1px solid #e8e8e8", padding: "0 16px", display: "flex", alignItems: "center", gap: 0, height: 64, position: "sticky", top: 0, zIndex: 100 }}>
-        <img src="/logo.jpg" alt="Angie's" onClick={() => { setActivePage("home"); setSearch(""); }} style={{ height: 48, width: 48, borderRadius: "50%", objectFit: "cover", border: "2px solid #f5c842", flexShrink: 0, cursor: "pointer", marginRight: 12 }} />
+      {/* TOP NAVBAR */}
+      <div style={{ background: "#fff", borderBottom: "1px solid #e8e8e8", padding: "0 20px", display: "flex", alignItems: "center", height: 60, position: "sticky", top: 0, zIndex: 100, gap: 16 }}>
+        <img src="/logo.jpg" alt="Angie's" onClick={() => { setActivePage("home"); setSearch(""); }} style={{ height: 44, width: 44, borderRadius: "50%", objectFit: "cover", flexShrink: 0, cursor: "pointer" }} />
 
-        {/* NAV TABS from pages */}
-        <div style={{ display: "flex", overflowX: "auto", flex: 1 }}>
-          {pages.map(page => (
-            <button key={page.slug} className="nav-tab" onClick={() => { setActivePage(page.slug); setSearch(""); if (page.slug === "home") setActiveCategory(Object.keys(menu)[0] || ""); }} style={{ padding: "0 14px", height: 64, fontSize: 14, fontWeight: activePage === page.slug ? 800 : 600, color: activePage === page.slug ? "#e8520a" : "#555", borderBottom: activePage === page.slug ? "2px solid #e8520a" : "2px solid transparent", whiteSpace: "nowrap" }}>
-              {page.title}
-            </button>
-          ))}
-          {/* Menu categories as tabs when on home */}
-          {activePage === "home" && Object.keys(menu).map(cat => (
-            <button key={cat} className="nav-tab" onClick={() => setActiveCategory(cat)} style={{ padding: "0 14px", height: 64, fontSize: 14, fontWeight: activeCategory === cat ? 800 : 600, color: activeCategory === cat ? "#e8520a" : "#555", borderBottom: activeCategory === cat ? "2px solid #e8520a" : "2px solid transparent", whiteSpace: "nowrap" }}>
+        {/* Search */}
+        <div style={{ position: "relative", flex: isMobile ? 1 : "0 0 240px" }}>
+          <input value={search} onChange={e => { setSearch(e.target.value); if (e.target.value) { setActivePage("home"); setActiveCategory("__search__"); } }} placeholder="Search Menu" style={{ width: "100%", padding: "9px 36px 9px 36px", borderRadius: 22, border: "1px solid #e0e0e0", background: "#f7f7f7", fontSize: 14 }} />
+          <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#999", fontSize: 14 }}>🔍</span>
+          {search && <button onClick={() => setSearch("")} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#999", fontSize: 16 }}>✕</button>}
+        </div>
+
+        {/* Page nav — About, etc */}
+        {!isMobile && pages.filter(p => p.slug !== "home").map(page => (
+          <button key={page.slug} onClick={() => setActivePage(page.slug)} style={{ padding: "6px 16px", borderRadius: 20, border: "1px solid #e0e0e0", background: activePage === page.slug ? "#1a1a1a" : "#fff", color: activePage === page.slug ? "#fff" : "#1a1a1a", fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>
+            {page.title}
+          </button>
+        ))}
+
+        <div style={{ marginLeft: "auto" }} />
+        {!isMobile && <button style={{ padding: "6px 16px", borderRadius: 20, border: "1px solid #e0e0e0", background: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Log in</button>}
+      </div>
+
+      {/* CATEGORY TABS — sticky below navbar */}
+      {activePage === "home" && !search && (
+        <div style={{ background: "#fff", borderBottom: "1px solid #e8e8e8", padding: "0 20px", display: "flex", overflowX: "auto", position: "sticky", top: 60, zIndex: 99 }}>
+          {allNavCats.map(cat => (
+            <button key={cat} className="cat-tab" onClick={() => { setActiveCategory(cat === "Popular" ? "__popular__" : cat); }} style={{ padding: "14px 16px", fontSize: 14, fontWeight: (activeCategory === "__popular__" && cat === "Popular") || activeCategory === cat ? 800 : 500, color: (activeCategory === "__popular__" && cat === "Popular") || activeCategory === cat ? "#1a1a1a" : "#666", borderBottom: (activeCategory === "__popular__" && cat === "Popular") || activeCategory === cat ? "2px solid #1a1a1a" : "2px solid transparent", whiteSpace: "nowrap" }}>
               {cat}
             </button>
           ))}
         </div>
+      )}
 
-        <div style={{ position: "relative", marginLeft: 8, flexShrink: 0 }}>
-          <input value={search} onChange={e => { setSearch(e.target.value); if (e.target.value) setActivePage("home"); }} placeholder="Search..." style={{ width: isMobile ? 120 : 180, padding: "8px 16px 8px 32px", borderRadius: 20, border: "1px solid #e0e0e0", background: "#f7f7f5", fontSize: 13 }} />
-          <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "#999", fontSize: 13 }}>🔍</span>
-        </div>
-      </div>
-
-      {/* CHECKOUT PAGE */}
-      {checkoutPage === "checkout" && (
-        <div className="fade-in" style={{ maxWidth: 520, margin: "0 auto", padding: "20px 16px 80px" }}>
-          <button onClick={() => setCheckoutPage("menu")} style={{ background: "none", border: "none", fontSize: 14, fontWeight: 700, cursor: "pointer", color: "#555", marginBottom: 20 }}>← Back</button>
-          <h2 style={{ fontSize: 22, fontWeight: 900, marginBottom: 6 }}>Checkout</h2>
-          <div style={{ fontSize: 13, color: "#888", marginBottom: 20 }}>📍 {selectedLocation.name} — {selectedLocation.address}</div>
-          <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 12, padding: 16, marginBottom: 16 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, padding: "8px 12px", background: "#f7f7f5", borderRadius: 8 }}>
+      {/* CHECKOUT */}
+      {appPage === "checkout" && (
+        <div className="fade-in" style={{ maxWidth: 520, margin: "0 auto", padding: "24px 16px 80px" }}>
+          <button onClick={() => setAppPage("menu")} style={{ background: "none", border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", color: "#555", marginBottom: 20, display: "flex", alignItems: "center", gap: 6 }}>← Back to menu</button>
+          <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 6 }}>Checkout</h2>
+          <div style={{ fontSize: 13, color: "#888", marginBottom: 20 }}>📍 {selectedLocation.name}</div>
+          <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 12, padding: 16, marginBottom: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14, padding: "8px 12px", background: "#f8f8f8", borderRadius: 8 }}>
               <span>💳</span><span style={{ fontSize: 13, color: "#555", fontWeight: 600 }}>Secured by Stripe</span>
               <span style={{ marginLeft: "auto", fontSize: 11, color: "#22c55e", fontWeight: 700 }}>🔒 SSL</span>
             </div>
@@ -378,137 +402,125 @@ export default function App() {
           </div>
           <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 12, padding: 16, marginBottom: 20 }}>
             {cart.map(item => (
-              <div key={item.cartId} style={{ display: "flex", justifyContent: "space-between", fontSize: 14, marginBottom: 6 }}>
+              <div key={item.cartId} style={{ display: "flex", justifyContent: "space-between", fontSize: 14, marginBottom: 8 }}>
                 <span>{item.name} × {item.qty}</span>
                 <span style={{ fontWeight: 700 }}>${(item.finalPrice * item.qty).toFixed(2)}</span>
               </div>
             ))}
-            <div style={{ borderTop: "1px solid #eee", marginTop: 10, paddingTop: 10, display: "flex", justifyContent: "space-between", fontWeight: 900, fontSize: 16 }}>
+            <div style={{ borderTop: "1px solid #eee", marginTop: 10, paddingTop: 10, display: "flex", justifyContent: "space-between", fontWeight: 800, fontSize: 16 }}>
               <span>Total</span><span>${subtotal.toFixed(2)}</span>
             </div>
           </div>
-          <button onClick={handlePay} disabled={paying} style={{ width: "100%", padding: "15px", borderRadius: 12, background: paying ? "#ccc" : "#1a1a1a", color: "#fff", fontSize: 15, fontWeight: 800, border: "none", cursor: "pointer" }}>
+          <button onClick={handlePay} disabled={paying} style={{ width: "100%", padding: "15px", borderRadius: 10, background: paying ? "#ccc" : "#1a1a1a", color: "#fff", fontSize: 15, fontWeight: 800, border: "none", cursor: "pointer" }}>
             {paying ? <span><span className="spin">⟳</span> Processing...</span> : `🔒 Pay $${subtotal.toFixed(2)}`}
           </button>
         </div>
       )}
 
       {/* CONFIRMATION */}
-      {checkoutPage === "confirmation" && (
+      {appPage === "confirmation" && (
         <div className="fade-in" style={{ maxWidth: 480, margin: "40px auto", padding: "0 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 64, marginBottom: 16 }}>🎉</div>
-          <h2 style={{ fontSize: 28, fontWeight: 900, marginBottom: 8 }}>Order Confirmed!</h2>
+          <div style={{ fontSize: 60, marginBottom: 16 }}>🎉</div>
+          <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 8 }}>Order Confirmed!</h2>
           <p style={{ color: "#888", marginBottom: 24 }}>Thank you for ordering from Angie's!</p>
-          <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 16, padding: 24, marginBottom: 20 }}>
-            <div style={{ fontSize: 12, color: "#888", fontWeight: 700, marginBottom: 4 }}>ORDER NUMBER</div>
-            <div style={{ fontSize: 32, fontWeight: 900, color: "#e8520a" }}>{orderNum}</div>
+          <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 14, padding: 24, marginBottom: 16 }}>
+            <div style={{ fontSize: 11, color: "#999", fontWeight: 700, marginBottom: 4, textTransform: "uppercase" }}>Order Number</div>
+            <div style={{ fontSize: 30, fontWeight: 900 }}>#{orderNum}</div>
           </div>
-          <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 16, padding: 20, marginBottom: 24 }}>
+          <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: 14, padding: 20, marginBottom: 24 }}>
             <div style={{ fontSize: 13, color: "#888", marginBottom: 4 }}>📍 {selectedLocation.name}</div>
-            <div style={{ fontSize: 24, fontWeight: 900, color: "#22c55e" }}>{selectedLocation.time}</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#22c55e" }}>Ready at {selectedLocation.time}</div>
           </div>
-          <button onClick={() => { setCart([]); setCheckoutPage("menu"); }} style={{ width: "100%", padding: "14px", borderRadius: 12, background: "#1a1a1a", color: "#fff", fontSize: 15, fontWeight: 800, border: "none", cursor: "pointer" }}>Order Again 🍔</button>
+          <button onClick={() => { setCart([]); setAppPage("menu"); }} style={{ width: "100%", padding: "14px", borderRadius: 10, background: "#1a1a1a", color: "#fff", fontSize: 15, fontWeight: 800, border: "none", cursor: "pointer" }}>Order Again 🍔</button>
         </div>
       )}
 
-      {/* MAIN CONTENT */}
-      {checkoutPage === "menu" && (
-        <>
-          <div style={{ display: "flex", maxWidth: 1200, margin: "0 auto" }}>
-            <div style={{ flex: 1, minWidth: 0, paddingBottom: isMobile ? 80 : 40 }}>
+      {/* MAIN MENU */}
+      {appPage === "menu" && (
+        <div style={{ display: "flex", maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ flex: 1, minWidth: 0, padding: "20px 20px", paddingBottom: isMobile ? 90 : 40 }}>
 
-              {/* HOME PAGE */}
-              {activePage === "home" && (
-                <>
-                  {/* Image Slider */}
-                  <div style={{ position: "relative", height: isMobile ? 200 : 300, overflow: "hidden", margin: "0 0 0 0" }}>
-                    {SLIDER_IMAGES.map((img, i) => (
-                      <div key={i} style={{ position: "absolute", inset: 0, transition: "opacity 0.8s", opacity: i === sliderIdx ? 1 : 0 }}>
-                        <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.6), transparent)" }} />
-                      </div>
-                    ))}
-                    <div style={{ position: "absolute", bottom: 20, left: 20, color: "#fff", zIndex: 2 }}>
-                      <div style={{ fontSize: isMobile ? 18 : 24, fontWeight: 900 }}>Angie's Kebabs & Burgers</div>
-                      <div style={{ fontSize: 13, opacity: 0.8 }}>⚪ Open until 11PM · 📍 {selectedLocation.name}</div>
-                    </div>
-                    <div style={{ position: "absolute", bottom: 16, right: 16, display: "flex", gap: 6, zIndex: 2 }}>
-                      {SLIDER_IMAGES.map((_, i) => (
-                        <button key={i} onClick={() => setSliderIdx(i)} style={{ width: i === sliderIdx ? 20 : 8, height: 8, borderRadius: 4, background: i === sliderIdx ? "#f5c842" : "rgba(255,255,255,0.5)", border: "none", cursor: "pointer", transition: "all 0.3s", padding: 0 }} />
-                      ))}
-                    </div>
+            {/* HOME — menu items */}
+            {activePage === "home" && (
+              <>
+                {loading ? (
+                  <div style={{ textAlign: "center", padding: 60, color: "#999" }}>
+                    <div className="spin" style={{ fontSize: 28 }}>⟳</div>
+                    <div style={{ marginTop: 12, fontSize: 14 }}>Loading menu...</div>
                   </div>
-
-                  {/* Menu Items */}
-                  <div style={{ padding: "16px" }}>
-                    {loading ? (
-                      <div style={{ textAlign: "center", padding: 60, color: "#888" }}>
-                        <div className="spin" style={{ fontSize: 32 }}>⟳</div>
-                        <div style={{ marginTop: 12 }}>Loading menu...</div>
-                      </div>
-                    ) : (
-                      Object.entries(filteredMenu).map(([cat, items]) => (
-                        <div key={cat} className="fade-in">
-                          <h2 style={{ fontSize: 20, fontWeight: 900, marginBottom: 14 }}>{cat}</h2>
-                          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(auto-fill, minmax(220px, 1fr))", gap: 12, marginBottom: 28 }}>
-                            {items.map(item => (
-                              <div key={item.id} className="food-card" onClick={() => openItem(item)} style={{ background: "#fff", borderRadius: 14, overflow: "hidden", border: "1px solid #eee" }}>
-                                <div style={{ position: "relative" }}>
-                                  {item.image_url ? (
-                                    <img src={item.image_url} alt={item.name} style={{ width: "100%", height: isMobile ? 120 : 160, objectFit: "cover", display: "block" }} />
-                                  ) : (
-                                    <div style={{ width: "100%", height: isMobile ? 120 : 160, background: "linear-gradient(135deg, #f5f5f5, #e8e8e8)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40 }}>🍔</div>
-                                  )}
-                                  <div style={{ position: "absolute", top: 6, left: 6, background: "rgba(0,0,0,0.7)", color: "#fff", fontSize: 11, fontWeight: 700, padding: "2px 7px", borderRadius: 6 }}>${item.price.toFixed(2)}</div>
-                                  <div style={{ position: "absolute", bottom: 6, right: 6, width: 28, height: 28, borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.2)", fontSize: 16 }}>+</div>
-                                </div>
-                                <div style={{ padding: "10px 12px 12px" }}>
-                                  <div style={{ fontSize: isMobile ? 12 : 14, fontWeight: 800, marginBottom: 3 }}>{item.name}</div>
-                                  {!isMobile && <div style={{ fontSize: 12, color: "#888", lineHeight: 1.4 }}>{item.description}</div>}
-                                </div>
+                ) : Object.keys(menu).length === 0 ? (
+                  <div style={{ textAlign: "center", padding: 60, color: "#999" }}>
+                    <div style={{ fontSize: 48, marginBottom: 16 }}>🍔</div>
+                    <div style={{ fontSize: 16, fontWeight: 700 }}>Menu coming soon!</div>
+                  </div>
+                ) : (
+                  Object.entries(search ? filteredMenu : activeCategory === "__popular__" ? { "Popular": popularItems } : { [activeCategory]: menu[activeCategory] || [] }).map(([cat, items]) => (
+                    <div key={cat} className="fade-in" style={{ marginBottom: 32 }}>
+                      <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 16 }}>{cat}</h2>
+                      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
+                        {items.map(item => (
+                          <div key={item.id} className="food-card" onClick={() => openItem(item)} style={{ background: "#fff", borderRadius: 12, overflow: "hidden", border: "1px solid #f0f0f0", position: "relative" }}>
+                            <div style={{ position: "relative" }}>
+                              {item.image_url ? (
+                                <img src={item.image_url} alt={item.name} style={{ width: "100%", height: isMobile ? 130 : 170, objectFit: "cover", display: "block" }} />
+                              ) : (
+                                <div style={{ width: "100%", height: isMobile ? 130 : 170, background: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 48 }}>🍔</div>
+                              )}
+                              {/* Price overlay */}
+                              <div style={{ position: "absolute", top: 8, left: 8, background: "rgba(0,0,0,0.75)", color: "#fff", fontSize: 12, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>${item.price.toFixed(2)}</div>
+                              {/* Item name overlay */}
+                              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(to top, rgba(0,0,0,0.8), transparent)", padding: "20px 12px 10px" }}>
+                                <div style={{ color: "#fff", fontSize: isMobile ? 12 : 14, fontWeight: 700, lineHeight: 1.3 }}>{item.name}</div>
                               </div>
-                            ))}
+                              {/* + button */}
+                              <div style={{ position: "absolute", top: 8, right: 8, width: 28, height: 28, borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.2)", fontSize: 18, fontWeight: 300, color: "#1a1a1a" }}>+</div>
+                            </div>
+                            {!isMobile && item.description && (
+                              <div style={{ padding: "10px 12px 12px" }}>
+                                <div style={{ fontSize: 12, color: "#888", lineHeight: 1.4 }}>{item.description.length > 60 ? item.description.slice(0, 60) + "..." : item.description}</div>
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </>
-              )}
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </>
+            )}
 
-              {/* OTHER PAGES — About, Contact, etc */}
-              {activePage !== "home" && currentPage && (
-                <div className="fade-in" style={{ padding: "32px 20px", maxWidth: 700 }}>
-                  <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: 16 }}>{currentPage.title}</h1>
-                  {currentPage.image_url && (
-                    <img src={currentPage.image_url} alt={currentPage.title} style={{ width: "100%", borderRadius: 14, marginBottom: 20, maxHeight: 300, objectFit: "cover" }} />
-                  )}
-                  <div style={{ fontSize: 15, color: "#444", lineHeight: 1.8, whiteSpace: "pre-line" }}>{currentPage.content}</div>
-                </div>
-              )}
-            </div>
-
-            {/* ORDER PANEL DESKTOP */}
-            {!isMobile && (
-              <div style={{ width: 340, flexShrink: 0, padding: "24px 24px 24px 0" }}>
-                <div style={{ position: "sticky", top: 80 }}>
-                  <OrderPanel />
-                </div>
+            {/* OTHER PAGES */}
+            {activePage !== "home" && currentPage && (
+              <div className="fade-in" style={{ maxWidth: 680, paddingTop: 8 }}>
+                <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 16 }}>{currentPage.title}</h1>
+                {currentPage.image_url && (
+                  <img src={currentPage.image_url} alt={currentPage.title} style={{ width: "100%", borderRadius: 12, marginBottom: 20, maxHeight: 280, objectFit: "cover" }} />
+                )}
+                <div style={{ fontSize: 15, color: "#444", lineHeight: 1.9, whiteSpace: "pre-line" }}>{currentPage.content}</div>
               </div>
             )}
           </div>
 
-          {/* MOBILE BOTTOM BAR */}
-          {isMobile && (
-            <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "#fff", borderTop: "1px solid #eee", padding: "10px 16px", zIndex: 100 }}>
-              <button onClick={() => setShowCartMobile(true)} style={{ width: "100%", padding: "14px", borderRadius: 14, background: cartCount > 0 ? "#1a1a1a" : "#ccc", color: "#fff", fontSize: 15, fontWeight: 800, border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ background: "rgba(255,255,255,0.2)", borderRadius: 8, padding: "2px 10px", fontSize: 13 }}>{cartCount} items</span>
-                <span>View Order</span>
-                <span>${subtotal.toFixed(2)}</span>
-              </button>
+          {/* ORDER PANEL — desktop */}
+          {!isMobile && (
+            <div style={{ width: 360, flexShrink: 0, padding: "20px 20px 40px 0" }}>
+              <div style={{ position: "sticky", top: 120 }}>
+                <OrderPanel />
+              </div>
             </div>
           )}
-        </>
+        </div>
+      )}
+
+      {/* MOBILE BOTTOM BAR */}
+      {isMobile && appPage === "menu" && (
+        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "#fff", borderTop: "1px solid #eee", padding: "10px 16px", zIndex: 100 }}>
+          <button onClick={() => setShowCartMobile(true)} style={{ width: "100%", padding: "14px", borderRadius: 10, background: "#1a1a1a", color: "#fff", fontSize: 14, fontWeight: 800, border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ background: "rgba(255,255,255,0.2)", borderRadius: 6, padding: "2px 10px", fontSize: 13 }}>{cartCount}</span>
+            <span>Pre-Order Pickup</span>
+            <span>${subtotal.toFixed(2)}</span>
+          </button>
+        </div>
       )}
     </div>
   );
