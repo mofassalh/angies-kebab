@@ -683,7 +683,7 @@ function agg(rests,dates){
 
 function fv(v,t){
   if(v===0)return'-';
-  if(t==='cur')return(v<0?'-':'')+'A$'+Math.abs(Math.round(v)).toLocaleString();
+  if(t==='cur')return(v<0?'-':'')+Math.abs(Math.round(v)).toLocaleString();
   if(t==='pct')return(v*100).toFixed(2)+'%';
   if(t==='num')return Math.round(v).toLocaleString();
   return'-';
