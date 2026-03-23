@@ -1,39 +1,566 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Angie's Kebab - Admin Panel</title>
-    <style>
-        body { font-family: 'Nunito', sans-serif; background: #f7f7f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 320px; text-align: center; }
-        h2 { color: #261a1a; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #ffcc00; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #e6b800; }
-        .logo { width: 80px; margin-bottom: 10px; }
-    </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Angie's Admin Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0f2f5;font-family:'Nunito',sans-serif;min-height:100vh;color:#1a1a1a;}
+input,button,select,textarea{outline:none;font-family:'Nunito',sans-serif;}
+
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#1a1a1a;}
+.login-box{background:#fff;border-radius:20px;padding:40px;width:360px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.3);}
+.login-box img{width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid #f5c842;}
+.login-box h2{font-size:20px;font-weight:900;margin-top:12px;}
+.login-box p{font-size:13px;color:#888;margin-top:4px;margin-bottom:20px;}
+.login-box input{width:100%;padding:11px 14px;border-radius:8px;border:1px solid #ddd;font-size:14px;margin-bottom:10px;}
+.err{color:#c0392b;font-size:12px;margin-bottom:8px;display:none;}
+.login-btn{width:100%;padding:11px;border-radius:8px;background:#1a1a1a;color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;}
+
+#app{display:none;}
+.topbar{background:#1a1a1a;height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100;}
+.topbar img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #f5c842;}
+.topbar-title{color:#fff;font-weight:800;font-size:14px;flex:1;}
+.tabs{display:flex;gap:3px;}
+.tab{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;}
+.tab.active{background:#f5c842;color:#1a1a1a;}
+.tab:not(.active){background:rgba(255,255,255,0.12);color:#fff;}
+.logout-btn{padding:6px 12px;border-radius:6px;background:rgba(255,255,255,0.12);color:#fff;border:none;cursor:pointer;font-size:12px;}
+
+.content{padding:20px;max-width:1100px;margin:0 auto;}
+.sheet{display:none;}
+.sheet.active{display:block;}
+
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);border:1px solid #e8e8e8;}
+.card-title{font-size:13px;font-weight:800;color:#1a1a1a;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f0f0f0;}
+.ig2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.ig3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+.fl{font-size:11px;font-weight:700;color:#555;margin-bottom:3px;}
+.fi{width:100%;padding:9px 12px;border-radius:8px;border:1px solid #ddd;font-size:13px;color:#1a1a1a;}
+.fi:focus{border-color:#1a1a1a;}
+textarea.fi{resize:vertical;min-height:70px;}
+.btn-primary{padding:10px 20px;background:#1a1a1a;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;}
+.btn-danger{padding:6px 12px;background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;}
+.btn-success{padding:6px 12px;background:#e8f5e9;color:#2d6a4f;border:1px solid #c8e6c9;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;}
+.btn-warning{padding:6px 12px;background:#fff3e0;color:#e65100;border:1px solid #ffe0b2;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;}
+.toast{background:#d4edda;color:#155724;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;margin-bottom:14px;display:none;}
+.toast.error{background:#f8d7da;color:#721c24;}
+
+/* Image Upload */
+.img-upload-zone{border:2px dashed #ddd;border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;}
+.img-upload-zone:hover{border-color:#1a1a1a;background:#f8f8f8;}
+.img-preview{width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:8px;}
+
+/* Menu items grid */
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.menu-card{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e8e8e8;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.menu-card img{width:100%;height:140px;object-fit:cover;}
+.menu-card-no-img{width:100%;height:140px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-size:40px;}
+.menu-card-body{padding:12px;}
+.menu-card-name{font-size:14px;font-weight:800;margin-bottom:4px;}
+.menu-card-cat{font-size:11px;color:#888;margin-bottom:4px;}
+.menu-card-price{font-size:16px;font-weight:900;color:#e8520a;margin-bottom:10px;}
+.menu-card-actions{display:flex;gap:6px;}
+.badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;}
+.badge-available{background:#e8f5e9;color:#2d6a4f;}
+.badge-unavailable{background:#fee;color:#c0392b;}
+
+/* Orders */
+.order-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
+.order-card{background:#fff;border-radius:12px;padding:14px;border:1px solid #e8e8e8;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.order-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.order-num{font-size:14px;font-weight:900;}
+.order-time{font-size:11px;color:#888;margin-top:2px;}
+.order-type{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#f0f0f0;}
+.order-items{font-size:12px;color:#555;margin-bottom:10px;line-height:1.8;}
+.order-total{font-size:15px;font-weight:900;color:#1a1a1a;margin-bottom:10px;}
+.status-select{width:100%;padding:8px 12px;border-radius:8px;border:1px solid #ddd;font-size:12px;font-weight:700;cursor:pointer;}
+.status-pending{border-color:#f39c12;color:#e65100;background:#fff8e1;}
+.status-processing{border-color:#3498db;color:#1565c0;background:#e3f2fd;}
+.status-ontheway{border-color:#9b59b6;color:#6a1b9a;background:#f3e5f5;}
+.status-delivered{border-color:#2ecc71;color:#1b5e20;background:#e8f5e9;}
+.status-cancelled{border-color:#e74c3c;color:#b71c1c;background:#fce4ec;}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.kpi-card{background:#fff;border-radius:12px;padding:16px;border:1px solid #e8e8e8;}
+.kpi-val{font-size:22px;font-weight:900;margin-bottom:4px;}
+.kpi-lbl{font-size:11px;color:#888;font-weight:600;}
+
+/* Addon rows */
+.addon-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+.addon-row input{flex:1;}
+.addon-row .price-input{width:80px;}
+.rm-btn{background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px;font-weight:700;}
+
+@media(max-width:768px){
+  .ig2,.ig3{grid-template-columns:1fr;}
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .tabs{overflow-x:auto;}
+}
+</style>
 </head>
 <body>
-    <div class="login-box">
-        <img src="https://angiesknb.com/logo.png" alt="Logo" class="logo"> <h2>Admin Login</h2>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="login()">Login</button>
+
+<div id="login-screen">
+  <div class="login-box">
+    <img src="/logo.jpg" alt="logo"/>
+    <h2>Admin Panel</h2>
+    <p>Angie's Kebabs & Burgers</p>
+    <input type="password" id="pass-input" placeholder="Enter admin password"/>
+    <div class="err" id="err-msg">❌ Wrong password!</div>
+    <button class="login-btn" onclick="doLogin()">Login →</button>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <img src="/logo.jpg" onclick="window.location.href='/'"/>
+    <div class="topbar-title">Angie's Admin Panel</div>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('dashboard',this)">📊 Dashboard</button>
+      <button class="tab" onclick="showTab('menu',this)">🍔 Menu</button>
+      <button class="tab" onclick="showTab('orders',this)">📋 Orders</button>
+      <button class="tab" onclick="showTab('add-item',this)">➕ Add Item</button>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </div>
+
+  <div class="content">
+    <div class="toast" id="toast"></div>
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard" class="sheet active">
+      <div class="kpi-grid" id="kpi-grid">
+        <div class="kpi-card"><div class="kpi-val" id="kpi-orders">-</div><div class="kpi-lbl">Total Orders</div></div>
+        <div class="kpi-card"><div class="kpi-val" id="kpi-revenue">-</div><div class="kpi-lbl">Total Revenue</div></div>
+        <div class="kpi-card"><div class="kpi-val" id="kpi-pending">-</div><div class="kpi-lbl">Pending Orders</div></div>
+        <div class="kpi-card"><div class="kpi-val" id="kpi-menu">-</div><div class="kpi-lbl">Menu Items</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📋 Recent Orders</div>
+        <div id="recent-orders-list">Loading...</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📊 Order Status Summary</div>
+        <div id="status-summary" style="display:flex;gap:12px;flex-wrap:wrap;"></div>
+      </div>
     </div>
 
-    <script>
-        function login() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            // এখানে আপনার আগের পাসওয়ার্ডটি দিন
-            if(user === "admin" && pass === "yourpassword") { 
-                alert("Login Successful! Redirecting...");
-                // লগইন সফল হলে ড্যাশবোর্ডে পাঠাতে পারেন
-            } else {
-                alert("Wrong credentials!");
-            }
-        }
-    </script>
+    <!-- MENU MANAGEMENT -->
+    <div id="tab-menu" class="sheet">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div style="font-size:16px;font-weight:800;">Menu Items</div>
+        <div style="display:flex;gap:8px;">
+          <select id="filter-cat" class="fi" style="width:auto" onchange="filterMenuItems()">
+            <option value="">All Categories</option>
+          </select>
+          <button class="btn-primary" onclick="showTab('add-item',document.querySelectorAll('.tab')[3])">+ Add Item</button>
+        </div>
+      </div>
+      <div class="menu-grid" id="menu-grid">Loading...</div>
+    </div>
+
+    <!-- ORDERS -->
+    <div id="tab-orders" class="sheet">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div style="font-size:16px;font-weight:800;">Order Management</div>
+        <select id="order-filter" class="fi" style="width:auto" onchange="loadOrders()">
+          <option value="">All Orders</option>
+          <option value="pending">Pending</option>
+          <option value="processing">On Process</option>
+          <option value="ontheway">On The Way</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="order-grid" id="order-grid">Loading...</div>
+    </div>
+
+    <!-- ADD/EDIT ITEM -->
+    <div id="tab-add-item" class="sheet">
+      <div style="font-size:16px;font-weight:800;margin-bottom:16px;" id="form-title">➕ Add New Menu Item</div>
+      <input type="hidden" id="edit-id"/>
+
+      <div class="card">
+        <div class="card-title">Basic Info</div>
+        <div class="ig2">
+          <div><div class="fl">Item Name *</div><input type="text" id="item-name" class="fi" placeholder="e.g. Shish Kebab"/></div>
+          <div><div class="fl">Category *</div>
+            <input type="text" id="item-category" class="fi" placeholder="e.g. Kebabs, Burgers, Sides" list="cat-list"/>
+            <datalist id="cat-list"></datalist>
+          </div>
+        </div>
+        <div class="ig2">
+          <div><div class="fl">Price ($) *</div><input type="number" id="item-price" class="fi" placeholder="0.00" step="0.01" min="0"/></div>
+          <div><div class="fl">Available</div>
+            <select id="item-available" class="fi">
+              <option value="true">✅ Yes — Show on website</option>
+              <option value="false">❌ No — Hide from website</option>
+            </select>
+          </div>
+        </div>
+        <div><div class="fl">Description</div><textarea id="item-desc" class="fi" placeholder="Describe this item..."></textarea></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📸 Item Image</div>
+        <div class="img-upload-zone" id="upload-zone" onclick="document.getElementById('img-file').click()">
+          <img id="img-preview" class="img-preview" style="display:none"/>
+          <div id="upload-placeholder">
+            <div style="font-size:36px;margin-bottom:8px">📷</div>
+            <div style="font-size:13px;font-weight:700;color:#555">Click to upload image</div>
+            <div style="font-size:11px;color:#aaa;margin-top:4px">JPG, PNG, WEBP — Max 5MB</div>
+          </div>
+          <div id="upload-progress" style="display:none;margin-top:8px;font-size:12px;color:#888;">Uploading...</div>
+        </div>
+        <input type="file" id="img-file" accept="image/*" style="display:none" onchange="handleImageUpload(event)"/>
+        <input type="hidden" id="item-image-url"/>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🥗 Ingredients</div>
+        <div><div class="fl">Ingredients (comma separated)</div>
+          <input type="text" id="item-ingredients" class="fi" placeholder="e.g. Lamb, Rice, Garlic sauce, Pita bread"/>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⚙️ Customisation Options (Add-ons)</div>
+        <div style="font-size:12px;color:#888;margin-bottom:12px;">Customer-রা এগুলো select করতে পারবে order করার সময়</div>
+        <div id="addons-list"></div>
+        <button onclick="addAddonRow()" style="padding:8px 16px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;">+ Add Option</button>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:20px;">
+        <button class="btn-primary" onclick="saveItem()" style="flex:1;padding:12px;">💾 Save Item</button>
+        <button onclick="resetForm()" style="padding:12px 20px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">✕ Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL="https://egyxvzjfqnpcfdnwusxn.supabase.co";
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVneXh2empmcW5wY2Zkbnd1c3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODMyMjUsImV4cCI6MjA4OTg1OTIyNX0.modzK6AhGyo3YBjZtDl2lK4tFQuj0B3KsDFIf2n-was";
+const {createClient}=supabase;
+const db=createClient(SUPABASE_URL,SUPABASE_KEY);
+const ADMIN_PASS="angies2024";
+
+let allMenuItems=[];
+let addonCount=0;
+
+function doLogin(){
+  if(document.getElementById('pass-input').value===ADMIN_PASS){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    loadDashboard();loadMenuItems();loadOrders();
+  }else{document.getElementById('err-msg').style.display='block';}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('pass-input').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+});
+function doLogout(){document.getElementById('login-screen').style.display='flex';document.getElementById('app').style.display='none';}
+
+function showTab(name,btn){
+  document.querySelectorAll('.sheet').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(name==='orders')loadOrders();
+  if(name==='dashboard')loadDashboard();
+  if(name==='menu')loadMenuItems();
+}
+
+function showToast(msg,isError=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(isError?' error':'');t.style.display='block';
+  setTimeout(()=>t.style.display='none',3000);
+}
+
+// ===== IMAGE UPLOAD =====
+async function handleImageUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  if(file.size>5*1024*1024){showToast('File too large! Max 5MB',true);return;}
+
+  document.getElementById('upload-progress').style.display='block';
+  document.getElementById('upload-placeholder').style.display='none';
+
+  const ext=file.name.split('.').pop();
+  const fileName=`menu/${Date.now()}.${ext}`;
+
+  const{data,error}=await db.storage.from('menu-images').upload(fileName,file,{upsert:true});
+  if(error){showToast('Upload failed: '+error.message,true);document.getElementById('upload-progress').style.display='none';document.getElementById('upload-placeholder').style.display='block';return;}
+
+  const{data:{publicUrl}}=db.storage.from('menu-images').getPublicUrl(fileName);
+  document.getElementById('item-image-url').value=publicUrl;
+  const preview=document.getElementById('img-preview');
+  preview.src=publicUrl;preview.style.display='block';
+  document.getElementById('upload-progress').style.display='none';
+  showToast('✅ Image uploaded!');
+}
+
+// ===== ADD-ONS =====
+function addAddonRow(name='',price=0){
+  addonCount++;
+  const div=document.createElement('div');
+  div.className='addon-row';
+  div.id='addon-'+addonCount;
+  div.innerHTML=`
+    <input type="text" class="fi" placeholder="Option name (e.g. Extra Cheese)" value="${name}" style="flex:1"/>
+    <input type="number" class="fi price-input" placeholder="Price" value="${price}" step="0.50" min="0"/>
+    <button class="rm-btn" onclick="document.getElementById('addon-${addonCount}').remove()">✕</button>`;
+  document.getElementById('addons-list').appendChild(div);
+}
+
+function getAddons(){
+  const rows=document.querySelectorAll('#addons-list .addon-row');
+  const addons=[];
+  rows.forEach(row=>{
+    const inputs=row.querySelectorAll('input');
+    const name=inputs[0].value.trim();
+    const price=parseFloat(inputs[1].value)||0;
+    if(name)addons.push({name,price});
+  });
+  return addons;
+}
+
+// ===== SAVE ITEM =====
+async function saveItem(){
+  const name=document.getElementById('item-name').value.trim();
+  const category=document.getElementById('item-category').value.trim();
+  const price=parseFloat(document.getElementById('item-price').value);
+  if(!name||!category||!price){showToast('Name, Category, Price required!',true);return;}
+
+  const ingredientsRaw=document.getElementById('item-ingredients').value;
+  const ingredients=ingredientsRaw.split(',').map(s=>s.trim()).filter(Boolean);
+
+  const item={
+    name, category, price,
+    description:document.getElementById('item-desc').value,
+    image_url:document.getElementById('item-image-url').value||null,
+    ingredients,
+    addons:getAddons(),
+    available:document.getElementById('item-available').value==='true',
+  };
+
+  const editId=document.getElementById('edit-id').value;
+  let error;
+  if(editId){
+    ({error}=await db.from('menu_items').update(item).eq('id',editId));
+  }else{
+    ({error}=await db.from('menu_items').insert(item));
+  }
+
+  if(error){showToast('Error: '+error.message,true);return;}
+  showToast('✅ Item saved!');
+  resetForm();
+  loadMenuItems();
+  showTab('menu',document.querySelectorAll('.tab')[1]);
+}
+
+function resetForm(){
+  document.getElementById('edit-id').value='';
+  document.getElementById('item-name').value='';
+  document.getElementById('item-category').value='';
+  document.getElementById('item-price').value='';
+  document.getElementById('item-desc').value='';
+  document.getElementById('item-ingredients').value='';
+  document.getElementById('item-image-url').value='';
+  document.getElementById('item-available').value='true';
+  document.getElementById('img-preview').style.display='none';
+  document.getElementById('upload-placeholder').style.display='block';
+  document.getElementById('addons-list').innerHTML='';
+  document.getElementById('form-title').textContent='➕ Add New Menu Item';
+  addonCount=0;
+}
+
+// ===== LOAD MENU =====
+async function loadMenuItems(){
+  const{data}=await db.from('menu_items').select('*').order('category');
+  if(!data)return;
+  allMenuItems=data;
+
+  // Category filter
+  const cats=[...new Set(data.map(i=>i.category))];
+  const catList=document.getElementById('cat-list');
+  const filterCat=document.getElementById('filter-cat');
+  catList.innerHTML=cats.map(c=>`<option value="${c}">`).join('');
+  filterCat.innerHTML='<option value="">All Categories</option>'+cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+
+  document.getElementById('kpi-menu').textContent=data.length;
+  renderMenuGrid(data);
+}
+
+function filterMenuItems(){
+  const cat=document.getElementById('filter-cat').value;
+  const filtered=cat?allMenuItems.filter(i=>i.category===cat):allMenuItems;
+  renderMenuGrid(filtered);
+}
+
+function renderMenuGrid(items){
+  const grid=document.getElementById('menu-grid');
+  if(!items.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No items found</div>';return;}
+  grid.innerHTML=items.map(item=>`
+    <div class="menu-card">
+      ${item.image_url?`<img src="${item.image_url}" alt="${item.name}" onerror="this.parentElement.querySelector('.menu-card-no-img')&&(this.style.display='none')"/>`:`<div class="menu-card-no-img">🍔</div>`}
+      <div class="menu-card-body">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+          <div class="menu-card-name">${item.name}</div>
+          <span class="badge ${item.available?'badge-available':'badge-unavailable'}">${item.available?'Live':'Hidden'}</span>
+        </div>
+        <div class="menu-card-cat">${item.category}</div>
+        <div class="menu-card-price">$${item.price.toFixed(2)}</div>
+        ${item.ingredients&&item.ingredients.length?`<div style="font-size:10px;color:#888;margin-bottom:8px">${item.ingredients.slice(0,3).join(', ')}${item.ingredients.length>3?'...':''}</div>`:''}
+        <div class="menu-card-actions">
+          <button class="btn-success" onclick="editItem('${item.id}')">✏️ Edit</button>
+          <button class="btn-warning" onclick="toggleAvailable('${item.id}',${item.available})">${item.available?'Hide':'Show'}</button>
+          <button class="btn-danger" onclick="deleteItem('${item.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+async function editItem(id){
+  const item=allMenuItems.find(i=>i.id===id);if(!item)return;
+  document.getElementById('edit-id').value=id;
+  document.getElementById('item-name').value=item.name;
+  document.getElementById('item-category').value=item.category;
+  document.getElementById('item-price').value=item.price;
+  document.getElementById('item-desc').value=item.description||'';
+  document.getElementById('item-ingredients').value=(item.ingredients||[]).join(', ');
+  document.getElementById('item-available').value=String(item.available);
+  document.getElementById('item-image-url').value=item.image_url||'';
+  if(item.image_url){
+    document.getElementById('img-preview').src=item.image_url;
+    document.getElementById('img-preview').style.display='block';
+    document.getElementById('upload-placeholder').style.display='none';
+  }
+  document.getElementById('addons-list').innerHTML='';
+  addonCount=0;
+  (item.addons||[]).forEach(a=>addAddonRow(a.name,a.price));
+  document.getElementById('form-title').textContent='✏️ Edit: '+item.name;
+  showTab('add-item',document.querySelectorAll('.tab')[3]);
+}
+
+async function toggleAvailable(id,current){
+  await db.from('menu_items').update({available:!current}).eq('id',id);
+  showToast(current?'Item hidden from website':'Item visible on website');
+  loadMenuItems();
+}
+
+async function deleteItem(id){
+  if(!confirm('Delete this item?'))return;
+  await db.from('menu_items').delete().eq('id',id);
+  showToast('Item deleted');
+  loadMenuItems();
+}
+
+// ===== ORDERS =====
+async function loadOrders(){
+  const filter=document.getElementById('order-filter')?document.getElementById('order-filter').value:'';
+  let query=db.from('orders').select('*').order('created_at',{ascending:false}).limit(50);
+  if(filter)query=query.eq('status',filter);
+  const{data}=await query;
+  if(!data)return;
+
+  const grid=document.getElementById('order-grid');
+  if(!data.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No orders found</div>';return;}
+
+  grid.innerHTML=data.map(order=>{
+    const items=Array.isArray(order.items)?order.items:[];
+    const timeAgo=getTimeAgo(order.created_at);
+    return`<div class="order-card">
+      <div class="order-header">
+        <div>
+          <div class="order-num">${order.order_number||'#'+order.id.slice(0,6)}</div>
+          <div class="order-time">🕐 ${timeAgo}</div>
+        </div>
+        <span class="order-type">${order.order_type==='pickup'?'🏃 Pickup':'🛵 Delivery'}</span>
+      </div>
+      <div class="order-items">${items.map(i=>`${i.name} × ${i.qty} — $${(i.finalPrice*i.qty).toFixed(2)}`).join('<br>')}</div>
+      <div class="order-total">Total: $${parseFloat(order.total).toFixed(2)}</div>
+      <select class="status-select status-${order.status}" onchange="updateOrderStatus('${order.id}',this)">
+        <option value="pending" ${order.status==='pending'?'selected':''}>⏳ Pending</option>
+        <option value="processing" ${order.status==='processing'?'selected':''}>🔄 On Process</option>
+        <option value="ontheway" ${order.status==='ontheway'?'selected':''}>🛵 On The Way</option>
+        <option value="delivered" ${order.status==='delivered'?'selected':''}>✅ Delivered</option>
+        <option value="cancelled" ${order.status==='cancelled'?'selected':''}>❌ Cancelled</option>
+      </select>
+    </div>`;
+  }).join('');
+}
+
+async function updateOrderStatus(id,selectEl){
+  const status=selectEl.value;
+  await db.from('orders').update({status,updated_at:new Date().toISOString()}).eq('id',id);
+  selectEl.className=`status-select status-${status}`;
+  showToast('✅ Order status updated!');
+  loadDashboard();
+}
+
+function getTimeAgo(dateStr){
+  const diff=Math.floor((Date.now()-new Date(dateStr))/1000);
+  if(diff<60)return diff+'s ago';
+  if(diff<3600)return Math.floor(diff/60)+'m ago';
+  if(diff<86400)return Math.floor(diff/3600)+'h ago';
+  return Math.floor(diff/86400)+'d ago';
+}
+
+// ===== DASHBOARD =====
+async function loadDashboard(){
+  const{data:orders}=await db.from('orders').select('*').order('created_at',{ascending:false});
+  if(!orders)return;
+
+  const total=orders.reduce((s,o)=>s+parseFloat(o.total||0),0);
+  const pending=orders.filter(o=>o.status==='pending').length;
+
+  document.getElementById('kpi-orders').textContent=orders.length;
+  document.getElementById('kpi-revenue').textContent='$'+Math.round(total).toLocaleString();
+  document.getElementById('kpi-pending').textContent=pending;
+
+  // Recent orders
+  const recentHtml=orders.slice(0,5).map(o=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f5f5f5;">
+      <div>
+        <div style="font-size:13px;font-weight:700;">${o.order_number||'#'+o.id.slice(0,6)}</div>
+        <div style="font-size:11px;color:#888;">${getTimeAgo(o.created_at)} · ${o.order_type}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:13px;font-weight:700;">$${parseFloat(o.total).toFixed(2)}</span>
+        <span class="badge ${o.status==='delivered'?'badge-available':o.status==='cancelled'?'badge-unavailable':''}" style="background:${statusColor(o.status)};color:#fff">${o.status}</span>
+      </div>
+    </div>`).join('');
+  document.getElementById('recent-orders-list').innerHTML=recentHtml||'<div style="color:#aaa;padding:20px;text-align:center">No orders yet</div>';
+
+  // Status summary
+  const statuses=['pending','processing','ontheway','delivered','cancelled'];
+  const summary=statuses.map(s=>{
+    const count=orders.filter(o=>o.status===s).length;
+    return`<div style="background:#f5f5f5;border-radius:10px;padding:10px 16px;text-align:center;min-width:100px;">
+      <div style="font-size:18px;font-weight:900;">${count}</div>
+      <div style="font-size:11px;color:#888;text-transform:capitalize">${s==='ontheway'?'On The Way':s}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('status-summary').innerHTML=summary;
+
+  // Real-time orders subscription
+  db.channel('orders').on('postgres_changes',{event:'INSERT',schema:'public',table:'orders'},()=>{
+    loadDashboard();loadOrders();
+    showToast('🔔 New order received!');
+  }).subscribe();
+}
+
+function statusColor(s){
+  const colors={pending:'#f39c12',processing:'#3498db',ontheway:'#9b59b6',delivered:'#2ecc71',cancelled:'#e74c3c'};
+  return colors[s]||'#95a5a6';
+}
+</script>
 </body>
 </html>

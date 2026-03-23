@@ -2,11 +2,7 @@
   "rewrites": [
     {
       "source": "/admin",
-      "destination": "/"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/"
+      "destination": "/admin.html"
     }
   ]
 }
