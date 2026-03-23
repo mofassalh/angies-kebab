@@ -67,8 +67,9 @@ const DELIVERY_PARTNERS = [
 const ADMIN_PASSWORD = "angies2024";
 
 export default function App() {
-  const path = window.location.pathname;
-  const isAdmin = path === "/admin";
+  const path = window.location.pathname.toLowerCase();
+  const isAdmin = path.includes("admin");
+  console.log("Current path is:", path);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [menu, setMenu] = useState(INITIAL_MENU);
