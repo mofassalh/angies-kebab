@@ -67,10 +67,9 @@ const DELIVERY_PARTNERS = [
 const ADMIN_PASSWORD = "angies2024";
 
 export default function App() {
-  const currentPath = window.location.pathname.toLowerCase().replace(/\/$/, ""); 
-  const isAdmin = currentPath === "/admin" || currentPath.includes("admin");
-
-  console.log("Debug - Path:", currentPath, "Is Admin:", isAdmin);
+  const path = window.location.pathname.toLowerCase();
+  const searchParams = new URLSearchParams(window.location.search);
+  const isAdmin = path.includes("admin") || searchParams.get("p") === "admin";
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [menu, setMenu] = useState(INITIAL_MENU);
