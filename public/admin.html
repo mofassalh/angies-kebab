@@ -22,6 +22,7 @@ input,button,select,textarea{outline:none;font-family:'Nunito',sans-serif;}
 .topbar{background:#1a1a1a;height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100;}
 .topbar img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #f5c842;}
 .topbar-title{color:#fff;font-weight:800;font-size:14px;flex:1;}
+.topbar-user{color:rgba(255,255,255,0.6);font-size:11px;}
 .tabs{display:flex;gap:3px;overflow-x:auto;}
 .tab{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;}
 .tab.active{background:#f5c842;color:#1a1a1a;}
@@ -36,7 +37,6 @@ input,button,select,textarea{outline:none;font-family:'Nunito',sans-serif;}
 .ig3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
 .fl{font-size:11px;font-weight:700;color:#555;margin-bottom:3px;}
 .fi{width:100%;padding:9px 12px;border-radius:8px;border:1px solid #ddd;font-size:13px;color:#1a1a1a;}
-.fi:focus{border-color:#1a1a1a;}
 textarea.fi{resize:vertical;min-height:80px;}
 .btn-primary{padding:10px 20px;background:#1a1a1a;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;}
 .btn-danger{padding:6px 12px;background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;}
@@ -48,25 +48,19 @@ textarea.fi{resize:vertical;min-height:80px;}
 .img-upload-zone:hover{border-color:#1a1a1a;background:#f8f8f8;}
 .img-preview{width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:8px;}
 .menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
-.menu-card{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e8e8e8;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.menu-card{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e8e8e8;}
 .menu-card img{width:100%;height:140px;object-fit:cover;}
 .menu-card-no-img{width:100%;height:140px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-size:40px;}
 .menu-card-body{padding:12px;}
 .menu-card-name{font-size:14px;font-weight:800;margin-bottom:4px;}
 .menu-card-cat{font-size:11px;color:#888;margin-bottom:4px;}
-.menu-card-price{font-size:16px;font-weight:900;color:#1a1a1a;margin-bottom:10px;}
+.menu-card-price{font-size:16px;font-weight:900;margin-bottom:10px;}
 .menu-card-actions{display:flex;gap:6px;flex-wrap:wrap;}
 .badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;}
 .badge-available{background:#e8f5e9;color:#2d6a4f;}
 .badge-unavailable{background:#fee;color:#c0392b;}
-.order-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
-.order-card{background:#fff;border-radius:12px;padding:14px;border:1px solid #e8e8e8;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
-.order-num{font-size:14px;font-weight:900;}
-.order-time{font-size:11px;color:#888;margin-top:2px;}
-.order-type-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#f0f0f0;}
-.order-items-text{font-size:12px;color:#555;margin:8px 0;line-height:1.8;}
-.order-total{font-size:15px;font-weight:900;margin-bottom:10px;}
-.status-select{width:100%;padding:8px 12px;border-radius:8px;border:1px solid #ddd;font-size:12px;font-weight:700;cursor:pointer;}
+.order-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+.order-card{background:#fff;border-radius:12px;padding:14px;border:1px solid #e8e8e8;}
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
 .kpi-card{background:#fff;border-radius:12px;padding:16px;border:1px solid #e8e8e8;}
 .kpi-val{font-size:22px;font-weight:900;margin-bottom:4px;}
@@ -74,11 +68,15 @@ textarea.fi{resize:vertical;min-height:80px;}
 .addon-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
 .addon-row .price-input{width:90px;}
 .rm-btn{background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px;font-weight:700;}
-.page-card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;border:1px solid #e8e8e8;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.staff-card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;border:1px solid #e8e8e8;display:flex;justify-content:space-between;align-items:flex-start;}
+.perm-check{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;cursor:pointer;}
+.perm-check input{width:16px;height:16px;cursor:pointer;}
+.role-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;}
+.role-owner{background:#fff3cd;color:#856404;}
+.role-staff{background:#e8f4fd;color:#0c5460;}
 @media(max-width:768px){
   .ig2,.ig3{grid-template-columns:1fr;}
   .kpi-grid{grid-template-columns:1fr 1fr;}
-  .tabs{overflow-x:auto;}
   .menu-grid{grid-template-columns:1fr 1fr;}
   .order-grid{grid-template-columns:1fr;}
 }
@@ -91,8 +89,9 @@ textarea.fi{resize:vertical;min-height:80px;}
     <img src="/logo.jpg" alt="logo"/>
     <h2>Admin Panel</h2>
     <p>Angie's Kebabs & Burgers</p>
-    <input type="password" id="pass-input" placeholder="Enter admin password"/>
-    <div class="err" id="err-msg">❌ Wrong password!</div>
+    <input type="email" id="login-email" placeholder="Email address"/>
+    <input type="password" id="login-pass" placeholder="Password"/>
+    <div class="err" id="err-msg">❌ Wrong email or password!</div>
     <button class="login-btn" onclick="doLogin()">Login →</button>
   </div>
 </div>
@@ -100,14 +99,11 @@ textarea.fi{resize:vertical;min-height:80px;}
 <div id="app">
   <div class="topbar">
     <img src="/logo.jpg" onclick="window.location.href='/'"/>
-    <div class="topbar-title">Angie's Admin Panel</div>
-    <div class="tabs">
-      <button class="tab active" onclick="showTab('dashboard',this)">📊 Dashboard</button>
-      <button class="tab" onclick="showTab('menu',this)">🍔 Menu</button>
-      <button class="tab" onclick="showTab('orders',this)">📋 Orders</button>
-      <button class="tab" onclick="showTab('pages',this)">📄 Pages</button>
-      <button class="tab" onclick="showTab('add-item',this)">➕ Add Item</button>
+    <div>
+      <div class="topbar-title">Angie's Admin Panel</div>
+      <div class="topbar-user" id="topbar-user"></div>
     </div>
+    <div class="tabs" id="nav-tabs"></div>
     <button class="logout-btn" onclick="doLogout()">Logout</button>
   </div>
 
@@ -115,7 +111,7 @@ textarea.fi{resize:vertical;min-height:80px;}
     <div class="toast" id="toast"></div>
 
     <!-- DASHBOARD -->
-    <div id="tab-dashboard" class="sheet active">
+    <div id="tab-dashboard" class="sheet">
       <div class="kpi-grid">
         <div class="kpi-card"><div class="kpi-val" id="kpi-orders">-</div><div class="kpi-lbl">Total Orders</div></div>
         <div class="kpi-card"><div class="kpi-val" id="kpi-revenue">-</div><div class="kpi-lbl">Total Revenue</div></div>
@@ -140,7 +136,7 @@ textarea.fi{resize:vertical;min-height:80px;}
           <select id="filter-cat" class="fi" style="width:auto" onchange="filterMenuItems()">
             <option value="">All Categories</option>
           </select>
-          <button class="btn-primary" onclick="showTab('add-item',document.querySelectorAll('.tab')[4])">+ Add Item</button>
+          <button class="btn-primary" onclick="showAddItemForm()">+ Add Item</button>
         </div>
       </div>
       <div class="menu-grid" id="menu-grid">Loading...</div>
@@ -168,7 +164,6 @@ textarea.fi{resize:vertical;min-height:80px;}
         <div style="font-size:16px;font-weight:800;">Page Management</div>
         <button class="btn-primary" onclick="showAddPageForm()">+ Add Page</button>
       </div>
-
       <div id="add-page-form" style="display:none;" class="card">
         <div class="card-title" id="page-form-title">Add New Page</div>
         <input type="hidden" id="page-edit-id"/>
@@ -176,84 +171,91 @@ textarea.fi{resize:vertical;min-height:80px;}
           <div><div class="fl">Page Title *</div><input type="text" id="page-title" class="fi" placeholder="e.g. About Us"/></div>
           <div><div class="fl">URL Slug *</div><input type="text" id="page-slug" class="fi" placeholder="e.g. about"/></div>
         </div>
-        <div><div class="fl">Content</div><textarea id="page-content" class="fi" rows="6" placeholder="Page content here..."></textarea></div>
+        <div><div class="fl">Content</div><textarea id="page-content" class="fi" rows="5" placeholder="Page content..."></textarea></div>
         <div class="ig3" style="margin-top:10px;">
-          <div><div class="fl">Image URL (optional)</div><input type="text" id="page-image" class="fi" placeholder="https://..."/></div>
-          <div><div class="fl">Show in Navigation</div>
-            <select id="page-nav" class="fi">
-              <option value="true">✅ Yes — Show in nav</option>
-              <option value="false">❌ No — Hide</option>
-            </select>
-          </div>
-          <div><div class="fl">Sort Order</div><input type="number" id="page-order" class="fi" placeholder="0" value="0"/></div>
+          <div><div class="fl">Image URL</div><input type="text" id="page-image" class="fi" placeholder="https://..."/></div>
+          <div><div class="fl">Show in Nav</div><select id="page-nav" class="fi"><option value="true">✅ Yes</option><option value="false">❌ No</option></select></div>
+          <div><div class="fl">Sort Order</div><input type="number" id="page-order" class="fi" value="0"/></div>
         </div>
         <div style="display:flex;gap:10px;margin-top:14px;">
-          <button class="btn-primary" onclick="savePage()">💾 Save Page</button>
+          <button class="btn-primary" onclick="savePage()">💾 Save</button>
           <button onclick="document.getElementById('add-page-form').style.display='none'" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
         </div>
       </div>
-
       <div id="pages-list">Loading...</div>
+    </div>
+
+    <!-- STAFF -->
+    <div id="tab-staff" class="sheet">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div style="font-size:16px;font-weight:800;">Staff Management</div>
+        <button class="btn-primary" onclick="document.getElementById('add-staff-form').style.display='block'">+ Add Staff</button>
+      </div>
+
+      <div id="add-staff-form" style="display:none;" class="card">
+        <div class="card-title">Add New Staff</div>
+        <input type="hidden" id="staff-edit-id"/>
+        <div class="ig3">
+          <div><div class="fl">Name *</div><input type="text" id="staff-name" class="fi" placeholder="Staff name"/></div>
+          <div><div class="fl">Email *</div><input type="email" id="staff-email" class="fi" placeholder="email@example.com"/></div>
+          <div><div class="fl">Password *</div><input type="password" id="staff-pass" class="fi" placeholder="Password"/></div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div class="fl" style="margin-bottom:10px;">Permissions</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;">
+            <label class="perm-check"><input type="checkbox" id="perm-orders" checked/> Orders</label>
+            <label class="perm-check"><input type="checkbox" id="perm-menu"/> Menu</label>
+            <label class="perm-check"><input type="checkbox" id="perm-pages"/> Pages</label>
+            <label class="perm-check"><input type="checkbox" id="perm-dashboard"/> Dashboard</label>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-primary" onclick="saveStaff()">💾 Save Staff</button>
+          <button onclick="document.getElementById('add-staff-form').style.display='none'" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
+        </div>
+      </div>
+
+      <div id="staff-list">Loading...</div>
     </div>
 
     <!-- ADD/EDIT ITEM -->
     <div id="tab-add-item" class="sheet">
       <div style="font-size:16px;font-weight:800;margin-bottom:16px;" id="form-title">➕ Add New Menu Item</div>
       <input type="hidden" id="edit-id"/>
-
       <div class="card">
         <div class="card-title">Basic Info</div>
         <div class="ig2">
           <div><div class="fl">Item Name *</div><input type="text" id="item-name" class="fi" placeholder="e.g. Shish Kebab"/></div>
-          <div><div class="fl">Category *</div>
-            <input type="text" id="item-category" class="fi" placeholder="e.g. Kebabs, Burgers, Sides" list="cat-list"/>
-            <datalist id="cat-list"></datalist>
-          </div>
+          <div><div class="fl">Category *</div><input type="text" id="item-category" class="fi" placeholder="e.g. Kebabs" list="cat-list"/><datalist id="cat-list"></datalist></div>
         </div>
         <div class="ig2">
           <div><div class="fl">Price ($) *</div><input type="number" id="item-price" class="fi" placeholder="0.00" step="0.01" min="0"/></div>
-          <div><div class="fl">Available</div>
-            <select id="item-available" class="fi">
-              <option value="true">✅ Yes — Show on website</option>
-              <option value="false">❌ No — Hide from website</option>
-            </select>
-          </div>
+          <div><div class="fl">Available</div><select id="item-available" class="fi"><option value="true">✅ Yes</option><option value="false">❌ No</option></select></div>
         </div>
-        <div><div class="fl">Description</div><textarea id="item-desc" class="fi" placeholder="Describe this item..."></textarea></div>
+        <div><div class="fl">Description</div><textarea id="item-desc" class="fi"></textarea></div>
       </div>
-
       <div class="card">
-        <div class="card-title">📸 Item Image</div>
-        <div class="img-upload-zone" id="upload-zone" onclick="document.getElementById('img-file').click()">
+        <div class="card-title">📸 Image</div>
+        <div class="img-upload-zone" onclick="document.getElementById('img-file').click()">
           <img id="img-preview" class="img-preview" style="display:none"/>
-          <div id="upload-placeholder">
-            <div style="font-size:36px;margin-bottom:8px">📷</div>
-            <div style="font-size:13px;font-weight:700;color:#555">Click to upload image</div>
-            <div style="font-size:11px;color:#aaa;margin-top:4px">JPG, PNG, WEBP — Max 5MB</div>
-          </div>
+          <div id="upload-placeholder"><div style="font-size:36px;margin-bottom:8px">📷</div><div style="font-size:13px;font-weight:700;color:#555">Click to upload</div><div style="font-size:11px;color:#aaa;margin-top:4px">JPG, PNG, WEBP — Max 5MB</div></div>
           <div id="upload-progress" style="display:none;font-size:12px;color:#888;margin-top:8px;">⏳ Uploading...</div>
         </div>
         <input type="file" id="img-file" accept="image/*" style="display:none" onchange="handleImageUpload(event)"/>
         <input type="hidden" id="item-image-url"/>
       </div>
-
       <div class="card">
         <div class="card-title">🥗 Ingredients</div>
-        <div><div class="fl">Ingredients (comma separated)</div>
-          <input type="text" id="item-ingredients" class="fi" placeholder="e.g. Lamb, Rice, Garlic sauce, Pita bread"/>
-        </div>
+        <input type="text" id="item-ingredients" class="fi" placeholder="e.g. Lamb, Rice, Garlic sauce"/>
       </div>
-
       <div class="card">
         <div class="card-title">⚙️ Customisation Options</div>
-        <div style="font-size:12px;color:#888;margin-bottom:12px;">Customer-রা order করার সময় এগুলো select করতে পারবে</div>
         <div id="addons-list"></div>
         <button onclick="addAddonRow()" style="padding:8px 16px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;">+ Add Option</button>
       </div>
-
       <div style="display:flex;gap:10px;margin-bottom:30px;">
         <button class="btn-primary" onclick="saveItem()" style="flex:1;padding:13px;">💾 Save Item</button>
-        <button onclick="resetForm()" style="padding:13px 20px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">✕ Cancel</button>
+        <button onclick="showTab('menu',null)" style="padding:13px 20px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">✕ Cancel</button>
       </div>
     </div>
 
@@ -265,60 +267,106 @@ const SUPABASE_URL="https://egyxvzjfqnpcfdnwusxn.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVneXh2empmcW5wY2Zkbnd1c3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODMyMjUsImV4cCI6MjA4OTg1OTIyNX0.modzK6AhGyo3YBjZtDl2lK4tFQuj0B3KsDFIf2n-was";
 const{createClient}=supabase;
 const db=createClient(SUPABASE_URL,SUPABASE_KEY);
-const ADMIN_PASS="angies2024";
+
+let currentUser=null;
 let allMenuItems=[];
 let addonCount=0;
 
-function doLogin(){
-  if(document.getElementById('pass-input').value===ADMIN_PASS){
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('app').style.display='block';
-    loadDashboard();loadMenuItems();loadOrders();loadPages();
-  }else{
+// ===== LOGIN =====
+async function doLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  if(!email||!pass)return;
+
+  const{data,error}=await db.from('staff').select('*').eq('email',email).eq('password',pass).eq('active',true).single();
+  if(error||!data){
     document.getElementById('err-msg').style.display='block';
+    return;
   }
+
+  currentUser=data;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('topbar-user').textContent=`${data.name} · ${data.role}`;
+  buildNav();
+  loadInitial();
 }
+
 document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('pass-input').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 });
+
 function doLogout(){
+  currentUser=null;
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('app').style.display='none';
+  document.getElementById('login-email').value='';
+  document.getElementById('login-pass').value='';
+}
+
+function hasPerm(perm){
+  if(!currentUser)return false;
+  if(currentUser.role==='owner')return true;
+  return currentUser.permissions?.[perm]===true;
+}
+
+function buildNav(){
+  const tabs=[];
+  if(hasPerm('dashboard'))tabs.push({id:'dashboard',label:'📊 Dashboard'});
+  if(hasPerm('menu'))tabs.push({id:'menu',label:'🍔 Menu'});
+  if(hasPerm('orders'))tabs.push({id:'orders',label:'📋 Orders'});
+  if(hasPerm('pages'))tabs.push({id:'pages',label:'📄 Pages'});
+  if(hasPerm('staff'))tabs.push({id:'staff',label:'👥 Staff'});
+
+  const nav=document.getElementById('nav-tabs');
+  nav.innerHTML=tabs.map((t,i)=>`<button class="tab${i===0?' active':''}" onclick="showTab('${t.id}',this)">${t.label}</button>`).join('');
+
+  // Show first tab
+  if(tabs.length>0) showTab(tabs[0].id,null);
+}
+
+function loadInitial(){
+  if(hasPerm('dashboard'))loadDashboard();
+  if(hasPerm('menu'))loadMenuItems();
+  if(hasPerm('orders'))loadOrders();
+  if(hasPerm('pages'))loadPages();
+  if(hasPerm('staff'))loadStaff();
 }
 
 function showTab(name,btn){
   document.querySelectorAll('.sheet').forEach(e=>e.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
+  const sheet=document.getElementById('tab-'+name);
+  if(sheet)sheet.classList.add('active');
   if(btn)btn.classList.add('active');
+  else{const b=document.querySelector(`.tab[onclick*="'${name}'"]`);if(b)b.classList.add('active');}
   if(name==='orders')loadOrders();
   if(name==='dashboard')loadDashboard();
   if(name==='menu')loadMenuItems();
   if(name==='pages')loadPages();
+  if(name==='staff')loadStaff();
 }
 
 function showToast(msg,isError=false){
   const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='toast'+(isError?' error':'');
-  t.style.display='block';
+  t.textContent=msg;t.className='toast'+(isError?' error':'');t.style.display='block';
   setTimeout(()=>t.style.display='none',3000);
 }
 
-// ===== IMAGE UPLOAD =====
+// ===== IMAGE =====
 async function handleImageUpload(e){
   const file=e.target.files[0];if(!file)return;
-  if(file.size>5*1024*1024){showToast('File too large! Max 5MB',true);return;}
+  if(file.size>5*1024*1024){showToast('Max 5MB!',true);return;}
   document.getElementById('upload-progress').style.display='block';
   document.getElementById('upload-placeholder').style.display='none';
   const ext=file.name.split('.').pop();
+  const{error}=await db.storage.from('menu-images').upload(`menu/${Date.now()}.${ext}`,file,{upsert:true});
+  if(error){showToast('Upload failed',true);document.getElementById('upload-progress').style.display='none';document.getElementById('upload-placeholder').style.display='block';return;}
   const fileName=`menu/${Date.now()}.${ext}`;
-  const{error}=await db.storage.from('menu-images').upload(fileName,file,{upsert:true});
-  if(error){showToast('Upload failed: '+error.message,true);document.getElementById('upload-progress').style.display='none';document.getElementById('upload-placeholder').style.display='block';return;}
+  await db.storage.from('menu-images').upload(fileName,file,{upsert:true});
   const{data:{publicUrl}}=db.storage.from('menu-images').getPublicUrl(fileName);
   document.getElementById('item-image-url').value=publicUrl;
-  const preview=document.getElementById('img-preview');
-  preview.src=publicUrl;preview.style.display='block';
+  const p=document.getElementById('img-preview');p.src=publicUrl;p.style.display='block';
   document.getElementById('upload-progress').style.display='none';
   showToast('✅ Image uploaded!');
 }
@@ -327,60 +375,46 @@ async function handleImageUpload(e){
 function addAddonRow(name='',price=0){
   addonCount++;
   const div=document.createElement('div');
-  div.className='addon-row';
-  div.id='addon-'+addonCount;
-  div.innerHTML=`
-    <input type="text" class="fi" placeholder="Option name (e.g. Extra Cheese)" value="${name}" style="flex:1"/>
-    <input type="number" class="fi price-input" placeholder="Price $" value="${price}" step="0.50" min="0"/>
-    <button class="rm-btn" onclick="document.getElementById('addon-${addonCount}').remove()">✕</button>`;
+  div.className='addon-row';div.id='addon-'+addonCount;
+  div.innerHTML=`<input type="text" class="fi" placeholder="Option name" value="${name}" style="flex:1"/><input type="number" class="fi price-input" placeholder="Price $" value="${price}" step="0.50" min="0"/><button class="rm-btn" onclick="document.getElementById('addon-${addonCount}').remove()">✕</button>`;
   document.getElementById('addons-list').appendChild(div);
 }
 
 function getAddons(){
-  const rows=document.querySelectorAll('#addons-list .addon-row');
-  const addons=[];
-  rows.forEach(row=>{
+  return [...document.querySelectorAll('#addons-list .addon-row')].map(row=>{
     const inputs=row.querySelectorAll('input');
-    const name=inputs[0].value.trim();
-    const price=parseFloat(inputs[1].value)||0;
-    if(name)addons.push({name,price});
-  });
-  return addons;
+    return{name:inputs[0].value.trim(),price:parseFloat(inputs[1].value)||0};
+  }).filter(a=>a.name);
 }
 
-// ===== SAVE MENU ITEM =====
+// ===== MENU =====
+function showAddItemForm(){
+  resetForm();
+  showTab('add-item',null);
+}
+
 async function saveItem(){
   const name=document.getElementById('item-name').value.trim();
   const category=document.getElementById('item-category').value.trim();
   const price=parseFloat(document.getElementById('item-price').value);
   if(!name||!category||!price){showToast('Name, Category, Price required!',true);return;}
-  const ingredients=document.getElementById('item-ingredients').value.split(',').map(s=>s.trim()).filter(Boolean);
-  const item={
-    name,category,price,
+  const item={name,category,price,
     description:document.getElementById('item-desc').value,
     image_url:document.getElementById('item-image-url').value||null,
-    ingredients,addons:getAddons(),
+    ingredients:document.getElementById('item-ingredients').value.split(',').map(s=>s.trim()).filter(Boolean),
+    addons:getAddons(),
     available:document.getElementById('item-available').value==='true',
   };
   const editId=document.getElementById('edit-id').value;
-  const{error}=editId
-    ?await db.from('menu_items').update(item).eq('id',editId)
-    :await db.from('menu_items').insert(item);
+  const{error}=editId?await db.from('menu_items').update(item).eq('id',editId):await db.from('menu_items').insert(item);
   if(error){showToast('Error: '+error.message,true);return;}
   showToast('✅ Item saved!');
-  resetForm();
-  loadMenuItems();
-  showTab('menu',document.querySelectorAll('.tab')[1]);
+  resetForm();loadMenuItems();
+  showTab('menu',null);
 }
 
 function resetForm(){
-  document.getElementById('edit-id').value='';
-  document.getElementById('item-name').value='';
-  document.getElementById('item-category').value='';
-  document.getElementById('item-price').value='';
-  document.getElementById('item-desc').value='';
-  document.getElementById('item-ingredients').value='';
-  document.getElementById('item-image-url').value='';
+  ['edit-id','item-name','item-category','item-price','item-desc','item-ingredients','item-image-url'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('item-available').value='true';
   document.getElementById('img-preview').style.display='none';
   document.getElementById('upload-placeholder').style.display='block';
@@ -389,7 +423,6 @@ function resetForm(){
   addonCount=0;
 }
 
-// ===== LOAD MENU =====
 async function loadMenuItems(){
   const{data}=await db.from('menu_items').select('*').order('category');
   if(!data)return;
@@ -399,7 +432,7 @@ async function loadMenuItems(){
   const filterCat=document.getElementById('filter-cat');
   if(catList)catList.innerHTML=cats.map(c=>`<option value="${c}">`).join('');
   if(filterCat)filterCat.innerHTML='<option value="">All Categories</option>'+cats.map(c=>`<option value="${c}">${c}</option>`).join('');
-  document.getElementById('kpi-menu').textContent=data.length;
+  if(document.getElementById('kpi-menu'))document.getElementById('kpi-menu').textContent=data.length;
   renderMenuGrid(data);
 }
 
@@ -409,13 +442,12 @@ function filterMenuItems(){
 }
 
 function renderMenuGrid(items){
-  const grid=document.getElementById('menu-grid');
-  if(!items.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No items found</div>';return;}
+  const grid=document.getElementById('menu-grid');if(!grid)return;
+  if(!items.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No items</div>';return;}
+  const canEdit=hasPerm('menu');
   grid.innerHTML=items.map(item=>`
     <div class="menu-card">
-      ${item.image_url
-        ?`<img src="${item.image_url}" alt="${item.name}" loading="lazy"/>`
-        :`<div class="menu-card-no-img">🍔</div>`}
+      ${item.image_url?`<img src="${item.image_url}" alt="${item.name}" loading="lazy"/>`:`<div class="menu-card-no-img">🍔</div>`}
       <div class="menu-card-body">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
           <div class="menu-card-name">${item.name}</div>
@@ -423,11 +455,10 @@ function renderMenuGrid(items){
         </div>
         <div class="menu-card-cat">${item.category}</div>
         <div class="menu-card-price">$${item.price.toFixed(2)}</div>
-        ${item.ingredients&&item.ingredients.length?`<div style="font-size:10px;color:#888;margin-bottom:8px">${item.ingredients.slice(0,3).join(', ')}${item.ingredients.length>3?'...':''}</div>`:''}
         <div class="menu-card-actions">
-          <button class="btn-success" onclick="editItem('${item.id}')">✏️ Edit</button>
+          ${canEdit?`<button class="btn-success" onclick="editItem('${item.id}')">✏️ Edit</button>
           <button class="btn-warning" onclick="toggleAvailable('${item.id}',${item.available})">${item.available?'Hide':'Show'}</button>
-          <button class="btn-danger" onclick="deleteItem('${item.id}')">🗑️ Delete</button>
+          <button class="btn-danger" onclick="deleteItem('${item.id}')">🗑️</button>`:'<span style="font-size:11px;color:#aaa">View only</span>'}
         </div>
       </div>
     </div>`).join('');
@@ -443,29 +474,22 @@ async function editItem(id){
   document.getElementById('item-ingredients').value=(item.ingredients||[]).join(', ');
   document.getElementById('item-available').value=String(item.available);
   document.getElementById('item-image-url').value=item.image_url||'';
-  if(item.image_url){
-    document.getElementById('img-preview').src=item.image_url;
-    document.getElementById('img-preview').style.display='block';
-    document.getElementById('upload-placeholder').style.display='none';
-  }
-  document.getElementById('addons-list').innerHTML='';
-  addonCount=0;
+  if(item.image_url){document.getElementById('img-preview').src=item.image_url;document.getElementById('img-preview').style.display='block';document.getElementById('upload-placeholder').style.display='none';}
+  document.getElementById('addons-list').innerHTML='';addonCount=0;
   (item.addons||[]).forEach(a=>addAddonRow(a.name,a.price));
   document.getElementById('form-title').textContent='✏️ Edit: '+item.name;
-  showTab('add-item',document.querySelectorAll('.tab')[4]);
+  showTab('add-item',null);
 }
 
 async function toggleAvailable(id,current){
   await db.from('menu_items').update({available:!current}).eq('id',id);
-  showToast(current?'Item hidden from website':'Item now visible on website');
-  loadMenuItems();
+  showToast(current?'Item hidden':'Item visible');loadMenuItems();
 }
 
 async function deleteItem(id){
   if(!confirm('Delete this item?'))return;
   await db.from('menu_items').delete().eq('id',id);
-  showToast('Item deleted');
-  loadMenuItems();
+  showToast('Deleted');loadMenuItems();
 }
 
 // ===== ORDERS =====
@@ -473,53 +497,39 @@ async function loadOrders(){
   const filter=document.getElementById('order-filter')?document.getElementById('order-filter').value:'';
   let query=db.from('orders').select('*').order('created_at',{ascending:false}).limit(50);
   if(filter)query=query.eq('status',filter);
-  const{data}=await query;
-  if(!data)return;
-  const grid=document.getElementById('order-grid');
-  if(!data.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No orders found</div>';return;}
+  const{data}=await query;if(!data)return;
+  const grid=document.getElementById('order-grid');if(!grid)return;
+  if(!data.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No orders</div>';return;}
+  const canUpdate=hasPerm('orders');
   grid.innerHTML=data.map(order=>{
     const items=Array.isArray(order.items)?order.items:[];
     return`<div class="order-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
-        <div>
-          <div class="order-num">${order.order_number||'#'+order.id.slice(0,6)}</div>
-          <div class="order-time">🕐 ${getTimeAgo(order.created_at)}</div>
-        </div>
-        <span class="order-type-badge">${order.order_type==='pickup'?'🏃 Pickup':'🛵 Delivery'}</span>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <div><div style="font-size:14px;font-weight:900;">${order.order_number||'#'+order.id.slice(0,6)}</div>
+        <div style="font-size:11px;color:#888;">🕐 ${getTimeAgo(order.created_at)}</div></div>
+        <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#f0f0f0">${order.order_type==='pickup'?'🏃 Pickup':'🛵 Delivery'}</span>
       </div>
-      <div class="order-items-text">${items.map(i=>`${i.name} × ${i.qty} — $${(i.finalPrice*i.qty).toFixed(2)}`).join('<br>')}</div>
-      <div class="order-total">Total: $${parseFloat(order.total).toFixed(2)}</div>
-      <select class="status-select" style="border-color:${statusColor(order.status)};color:${statusColor(order.status)}" onchange="updateOrderStatus('${order.id}',this)">
+      <div style="font-size:12px;color:#555;margin-bottom:8px;line-height:1.8">${items.map(i=>`${i.name} × ${i.qty}`).join('<br>')}</div>
+      <div style="font-size:15px;font-weight:900;margin-bottom:10px;">$${parseFloat(order.total).toFixed(2)}</div>
+      ${canUpdate?`<select style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid ${statusColor(order.status)};font-size:12px;font-weight:700;cursor:pointer;color:${statusColor(order.status)}" onchange="updateOrderStatus('${order.id}',this)">
         <option value="pending" ${order.status==='pending'?'selected':''}>⏳ Pending</option>
         <option value="processing" ${order.status==='processing'?'selected':''}>🔄 On Process</option>
         <option value="ontheway" ${order.status==='ontheway'?'selected':''}>🛵 On The Way</option>
         <option value="delivered" ${order.status==='delivered'?'selected':''}>✅ Delivered</option>
         <option value="cancelled" ${order.status==='cancelled'?'selected':''}>❌ Cancelled</option>
-      </select>
+      </select>`:`<span style="font-size:12px;font-weight:700;color:${statusColor(order.status)}">${order.status}</span>`}
     </div>`;
   }).join('');
 }
 
-async function updateOrderStatus(id,selectEl){
-  const status=selectEl.value;
-  await db.from('orders').update({status,updated_at:new Date().toISOString()}).eq('id',id);
-  selectEl.style.borderColor=statusColor(status);
-  selectEl.style.color=statusColor(status);
-  showToast('✅ Order status updated!');
-  loadDashboard();
+async function updateOrderStatus(id,sel){
+  await db.from('orders').update({status:sel.value,updated_at:new Date().toISOString()}).eq('id',id);
+  sel.style.borderColor=statusColor(sel.value);sel.style.color=statusColor(sel.value);
+  showToast('✅ Status updated!');loadDashboard();
 }
 
-function statusColor(s){
-  return{pending:'#f39c12',processing:'#3498db',ontheway:'#9b59b6',delivered:'#2ecc71',cancelled:'#e74c3c'}[s]||'#95a5a6';
-}
-
-function getTimeAgo(dateStr){
-  const diff=Math.floor((Date.now()-new Date(dateStr))/1000);
-  if(diff<60)return diff+'s ago';
-  if(diff<3600)return Math.floor(diff/60)+'m ago';
-  if(diff<86400)return Math.floor(diff/3600)+'h ago';
-  return Math.floor(diff/86400)+'d ago';
-}
+function statusColor(s){return{pending:'#f39c12',processing:'#3498db',ontheway:'#9b59b6',delivered:'#2ecc71',cancelled:'#e74c3c'}[s]||'#95a5a6';}
+function getTimeAgo(d){const diff=Math.floor((Date.now()-new Date(d))/1000);if(diff<60)return diff+'s ago';if(diff<3600)return Math.floor(diff/60)+'m ago';if(diff<86400)return Math.floor(diff/3600)+'h ago';return Math.floor(diff/86400)+'d ago';}
 
 // ===== DASHBOARD =====
 async function loadDashboard(){
@@ -527,70 +537,54 @@ async function loadDashboard(){
   if(!orders)return;
   const total=orders.reduce((s,o)=>s+parseFloat(o.total||0),0);
   const pending=orders.filter(o=>o.status==='pending').length;
-  document.getElementById('kpi-orders').textContent=orders.length;
-  document.getElementById('kpi-revenue').textContent='$'+Math.round(total).toLocaleString();
-  document.getElementById('kpi-pending').textContent=pending;
-
-  const recentHtml=orders.slice(0,5).map(o=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f5f5f5;">
-      <div>
-        <div style="font-size:13px;font-weight:700;">${o.order_number||'#'+o.id.slice(0,6)}</div>
-        <div style="font-size:11px;color:#888;">${getTimeAgo(o.created_at)} · ${o.order_type}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;">
+  if(document.getElementById('kpi-orders'))document.getElementById('kpi-orders').textContent=orders.length;
+  if(document.getElementById('kpi-revenue'))document.getElementById('kpi-revenue').textContent='$'+Math.round(total).toLocaleString();
+  if(document.getElementById('kpi-pending'))document.getElementById('kpi-pending').textContent=pending;
+  const rl=document.getElementById('recent-orders-list');
+  if(rl)rl.innerHTML=orders.slice(0,5).map(o=>`
+    <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f5f5f5;">
+      <div><div style="font-size:13px;font-weight:700;">${o.order_number||'#'+o.id.slice(0,6)}</div>
+      <div style="font-size:11px;color:#888;">${getTimeAgo(o.created_at)} · ${o.order_type}</div></div>
+      <div style="display:flex;gap:10px;align-items:center;">
         <span style="font-size:13px;font-weight:700;">$${parseFloat(o.total).toFixed(2)}</span>
         <span style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:${statusColor(o.status)}22;color:${statusColor(o.status)}">${o.status}</span>
       </div>
-    </div>`).join('');
-  document.getElementById('recent-orders-list').innerHTML=recentHtml||'<div style="color:#aaa;padding:20px;text-align:center">No orders yet</div>';
-
-  const statuses=['pending','processing','ontheway','delivered','cancelled'];
-  document.getElementById('status-summary').innerHTML=statuses.map(s=>`
+    </div>`).join('')||'<div style="color:#aaa;padding:20px;text-align:center">No orders yet</div>';
+  const ss=document.getElementById('status-summary');
+  if(ss)ss.innerHTML=['pending','processing','ontheway','delivered','cancelled'].map(s=>`
     <div style="background:#f5f5f5;border-radius:10px;padding:10px 16px;text-align:center;min-width:90px;">
       <div style="font-size:18px;font-weight:900;color:${statusColor(s)}">${orders.filter(o=>o.status===s).length}</div>
       <div style="font-size:11px;color:#888">${s==='ontheway'?'On The Way':s.charAt(0).toUpperCase()+s.slice(1)}</div>
     </div>`).join('');
 
-  // Real-time
-  db.channel('orders-dash').on('postgres_changes',{event:'INSERT',schema:'public',table:'orders'},()=>{
-    loadDashboard();loadOrders();
-    showToast('🔔 New order received!');
+  db.channel('orders-rt').on('postgres_changes',{event:'INSERT',schema:'public',table:'orders'},()=>{
+    loadDashboard();loadOrders();showToast('🔔 New order!');
   }).subscribe();
 }
 
 // ===== PAGES =====
 async function loadPages(){
-  const{data}=await db.from('pages').select('*').order('sort_order');
-  if(!data)return;
-  const list=document.getElementById('pages-list');
-  if(!data.length){list.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;">No pages yet. Click "Add Page" to create one.</div>';return;}
-  list.innerHTML=data.map(page=>`
-    <div class="page-card">
+  const{data}=await db.from('pages').select('*').order('sort_order');if(!data)return;
+  const list=document.getElementById('pages-list');if(!list)return;
+  if(!data.length){list.innerHTML='<div style="padding:40px;text-align:center;color:#aaa">No pages yet</div>';return;}
+  list.innerHTML=data.map(p=>`
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;">
       <div>
-        <div style="font-size:14px;font-weight:700;">${page.title}</div>
-        <div style="font-size:12px;color:#888;margin-top:2px;">
-          /${page.slug} · 
-          <span style="color:${page.show_in_nav?'#2d6a4f':'#c0392b'};font-weight:700">${page.show_in_nav?'Visible in nav':'Hidden'}</span>
-          · Sort: ${page.sort_order}
-        </div>
-        <div style="font-size:12px;color:#aaa;margin-top:4px;">${(page.content||'').slice(0,80)}${(page.content||'').length>80?'...':''}</div>
+        <div style="font-size:14px;font-weight:700;">${p.title}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px;">/${p.slug} · <span style="color:${p.show_in_nav?'#2d6a4f':'#c0392b'}">${p.show_in_nav?'Visible':'Hidden'}</span></div>
+        <div style="font-size:12px;color:#aaa;margin-top:3px;">${(p.content||'').slice(0,80)}${(p.content||'').length>80?'...':''}</div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0;margin-left:12px;">
-        <button class="btn-success" onclick="editPage('${page.id}')">✏️ Edit</button>
-        <button class="btn-danger" onclick="deletePage('${page.id}','${page.slug}')">🗑️</button>
+        <button class="btn-success" onclick="editPage('${p.id}')">✏️</button>
+        <button class="btn-danger" onclick="deletePage('${p.id}','${p.slug}')">🗑️</button>
       </div>
     </div>`).join('');
 }
 
 function showAddPageForm(){
   document.getElementById('add-page-form').style.display='block';
-  document.getElementById('page-edit-id').value='';
-  document.getElementById('page-title').value='';
-  document.getElementById('page-slug').value='';
-  document.getElementById('page-content').value='';
-  document.getElementById('page-image').value='';
-  document.getElementById('page-nav').value='true';
-  document.getElementById('page-order').value='0';
+  ['page-edit-id','page-title','page-slug','page-content','page-image'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('page-nav').value='true';document.getElementById('page-order').value='0';
   document.getElementById('page-form-title').textContent='Add New Page';
   window.scrollTo(0,0);
 }
@@ -599,44 +593,97 @@ async function savePage(){
   const title=document.getElementById('page-title').value.trim();
   const slug=document.getElementById('page-slug').value.trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
   if(!title||!slug){showToast('Title and Slug required!',true);return;}
-  const pageData={
-    title,slug,
-    content:document.getElementById('page-content').value,
-    image_url:document.getElementById('page-image').value||null,
-    show_in_nav:document.getElementById('page-nav').value==='true',
-    sort_order:+document.getElementById('page-order').value||0,
-  };
+  const pd={title,slug,content:document.getElementById('page-content').value,image_url:document.getElementById('page-image').value||null,show_in_nav:document.getElementById('page-nav').value==='true',sort_order:+document.getElementById('page-order').value||0};
   const editId=document.getElementById('page-edit-id').value;
-  const{error}=editId
-    ?await db.from('pages').update(pageData).eq('id',editId)
-    :await db.from('pages').insert(pageData);
+  const{error}=editId?await db.from('pages').update(pd).eq('id',editId):await db.from('pages').insert(pd);
   if(error){showToast('Error: '+error.message,true);return;}
-  showToast('✅ Page saved!');
-  document.getElementById('add-page-form').style.display='none';
-  loadPages();
+  showToast('✅ Page saved!');document.getElementById('add-page-form').style.display='none';loadPages();
 }
 
 async function editPage(id){
-  const{data}=await db.from('pages').select('*').eq('id',id).single();
-  if(!data)return;
-  document.getElementById('page-edit-id').value=id;
-  document.getElementById('page-title').value=data.title;
-  document.getElementById('page-slug').value=data.slug;
-  document.getElementById('page-content').value=data.content||'';
-  document.getElementById('page-image').value=data.image_url||'';
-  document.getElementById('page-nav').value=String(data.show_in_nav);
-  document.getElementById('page-order').value=data.sort_order||0;
-  document.getElementById('page-form-title').textContent='✏️ Edit: '+data.title;
-  document.getElementById('add-page-form').style.display='block';
-  window.scrollTo(0,0);
+  const{data}=await db.from('pages').select('*').eq('id',id).single();if(!data)return;
+  document.getElementById('page-edit-id').value=id;document.getElementById('page-title').value=data.title;
+  document.getElementById('page-slug').value=data.slug;document.getElementById('page-content').value=data.content||'';
+  document.getElementById('page-image').value=data.image_url||'';document.getElementById('page-nav').value=String(data.show_in_nav);
+  document.getElementById('page-order').value=data.sort_order||0;document.getElementById('page-form-title').textContent='✏️ Edit: '+data.title;
+  document.getElementById('add-page-form').style.display='block';window.scrollTo(0,0);
 }
 
 async function deletePage(id,slug){
-  if(slug==='home'){showToast('Home page cannot be deleted!',true);return;}
+  if(slug==='home'){showToast('Home cannot be deleted!',true);return;}
   if(!confirm('Delete this page?'))return;
-  await db.from('pages').delete().eq('id',id);
-  showToast('Page deleted');
-  loadPages();
+  await db.from('pages').delete().eq('id',id);showToast('Deleted');loadPages();
+}
+
+// ===== STAFF =====
+async function loadStaff(){
+  const{data}=await db.from('staff').select('*').order('created_at');if(!data)return;
+  const list=document.getElementById('staff-list');if(!list)return;
+  list.innerHTML=data.map(s=>`
+    <div class="staff-card">
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <div style="font-size:14px;font-weight:800;">${s.name}</div>
+          <span class="role-badge role-${s.role}">${s.role}</span>
+          ${!s.active?'<span class="badge badge-unavailable">Inactive</span>':''}
+        </div>
+        <div style="font-size:12px;color:#888;margin-bottom:8px;">${s.email}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          ${Object.entries(s.permissions||{}).filter(([,v])=>v).map(([k])=>`<span style="background:#e8f4fd;color:#0c5460;border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700">${k}</span>`).join('')}
+        </div>
+      </div>
+      ${s.role!=='owner'?`<div style="display:flex;gap:6px;flex-shrink:0;margin-left:12px;">
+        <button class="btn-success" onclick="editStaff('${s.id}')">✏️ Edit</button>
+        <button class="btn-warning" onclick="toggleStaffActive('${s.id}',${s.active})">${s.active?'Disable':'Enable'}</button>
+        <button class="btn-danger" onclick="deleteStaff('${s.id}')">🗑️</button>
+      </div>`:'<span style="font-size:11px;color:#aaa">Owner account</span>'}
+    </div>`).join('');
+}
+
+async function saveStaff(){
+  const name=document.getElementById('staff-name').value.trim();
+  const email=document.getElementById('staff-email').value.trim();
+  const pass=document.getElementById('staff-pass').value;
+  if(!name||!email||!pass){showToast('All fields required!',true);return;}
+  const permissions={
+    orders:document.getElementById('perm-orders').checked,
+    menu:document.getElementById('perm-menu').checked,
+    pages:document.getElementById('perm-pages').checked,
+    dashboard:document.getElementById('perm-dashboard').checked,
+  };
+  const staffData={name,email,password:pass,role:'staff',permissions,active:true};
+  const editId=document.getElementById('staff-edit-id').value;
+  const{error}=editId?await db.from('staff').update(staffData).eq('id',editId):await db.from('staff').insert(staffData);
+  if(error){showToast('Error: '+error.message,true);return;}
+  showToast('✅ Staff saved!');
+  document.getElementById('add-staff-form').style.display='none';
+  ['staff-edit-id','staff-name','staff-email','staff-pass'].forEach(id=>document.getElementById(id).value='');
+  loadStaff();
+}
+
+async function editStaff(id){
+  const{data}=await db.from('staff').select('*').eq('id',id).single();if(!data)return;
+  document.getElementById('staff-edit-id').value=id;
+  document.getElementById('staff-name').value=data.name;
+  document.getElementById('staff-email').value=data.email;
+  document.getElementById('staff-pass').value=data.password;
+  document.getElementById('perm-orders').checked=data.permissions?.orders||false;
+  document.getElementById('perm-menu').checked=data.permissions?.menu||false;
+  document.getElementById('perm-pages').checked=data.permissions?.pages||false;
+  document.getElementById('perm-dashboard').checked=data.permissions?.dashboard||false;
+  document.getElementById('add-staff-form').style.display='block';
+  window.scrollTo(0,0);
+}
+
+async function toggleStaffActive(id,current){
+  await db.from('staff').update({active:!current}).eq('id',id);
+  showToast(current?'Staff disabled':'Staff enabled');loadStaff();
+}
+
+async function deleteStaff(id){
+  if(!confirm('Delete this staff?'))return;
+  await db.from('staff').delete().eq('id',id);
+  showToast('Deleted');loadStaff();
 }
 </script>
 </body>
