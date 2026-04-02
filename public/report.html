@@ -13,111 +13,84 @@
 body{background:#f0f2f5;font-family:'Inter',Arial,sans-serif;min-height:100vh;color:#1a1a1a;font-size:13px;}
 input,button,select{outline:none;font-family:'Inter',Arial,sans-serif;}
 
-/* LOGIN */
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#1e2a38;}
 .login-box{background:#fff;border-radius:16px;padding:40px;width:360px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.3);}
 .login-box img{width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid #f5c842;}
-.login-box h2{font-size:20px;font-weight:700;margin-top:12px;color:#1a1a1a;}
+.login-box h2{font-size:20px;font-weight:700;margin-top:12px;}
 .login-box p{font-size:13px;color:#666;margin-top:4px;margin-bottom:20px;}
 .login-box input{width:100%;padding:11px 14px;border-radius:8px;border:1px solid #ddd;font-size:14px;margin-bottom:10px;color:#1a1a1a;}
 .err-msg{color:#c0392b;font-size:12px;margin-bottom:8px;display:none;}
 .login-btn{width:100%;padding:11px;border-radius:8px;background:#1e2a38;color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;}
 
-/* APP LAYOUT */
 #app{display:none;min-height:100vh;flex-direction:column;}
-
-/* TOPBAR */
 .topbar{background:#1e2a38;height:50px;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:300;position:sticky;top:0;}
-.topbar img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #f5c842;cursor:pointer;flex-shrink:0;}
-.topbar-name{color:#fff;font-weight:700;font-size:14px;}
+.topbar img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #f5c842;cursor:pointer;}
+.topbar-name{color:#fff;font-weight:700;font-size:14px;flex:1;}
 .topbar-sub{color:rgba(255,255,255,0.45);font-size:10px;}
-.top-tabs{display:flex;gap:2px;margin-left:auto;}
+.top-tabs{display:flex;gap:2px;}
 .ttab{padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;transition:all 0.15s;}
 .ttab.active{background:#f5c842;color:#1a1a1a;font-weight:700;}
 .ttab:not(.active){background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);}
-.ttab:not(.active):hover{background:rgba(255,255,255,0.2);}
-.logout-btn{padding:6px 12px;border-radius:6px;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);border:none;cursor:pointer;font-size:12px;margin-left:8px;}
+.logout-btn{padding:6px 12px;border-radius:6px;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);border:none;cursor:pointer;font-size:12px;}
 
-/* MAIN */
 .main-body{display:flex;flex:1;overflow:hidden;height:calc(100vh - 50px);}
-
-/* SIDEBAR */
-.sidebar{width:176px;background:#fff;border-right:1px solid #e0e0e0;flex-shrink:0;display:none;flex-direction:column;overflow-y:auto;}
+.sidebar{width:180px;background:#fff;border-right:1px solid #e0e0e0;flex-shrink:0;display:none;flex-direction:column;overflow-y:auto;}
 .sidebar.show{display:flex;}
 .sb-sec{padding:10px 12px 4px;font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.5px;}
 .sb-item{padding:9px 14px;font-size:12px;font-weight:500;cursor:pointer;border-left:3px solid transparent;color:#444;transition:all 0.15s;}
 .sb-item:hover{background:#f5f5f5;color:#1a1a1a;}
 .sb-item.active{background:#eef2ff;color:#1e2a38;font-weight:700;border-left-color:#1e2a38;}
-
-/* CONTENT */
 .content{flex:1;overflow:auto;}
 .sheet{display:none;}
 .sheet.active{display:block;}
-
-/* CARDS */
 .page-pad{padding:16px;}
+
 .card{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);border:1px solid #e8e8e8;}
 .card-title{font-size:12px;font-weight:700;color:#1a1a1a;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f0f0f0;}
-.ig2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
-.ig3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
-.ig4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;}
-.fl{font-size:11px;font-weight:600;color:#555;margin-bottom:3px;}
-.fi{width:100%;padding:8px 10px;border-radius:6px;border:1px solid #ddd;font-size:12px;background:#fff;color:#1a1a1a;}
-.fi:focus{border-color:#1e2a38;}
-.save-btn{width:100%;padding:10px;background:#1e2a38;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:12px;}
 .toast{background:#d4edda;color:#155724;border-radius:6px;padding:8px 14px;font-size:12px;font-weight:600;margin-bottom:10px;display:none;}
+.toggle-btn{background:#f0f0f0;border:1px solid #ddd;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;color:#1a1a1a;}
 
-/* DATA TABLE */
-.dtwrap{overflow-x:auto;border-radius:8px;border:1px solid #e0e0e0;}
-.dt{width:100%;border-collapse:collapse;font-size:11px;background:#fff;}
-.dt th{background:#1e2a38;color:#fff;padding:7px 10px;font-weight:700;white-space:nowrap;border:1px solid #152030;font-size:11px;}
-.dt td{padding:6px 10px;border:1px solid #ebebeb;white-space:nowrap;color:#1a1a1a;}
-.dt tr:nth-child(even) td{background:#fafafa;}
-.del-btn{background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:10px;}
-
-/* UPLOAD */
 .upload-zone{border:2px dashed #1e2a38;border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:#f8f9fa;transition:all 0.2s;margin-bottom:10px;}
 .upload-zone:hover{background:#eef2ff;}
 
-/* REPORT TABLE WRAPPER — key for frozen headers */
-.rt-outer{overflow:auto;position:relative;}
+/* Input table */
+.input-table-wrap{overflow-x:auto;}
+.input-table{width:100%;border-collapse:collapse;min-width:1100px;}
+.input-table th{background:#1e2a38;color:#fff;padding:10px 12px;font-size:12px;font-weight:700;text-align:left;border:1px solid #152030;white-space:nowrap;}
+.input-table td{padding:8px;border:1px solid #e0e0e0;background:#fff;vertical-align:middle;}
+.input-table td input, .input-table td select{width:100%;padding:7px 8px;border:1px solid #ddd;border-radius:6px;font-size:12px;color:#1a1a1a;background:#fff;}
+.input-table td input:focus, .input-table td select:focus{border-color:#1e2a38;}
+.save-row-btn{padding:7px 14px;background:#1e2a38;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.save-row-btn:hover{background:#152030;}
+
+/* Entries table */
+.entries-table-wrap{overflow-x:auto;border-radius:8px;border:1px solid #e0e0e0;}
+.entries-table{width:100%;border-collapse:collapse;font-size:11px;background:#fff;min-width:1000px;}
+.entries-table th{background:#1e2a38;color:#fff;padding:7px 10px;font-weight:700;white-space:nowrap;border:1px solid #152030;text-align:left;}
+.entries-table td{padding:6px 10px;border:1px solid #ebebeb;white-space:nowrap;color:#1a1a1a;}
+.entries-table tr:nth-child(even) td{background:#fafafa;}
+.entries-table tr:hover td{background:#f0f4f8;}
+.act-btn{padding:4px 8px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid;}
+.btn-edit{background:#e8f4fd;color:#0c5460;border-color:#bee5eb;}
+.btn-hide{background:#fff3cd;color:#856404;border-color:#ffeeba;}
+.btn-show{background:#e8f5e9;color:#155724;border-color:#c3e6cb;}
+.btn-del{background:#fee;color:#c0392b;border-color:#fcc;}
 
 /* Report table */
-table.rt{border-collapse:collapse;font-size:11px;background:#fff;table-layout:fixed;}
-table.rt th, table.rt td{font-family:'Inter',Arial,sans-serif;}
-
-/* Frozen row 1 — week names */
-.rt-row-week{position:sticky;top:0;z-index:10;}
-.rt-row-week td, .rt-row-week th{position:sticky;top:0;z-index:10;}
-
-/* Frozen row 2 — dates */
-.rt-row-date{position:sticky;top:34px;z-index:9;}
-.rt-row-date td{position:sticky;top:34px;z-index:9;}
-
-/* Frozen col 1 — row labels */
-.rt-col-fix{position:sticky;left:0;z-index:5;}
-/* Frozen corner cells (both frozen row AND col) */
-.rt-corner{position:sticky;left:0;z-index:12!important;}
-
-/* Header cells */
-.rt-th-title{background:#1e2a38;color:#fff;font-weight:700;padding:8px 12px;border:1px solid #152030;text-align:center;font-size:12px;min-width:200px;width:200px;}
-.rt-thw{background:#2c3e50;color:#fff;font-weight:700;font-size:11px;padding:7px 6px;border:1px solid #1e2a38;min-width:70px;width:70px;text-align:center;}
-.rt-thm{background:#546e7a;color:#fff;font-weight:700;font-size:11px;padding:7px 6px;border:1px solid #455a64;min-width:80px;width:80px;text-align:center;}
-.rt-thy{background:#1a1a1a;color:#f5c842;font-weight:700;font-size:11px;padding:7px 6px;border:1px solid #000;min-width:85px;width:85px;text-align:center;}
-
-/* Date row cells */
-.rt-date-fix{background:#37474f;color:#fff;font-size:10px;padding:5px 10px;border:1px solid #263238;text-align:right;font-weight:500;}
-.rt-dw{background:#546e7a;color:#fff;font-size:9px;padding:4px 4px;border:1px solid #455a64;text-align:center;}
-.rt-dm{background:#607d8b;color:#fff;font-size:9px;padding:4px 4px;border:1px solid #546e7a;text-align:center;}
-.rt-dy{background:#263238;color:#f5c842;font-size:9px;padding:4px 4px;border:1px solid #1a1a1a;text-align:center;}
-
-/* Row label cells */
-.rt-lbl{background:#fff;color:#1a1a1a;font-weight:400;padding:5px 10px;border:1px solid #e0e0e0;text-align:right;white-space:nowrap;width:200px;min-width:200px;}
-.rt-lbl-bold{background:#f5f5f5;color:#1a1a1a;font-weight:700;padding:6px 10px;border:1px solid #d0d0d0;text-align:right;white-space:nowrap;width:200px;min-width:200px;}
-.rt-lbl-sec{background:#1e2a38;color:#fff;font-weight:700;padding:6px 10px;border:1px solid #152030;text-align:right;white-space:nowrap;font-size:11px;width:200px;min-width:200px;}
-.rt-lbl-sub{background:#f9f9f9;color:#444;font-weight:400;padding:5px 10px 5px 20px;border:1px solid #e8e8e8;text-align:right;white-space:nowrap;font-size:10px;width:200px;min-width:200px;}
-
-/* Data cells */
+.rtwrap{overflow:auto;max-height:calc(100vh - 160px);position:relative;}
+table.rt{border-collapse:collapse;font-size:11px;background:#fff;border:1px solid #ccc;}
+table.rt th,table.rt td{font-family:'Inter',Arial,sans-serif;color:#1a1a1a;}
+.rt-fix1{background:#fff;color:#1a1a1a;font-weight:400;padding:5px 10px;border:1px solid #e0e0e0;white-space:nowrap;position:sticky;left:0;z-index:5;text-align:right;min-width:200px;width:200px;font-size:11px;}
+.rt-fix-bold{background:#f5f5f5;color:#1a1a1a;font-weight:700;padding:6px 10px;border:1px solid #d0d0d0;white-space:nowrap;position:sticky;left:0;z-index:5;text-align:right;min-width:200px;width:200px;font-size:11px;}
+.rt-fix-sec{background:#1e2a38;color:#fff;font-weight:700;padding:6px 10px;border:1px solid #152030;white-space:nowrap;position:sticky;left:0;z-index:5;text-align:right;font-size:11px;min-width:200px;width:200px;}
+.rt-fix-header{background:#1a1a1a;color:#fff;font-weight:700;padding:7px 10px;border:1px solid #111;white-space:nowrap;position:sticky;left:0;z-index:6;text-align:center;font-size:12px;min-width:200px;width:200px;}
+.rt-thw{background:#2c3e50;color:#fff;font-weight:700;font-size:11px;padding:7px 6px;border:1px solid #1e2a38;white-space:nowrap;min-width:70px;width:70px;text-align:center;position:sticky;top:0;z-index:4;}
+.rt-thm{background:#546e7a;color:#fff;font-weight:700;font-size:11px;padding:7px 6px;border:1px solid #455a64;white-space:nowrap;min-width:80px;width:80px;text-align:center;position:sticky;top:0;z-index:4;}
+.rt-thy{background:#1a1a1a;color:#f5c842;font-weight:700;font-size:11px;padding:7px 6px;border:1px solid #000;white-space:nowrap;min-width:85px;width:85px;text-align:center;position:sticky;top:0;z-index:4;}
+.rt-dw{background:#546e7a;color:#fff;font-size:9px;padding:4px 4px;border:1px solid #455a64;text-align:center;position:sticky;top:34px;z-index:3;}
+.rt-dm{background:#607d8b;color:#fff;font-size:9px;padding:4px 4px;border:1px solid #546e7a;text-align:center;position:sticky;top:34px;z-index:3;}
+.rt-dy{background:#263238;color:#f5c842;font-size:9px;padding:4px 4px;border:1px solid #1a1a1a;text-align:center;position:sticky;top:34px;z-index:3;}
+.rt-fix-date{background:#37474f;color:#fff;font-size:10px;padding:5px 10px;border:1px solid #263238;text-align:right;font-weight:500;position:sticky;left:0;top:34px;z-index:7;}
 .rt-w{text-align:right;padding:4px 8px;border:1px solid #e8e8e8;color:#1a1a1a;background:#fff;}
 .rt-m{text-align:right;padding:4px 8px;border:1px solid #d0d0d0;color:#1a1a1a;background:#f5f5f5;font-weight:700;}
 .rt-y{text-align:right;padding:4px 8px;border:1px solid #bbb;color:#1a1a1a;background:#ebebeb;font-weight:700;}
@@ -125,7 +98,7 @@ table.rt th, table.rt td{font-family:'Inter',Arial,sans-serif;}
 .rt-profit{color:#1a7a3c!important;font-weight:700;}
 .rt-loss{color:#c0392b!important;font-weight:700;}
 
-/* DASHBOARD */
+/* Dashboard */
 .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
 .kpi-card{background:#fff;border-radius:10px;padding:14px;border:1px solid #e8e8e8;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
 .kpi-icon{font-size:20px;margin-bottom:6px;}
@@ -139,29 +112,15 @@ table.rt th, table.rt td{font-family:'Inter',Arial,sans-serif;}
 .dash-table td{padding:7px 10px;border:1px solid #e8e8e8;color:#1a1a1a;}
 .dash-table tr:nth-child(even) td{background:#fafafa;}
 
-/* Toggle */
-.toggle-btn{background:#f0f0f0;border:1px solid #ddd;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;color:#1a1a1a;}
-
-/* MOBILE */
 @media(max-width:768px){
-  .topbar{flex-wrap:wrap;height:auto;padding:8px 12px;gap:6px;}
-  .top-tabs{flex-wrap:nowrap;overflow-x:auto;width:100%;gap:2px;margin-left:0;padding-bottom:4px;}
-  .ttab{padding:5px 8px;font-size:11px;}
+  .top-tabs{overflow-x:auto;}
   .kpi-grid{grid-template-columns:1fr 1fr;}
   .chart-grid{grid-template-columns:1fr;}
-  .ig3,.ig4{grid-template-columns:1fr 1fr;}
   .main-body{height:auto;flex-direction:column;}
-  .content{overflow:visible;}
-  .sidebar{width:100%;border-right:none;border-bottom:1px solid #e0e0e0;flex-direction:row;flex-wrap:wrap;height:auto;}
-  .sidebar.show{display:flex;}
-  .sb-item{padding:7px 12px;font-size:11px;border-left:none;border-bottom:3px solid transparent;}
+  .sidebar{width:100%;border-right:none;border-bottom:1px solid #e0e0e0;}
+  .sidebar.show{display:flex;flex-direction:row;flex-wrap:wrap;}
+  .sb-item{padding:7px 10px;font-size:11px;border-left:none;border-bottom:3px solid transparent;}
   .sb-item.active{border-bottom-color:#1e2a38;border-left-color:transparent;}
-  .rt-outer{max-height:70vh;}
-}
-@media(max-width:480px){
-  .ig2,.ig3,.ig4{grid-template-columns:1fr;}
-  .kpi-grid{grid-template-columns:1fr;}
-  .topbar-name{font-size:12px;}
 }
 </style>
 </head>
@@ -226,47 +185,33 @@ table.rt th, table.rt td{font-family:'Inter',Arial,sans-serif;}
         <div id="dash-loc-ascot" class="dash-section" style="display:none"></div>
       </div>
 
-      <!-- OVERALL -->
+      <!-- REPORT TABS -->
       <div id="tab-overall" class="sheet">
         <div class="page-pad">
           <div style="font-size:15px;font-weight:700;margin-bottom:2px;">📊 Overall — All 6 Restaurants</div>
           <div style="font-size:11px;color:#888;margin-bottom:10px;">All locations combined · AUD</div>
-          <div class="rt-outer" id="rt-overall-wrap">
-            <div id="r-overall"></div>
-          </div>
+          <div class="rtwrap"><div id="r-overall"></div></div>
         </div>
       </div>
-
-      <!-- ST ALBANS -->
       <div id="tab-stalbans" class="sheet">
         <div class="page-pad">
           <div style="font-size:15px;font-weight:700;margin-bottom:2px;">📍 ST ALBANS</div>
           <div style="font-size:11px;color:#888;margin-bottom:10px;">Angie's ST Albans + Golden Flames ST Albans</div>
-          <div class="rt-outer" id="rt-stalbans-wrap">
-            <div id="r-stalbans"></div>
-          </div>
+          <div class="rtwrap"><div id="r-stalbans"></div></div>
         </div>
       </div>
-
-      <!-- FITZROY -->
       <div id="tab-fitzroy" class="sheet">
         <div class="page-pad">
           <div style="font-size:15px;font-weight:700;margin-bottom:2px;">📍 FITZROY NORTH</div>
           <div style="font-size:11px;color:#888;margin-bottom:10px;">Angie's Fitzroy North + Lamb on Nicholson</div>
-          <div class="rt-outer" id="rt-fitzroy-wrap">
-            <div id="r-fitzroy"></div>
-          </div>
+          <div class="rtwrap"><div id="r-fitzroy"></div></div>
         </div>
       </div>
-
-      <!-- ASCOT -->
       <div id="tab-ascot" class="sheet">
         <div class="page-pad">
           <div style="font-size:15px;font-weight:700;margin-bottom:2px;">📍 ASCOT VALE</div>
           <div style="font-size:11px;color:#888;margin-bottom:10px;">Angie's Ascot Vale + Ascot Vale Kebabs</div>
-          <div class="rt-outer" id="rt-ascot-wrap">
-            <div id="r-ascot"></div>
-          </div>
+          <div class="rtwrap"><div id="r-ascot"></div></div>
         </div>
       </div>
 
@@ -275,6 +220,7 @@ table.rt th, table.rt td{font-family:'Inter',Arial,sans-serif;}
         <div class="page-pad">
           <div class="toast" id="toast">✅ Saved!</div>
 
+          <!-- FILE UPLOAD -->
           <div class="card">
             <div class="card-title">📂 Upload File — Excel or CSV</div>
             <div class="upload-zone" onclick="document.getElementById('file-inp').click()">
@@ -294,7 +240,7 @@ table.rt th, table.rt td{font-family:'Inter',Arial,sans-serif;}
             </div>
             <div id="preview-section" style="display:none;margin-top:10px;">
               <div style="font-size:11px;font-weight:700;color:#1a1a1a;margin-bottom:6px;">👁️ Preview — <span id="prev-count">0</span> rows</div>
-              <div style="overflow-x:auto;border-radius:6px;border:1px solid #ddd;max-height:200px;overflow-y:auto;">
+              <div style="overflow-x:auto;border-radius:6px;border:1px solid #ddd;max-height:180px;overflow-y:auto;">
                 <table id="prev-table" style="width:100%;border-collapse:collapse;font-size:10px;background:#fff;">
                   <thead id="prev-head"></thead>
                   <tbody id="prev-body"></tbody>
@@ -305,83 +251,73 @@ table.rt th, table.rt td{font-family:'Inter',Arial,sans-serif;}
 
           <div style="text-align:center;color:#aaa;font-size:12px;margin:-4px 0 12px;">— or enter manually —</div>
 
+          <!-- MANUAL INPUT TABLE -->
           <div class="card">
-            <div class="card-title">📅 Entry Details</div>
-            <div class="ig4">
-              <div><div class="fl">Date (Week Start) *</div><input type="date" id="f-date" class="fi"/></div>
-              <div><div class="fl">Location *</div>
-                <select id="f-loc" class="fi" onchange="filterRest()">
-                  <option value="">Select Location</option>
-                  <option>ST ALBANS</option><option>FITZROY NORTH</option><option>ASCOT VALE</option>
-                </select>
-              </div>
-              <div><div class="fl">Restaurant Name *</div>
-                <select id="f-rest" class="fi">
-                  <option value="">Select Restaurant</option>
-                  <option>ANGIES - ST ALBANS</option><option>GOLDEN FLAMES - ST ALBANS</option>
-                  <option>ANGIES - FITZROY NORTH</option><option>LAMB ON NICHOLSON</option>
-                  <option>ANGIES - ASCOT VALE</option><option>ASCOT VALE KEBABS</option>
-                </select>
-              </div>
-              <div><div class="fl">Week</div><input type="text" id="f-week" class="fi" readonly placeholder="Auto"/></div>
+            <div class="card-title">📝 Manual Data Entry</div>
+            <div class="input-table-wrap">
+              <table class="input-table">
+                <thead>
+                  <tr>
+                    <th style="min-width:130px;">📅 Date</th>
+                    <th style="min-width:150px;">📍 Location</th>
+                    <th style="min-width:190px;">🏪 Restaurant</th>
+                    <th style="min-width:150px;">🛵 Delivery Partner</th>
+                    <th style="min-width:110px;">🔢 No. of Orders</th>
+                    <th style="min-width:130px;">💰 Gross Revenue</th>
+                    <th style="min-width:130px;">💵 Net Revenue</th>
+                    <th style="min-width:140px;">💸 Expenses Type</th>
+                    <th style="min-width:130px;">💲 Exp. Amount</th>
+                    <th style="min-width:150px;">📝 Note</th>
+                    <th style="min-width:80px;text-align:center;">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input type="date" id="f-date"/></td>
+                    <td>
+                      <select id="f-loc" onchange="filterRestByLoc()">
+                        <option value="">Select...</option>
+                        <option value="ST ALBANS">ST ALBANS</option>
+                        <option value="ASCOT VALE">ASCOT VALE</option>
+                        <option value="FITZROY NORTH">FITZROY NORTH</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select id="f-rest">
+                        <option value="">Select location first</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select id="f-partner">
+                        <option value="store">Physical Store</option>
+                        <option value="uber">Uber Eats</option>
+                        <option value="doordash">DoorDash</option>
+                      </select>
+                    </td>
+                    <td><input type="number" id="f-orders" placeholder="0" min="0"/></td>
+                    <td><input type="number" id="f-gross" placeholder="0.00" min="0" step="0.01"/></td>
+                    <td><input type="number" id="f-net" placeholder="0.00" min="0" step="0.01"/></td>
+                    <td>
+                      <select id="f-exptype">
+                        <option value="">None</option>
+                        <option value="food">Food</option>
+                        <option value="staff">Staff</option>
+                        <option value="operation">Operation</option>
+                        <option value="other">Others</option>
+                      </select>
+                    </td>
+                    <td><input type="number" id="f-expamt" placeholder="0.00" min="0" step="0.01"/></td>
+                    <td><input type="text" id="f-notes" placeholder="Optional..."/></td>
+                    <td style="text-align:center;">
+                      <button class="save-row-btn" onclick="saveEntry()">💾 Save</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">💰 Revenue</div>
-            <div class="ig3">
-              <div><div class="fl">Revenue Type</div>
-                <select id="f-revtype" class="fi" onchange="onRevTypeChange()">
-                  <option value="store">Store (Cash/EFTPOS)</option>
-                  <option value="uber">Uber Eats</option>
-                  <option value="doordash">DoorDash</option>
-                  <option value="menulog">Menulog</option>
-                </select>
-              </div>
-              <div><div class="fl">Delivery Partner</div>
-                <select id="f-partner" class="fi" disabled>
-                  <option value="">N/A</option>
-                  <option value="uber">Uber Eats</option>
-                  <option value="doordash">DoorDash</option>
-                  <option value="menulog">Menulog</option>
-                </select>
-              </div>
-              <div><div class="fl">Number of Orders</div><input type="number" id="f-orders" class="fi" placeholder="0" min="0"/></div>
-            </div>
-            <div class="ig3">
-              <div><div class="fl">Gross Revenue (A$)</div><input type="number" id="f-gross" class="fi" placeholder="0.00" step="0.01"/></div>
-              <div><div class="fl">Net Revenue (A$)</div><input type="number" id="f-net" class="fi" placeholder="0.00" step="0.01"/></div>
-              <div><div class="fl">Commission %</div>
-                <select id="f-comm" class="fi" disabled>
-                  <option value="0">0% (Store)</option>
-                  <option value="0.25">25%</option>
-                  <option value="0.30">30%</option>
-                  <option value="0.35">35%</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-title">💸 Expenses</div>
-            <div class="ig3">
-              <div><div class="fl">Expenses Type</div>
-                <select id="f-exptype" class="fi">
-                  <option value="">None</option>
-                  <option value="food">Food</option>
-                  <option value="staff">Staff</option>
-                  <option value="operation">Operation</option>
-                  <option value="rent">Rent</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-              <div><div class="fl">Expenses Amount (A$)</div><input type="number" id="f-expamt" class="fi" placeholder="0.00" step="0.01"/></div>
-              <div><div class="fl">Notes</div><input type="text" id="f-notes" class="fi" placeholder="Optional"/></div>
-            </div>
-          </div>
-
-          <button class="save-btn" onclick="saveEntry()">✅ Save Entry</button>
-
+          <!-- SAVED ENTRIES -->
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
             <div style="font-size:13px;font-weight:700;color:#1a1a1a;">Saved Entries (<span id="ecount">0</span>)</div>
             <div style="display:flex;gap:8px;">
@@ -390,14 +326,15 @@ table.rt th, table.rt td{font-family:'Inter',Arial,sans-serif;}
             </div>
           </div>
           <div id="entries-wrap" style="display:none;">
-            <div class="dtwrap">
-              <table class="dt">
-                <thead><tr>
-                  <th>Date</th><th>Week</th><th>Location</th><th>Restaurant</th>
-                  <th>Rev Type</th><th>Partner</th><th>Orders</th>
-                  <th>Gross (A$)</th><th>Net (A$)</th>
-                  <th>Exp Type</th><th>Exp Amt (A$)</th><th>Notes</th><th>Del</th>
-                </tr></thead>
+            <div class="entries-table-wrap">
+              <table class="entries-table">
+                <thead>
+                  <tr>
+                    <th>Date</th><th>Week</th><th>Location</th><th>Restaurant</th>
+                    <th>Partner</th><th>Orders</th><th>Gross</th><th>Net</th>
+                    <th>Exp Type</th><th>Exp Amt</th><th>Note</th><th>Actions</th>
+                  </tr>
+                </thead>
                 <tbody id="etbody"></tbody>
               </table>
             </div>
@@ -465,14 +402,13 @@ function matchRest(v){
 }
 
 const COL_DEFS=[
-  {id:'cm-date',label:'Date',keys:['date','week date','week_date','period']},
+  {id:'cm-date',label:'Date',keys:['date','week date','period']},
   {id:'cm-loc',label:'Location',keys:['location','resturent location','restaurant location','area']},
   {id:'cm-rest',label:'Restaurant Name',keys:['restaurant name','resturent name','restaurant','store','name']},
-  {id:'cm-revtype',label:'Revenue Type',keys:['revenue type','type','rev type']},
-  {id:'cm-partner',label:'Delivery Partner',keys:['delivery partner','partner','platform']},
+  {id:'cm-partner',label:'Delivery Partner',keys:['delivery partner','partner','platform','channel']},
   {id:'cm-orders',label:'Number of Orders',keys:['number of order','orders','txn','transactions']},
-  {id:'cm-gross',label:'Gross Revenue',keys:['gross revenue','gross','gross rev','revenue']},
-  {id:'cm-net',label:'Net Revenue',keys:['net revenue','net','net rev']},
+  {id:'cm-gross',label:'Gross Revenue',keys:['gross revenue','gross','revenue']},
+  {id:'cm-net',label:'Net Revenue',keys:['net revenue','net']},
   {id:'cm-exptype',label:'Expenses Type',keys:['expenses type','expense type','exp type']},
   {id:'cm-expamt',label:'Expenses Amount',keys:['expenses amount','expense amount','amount','exp amount']},
 ];
@@ -493,7 +429,6 @@ function doLogin(){
 }
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('pass-input').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-  document.getElementById('f-date').addEventListener('change',function(){document.getElementById('f-week').value=d2w(this.value);});
 });
 function doLogout(){document.getElementById('login-screen').style.display='flex';document.getElementById('app').style.display='none';}
 
@@ -510,25 +445,18 @@ function showTab(name,btn){
 function showDash(name,el){
   document.querySelectorAll('.dash-section').forEach(e=>e.style.display='none');
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
-  const sec=document.getElementById('dash-'+name);
-  if(sec){sec.style.display='block';}
+  const sec=document.getElementById('dash-'+name);if(sec)sec.style.display='block';
   el.classList.add('active');
   buildDashboard(name);
 }
 
-function filterRest(){
+function filterRestByLoc(){
   const loc=document.getElementById('f-loc').value;
   const sel=document.getElementById('f-rest');
-  sel.innerHTML='<option value="">Select Restaurant</option>';
-  (loc?REST_BY_LOC[loc]:RESTS).forEach(r=>sel.innerHTML+=`<option>${r}</option>`);
+  sel.innerHTML='<option value="">Select restaurant</option>';
+  if(loc&&REST_BY_LOC[loc]){REST_BY_LOC[loc].forEach(r=>sel.innerHTML+=`<option value="${r}">${r}</option>`);}
 }
-function onRevTypeChange(){
-  const t=document.getElementById('f-revtype').value;
-  const isStore=t==='store';
-  document.getElementById('f-partner').disabled=isStore;
-  document.getElementById('f-comm').disabled=isStore;
-  if(!isStore)document.getElementById('f-partner').value=t;
-}
+
 function toggleEntries(){
   const w=document.getElementById('entries-wrap'),b=document.getElementById('toggle-btn');
   const show=w.style.display==='none';
@@ -582,25 +510,26 @@ function saveUploaded(){
     if(!dateRaw)return;
     const date=parseDate(dateRaw);if(!date)return;
     const restaurant=matchRest(gm('cm-rest')?row[gm('cm-rest')]:'');
-    const revTypeRaw=gm('cm-revtype')?String(row[gm('cm-revtype')]||'').toLowerCase():'store';
     const partnerRaw=gm('cm-partner')?String(row[gm('cm-partner')]||'').toLowerCase():'';
     const grossRaw=gm('cm-gross')?+row[gm('cm-gross')]||0:0;
     const netRaw=gm('cm-net')?+row[gm('cm-net')]||0:0;
-    let revType='store';
-    if(/uber/.test(revTypeRaw)||/uber/.test(partnerRaw))revType='uber';
-    else if(/door|dd/.test(revTypeRaw)||/door|dd/.test(partnerRaw))revType='doordash';
-    else if(/menu/.test(revTypeRaw)||/menu/.test(partnerRaw))revType='menulog';
+    let rev_type='store';
+    if(/uber/.test(partnerRaw))rev_type='uber';
+    else if(/door|dd/.test(partnerRaw))rev_type='doordash';
     entries.push({
-      id:Date.now()+i,date,restaurant,week:d2w(date),location:gm('cm-loc')?row[gm('cm-loc')]:'',
-      rev_type:revType,partner:revType==='store'?'':revType,
+      id:Date.now()+i,date,restaurant,week:d2w(date),
+      location:gm('cm-loc')?row[gm('cm-loc')]:'',
+      rev_type,partner:partnerRaw||'store',
       orders:gm('cm-orders')?+row[gm('cm-orders')]||0:0,
-      gross:grossRaw,net:netRaw||grossRaw*(revType==='store'?1:0.70),
+      gross:grossRaw,net:netRaw||grossRaw*(rev_type==='store'?1:0.70),
       exp_type:gm('cm-exptype')?String(row[gm('cm-exptype')]||'').toLowerCase():'',
-      exp_amt:gm('cm-expamt')?+row[gm('cm-expamt')]||0:0,notes:'',
+      exp_amt:gm('cm-expamt')?+row[gm('cm-expamt')]||0:0,
+      notes:'',hidden:false,
     });added++;
   });
   localStorage.setItem('pl_v4',JSON.stringify(entries));
-  clearUpload();renderEntries();showToast(`✅ ${added} rows saved!`);
+  clearUpload();renderEntries();
+  showToast(`✅ ${added} rows saved!`);
 }
 
 function clearUpload(){
@@ -611,43 +540,113 @@ function clearUpload(){
   document.getElementById('preview-section').style.display='none';
 }
 
+// MANUAL ENTRY
 function saveEntry(){
   const date=document.getElementById('f-date').value;
   const restaurant=document.getElementById('f-rest').value;
   if(!date||!restaurant){alert('Date and Restaurant required!');return;}
-  const revType=document.getElementById('f-revtype').value;
+  const partner=document.getElementById('f-partner').value;
+  let rev_type='store';
+  if(partner==='uber')rev_type='uber';
+  else if(partner==='doordash')rev_type='doordash';
   const gross=+document.getElementById('f-gross').value||0;
-  const net=+document.getElementById('f-net').value||gross*(1-(+document.getElementById('f-comm').value||0));
+  const net=+document.getElementById('f-net').value||0;
   entries.push({
-    id:Date.now(),date,restaurant,week:d2w(date),location:document.getElementById('f-loc').value,
-    rev_type:revType,partner:document.getElementById('f-partner').value,
-    orders:+document.getElementById('f-orders').value||0,gross,net,
+    id:Date.now(),date,restaurant,week:d2w(date),
+    location:document.getElementById('f-loc').value,
+    rev_type,partner,
+    orders:+document.getElementById('f-orders').value||0,
+    gross,net,
     exp_type:document.getElementById('f-exptype').value,
     exp_amt:+document.getElementById('f-expamt').value||0,
     notes:document.getElementById('f-notes').value,
+    hidden:false,
   });
   localStorage.setItem('pl_v4',JSON.stringify(entries));
+  // Reset fields — keep date & location
   ['f-orders','f-gross','f-net','f-expamt','f-notes'].forEach(id=>document.getElementById(id).value='');
-  renderEntries();showToast('✅ Entry saved!');
+  document.getElementById('f-exptype').value='';
+  document.getElementById('f-partner').value='store';
+  document.getElementById('f-rest').value='';
+  renderEntries();
+  showToast('✅ Entry saved!');
+  setTimeout(()=>{
+    const wrap=document.getElementById('entries-wrap');
+    wrap.style.display='block';
+    document.getElementById('toggle-btn').textContent='🙈 Hide Entries';
+    wrap.scrollIntoView({behavior:'smooth',block:'start'});
+  },300);
 }
-
-function delEntry(id){entries=entries.filter(e=>e.id!==id);localStorage.setItem('pl_v4',JSON.stringify(entries));renderEntries();}
-function clearAll(){if(confirm('Delete all data?')){entries=[];localStorage.removeItem('pl_v4');renderEntries();}}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',3000);}
 
 function renderEntries(){
   document.getElementById('ecount').textContent=entries.length;
   const f=v=>v?'A$'+Math.round(v).toLocaleString():'-';
   document.getElementById('etbody').innerHTML=entries.slice().reverse().map(e=>`
-    <tr><td>${e.date}</td><td>${e.week||'-'}</td><td>${e.location||'-'}</td><td><b>${e.restaurant}</b></td>
-    <td>${e.rev_type||'-'}</td><td>${e.partner||'-'}</td><td>${e.orders||'-'}</td>
-    <td>${f(e.gross)}</td><td>${f(e.net)}</td><td>${e.exp_type||'-'}</td><td>${f(e.exp_amt)}</td>
-    <td>${e.notes||'-'}</td><td><button class="del-btn" onclick="delEntry(${e.id})">🗑️</button></td></tr>`).join('');
+    <tr style="opacity:${e.hidden?0.4:1};background:${e.hidden?'#f9f9f9':''};">
+      <td>${e.date}</td><td>${e.week||'-'}</td><td>${e.location||'-'}</td>
+      <td style="font-weight:700;">${e.restaurant}</td>
+      <td>${e.partner||'-'}</td><td>${e.orders||'-'}</td>
+      <td>${f(e.gross)}</td><td>${f(e.net)}</td>
+      <td>${e.exp_type||'-'}</td><td>${f(e.exp_amt)}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;">${e.notes||'-'}</td>
+      <td>
+        <div style="display:flex;gap:4px;">
+          <button class="act-btn btn-edit" onclick="editEntry(${e.id})">✏️</button>
+          <button class="act-btn ${e.hidden?'btn-show':'btn-hide'}" onclick="toggleHideEntry(${e.id})">${e.hidden?'👁️':'🙈'}</button>
+          <button class="act-btn btn-del" onclick="delEntry(${e.id})">🗑️</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function editEntry(id){
+  const e=entries.find(x=>x.id===id);if(!e)return;
+  document.getElementById('f-date').value=e.date;
+  document.getElementById('f-loc').value=e.location||'';
+  filterRestByLoc();
+  setTimeout(()=>{
+    document.getElementById('f-rest').value=e.restaurant;
+    document.getElementById('f-partner').value=e.partner||'store';
+    document.getElementById('f-orders').value=e.orders||'';
+    document.getElementById('f-gross').value=e.gross||'';
+    document.getElementById('f-net').value=e.net||'';
+    document.getElementById('f-exptype').value=e.exp_type||'';
+    document.getElementById('f-expamt').value=e.exp_amt||'';
+    document.getElementById('f-notes').value=e.notes||'';
+  },100);
+  entries=entries.filter(x=>x.id!==id);
+  localStorage.setItem('pl_v4',JSON.stringify(entries));
+  renderEntries();
+  window.scrollTo({top:0,behavior:'smooth'});
+  showToast('✏️ Edit mode — update and save again');
+}
+
+function toggleHideEntry(id){
+  entries=entries.map(e=>e.id===id?{...e,hidden:!e.hidden}:e);
+  localStorage.setItem('pl_v4',JSON.stringify(entries));
+  renderEntries();
+}
+
+function delEntry(id){
+  entries=entries.filter(e=>e.id!==id);
+  localStorage.setItem('pl_v4',JSON.stringify(entries));
+  renderEntries();
+}
+
+function clearAll(){
+  if(confirm('Delete all data?')){entries=[];localStorage.removeItem('pl_v4');renderEntries();}
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  setTimeout(()=>t.style.display='none',3000);
 }
 
 // AGGREGATE
 function agg(rests,dates){
   const rows=entries.filter(e=>{
+    if(e.hidden)return false;
     const inR=rests==='all'||rests.includes(e.restaurant);
     const inD=dates==='all'||dates.includes(e.date);
     return inR&&inD;
@@ -655,7 +654,6 @@ function agg(rests,dates){
   const sr=rows.filter(r=>r.rev_type==='store');
   const ur=rows.filter(r=>r.rev_type==='uber');
   const dr=rows.filter(r=>r.rev_type==='doordash');
-  const mr=rows.filter(r=>r.rev_type==='menulog');
   const sg=arr=>arr.reduce((a,r)=>a+(r.gross||0),0);
   const sn=arr=>arr.reduce((a,r)=>a+(r.net||0),0);
   const so=arr=>arr.reduce((a,r)=>a+(r.orders||0),0);
@@ -663,27 +661,25 @@ function agg(rests,dates){
   const sgr=sg(sr),snr=sn(sr),sor=so(sr);
   const ugr=sg(ur),unr=sn(ur),uor=so(ur);
   const dgr=sg(dr),dnr=sn(dr),dor=so(dr);
-  const mgr=sg(mr),mnr=sn(mr),mor=so(mr);
-  const og=ugr+dgr+mgr,on_=unr+dnr+mnr,oo=uor+dor+mor;
+  const og=ugr+dgr,on_=unr+dnr,oo=uor+dor;
   const tg=sgr+og,tn=snr+on_,to=sor+oo;
-  const food=se('food'),staff=se('staff'),ops=se('operation'),rent=se('rent'),other=se('other');
-  const tc=food+staff+ops+rent+other;
+  const food=se('food'),staff=se('staff'),ops=se('operation'),other=se('other');
+  const tc=food+staff+ops+other;
   const gp=tn-food-staff,np=tn-tc;
   return{
     total_orders:to,per_txn:to>0?tg/to:0,
     staff_pct:tn>0?staff/tn:0,food_gross_pct:tg>0?food/tg:0,food_net_pct:tn>0?food/tn:0,ops_pct:tn>0?ops/tn:0,
-    tg,tn,tc,food,staff,ops,rent,other,gp,np,profit_pct:tn>0?np/tn:0,
+    tg,tn,tc,food,staff,ops,other,gp,np,profit_pct:tn>0?np/tn:0,
     store_orders:sor,store_gross:sgr,store_net:snr,store_ptr:sor>0?sgr/sor:0,
     uber_orders:uor,uber_gross:ugr,uber_net:unr,
     dd_orders:dor,dd_gross:dgr,dd_net:dnr,
-    ml_orders:mor,ml_gross:mgr,ml_net:mnr,
     online_orders:oo,online_gross:og,online_net:on_,online_ptr:oo>0?on_/oo:0,
   };
 }
 
 function fv(v,t){
   if(v===0)return'-';
-  if(t==='cur')return(v<0?'-':'')+Math.abs(Math.round(v)).toLocaleString();
+  if(t==='cur')return(v<0?'-':'')+'A$'+Math.abs(Math.round(v)).toLocaleString();
   if(t==='pct')return(v*100).toFixed(2)+'%';
   if(t==='num')return Math.round(v).toLocaleString();
   return'-';
@@ -691,52 +687,42 @@ function fv(v,t){
 
 function hasData(col,rests){
   const dates=col.type==='week'?[col.date]:(col.dates||[]);
-  return entries.some(e=>(rests==='all'||rests.includes(e.restaurant))&&dates.includes(e.date));
+  return entries.some(e=>{
+    if(e.hidden)return false;
+    const inR=rests==='all'||rests.includes(e.restaurant);
+    return inR&&dates.includes(e.date);
+  });
 }
 
-// BUILD REPORT — with fully frozen header rows and label column
 function buildReport(containerId,rests,title){
   const allR=rests==='all'?RESTS:rests;
   const r1=allR[0],r2=allR.length>1?allR[1]:null;
-
-  // Use a scrollable container with sticky positioning
-  let h=`<div style="overflow:auto;max-height:calc(100vh - 160px);position:relative;">`;
-  h+=`<table class="rt" style="border-collapse:collapse;">`;
-
-  // ROW 1: Week headers — sticky top:0
-  h+=`<thead>`;
-  h+=`<tr class="rt-row-week">`;
-  h+=`<th class="rt-th-title rt-corner" style="position:sticky;top:0;left:0;z-index:20;">${title}</th>`;
+  let h=`<div style="overflow:auto;max-height:calc(100vh - 150px);position:relative;"><table class="rt">`;
+  // Header row 1
+  h+=`<thead><tr>`;
+  h+=`<th class="rt-fix-header" style="position:sticky;top:0;left:0;z-index:10;">${title}</th>`;
   DCOLS.forEach(c=>{
     const cls=c.type==='week'?'rt-thw':c.type==='month'?'rt-thm':'rt-thy';
-    h+=`<th class="${cls}" style="position:sticky;top:0;z-index:10;">${c.label}</th>`;
+    h+=`<th class="${cls}">${c.label}</th>`;
   });
   h+=`</tr>`;
-
-  // ROW 2: Date row — sticky top:34px
-  h+=`<tr class="rt-row-date">`;
-  h+=`<td class="rt-date-fix rt-corner" style="position:sticky;top:34px;left:0;z-index:19;">Date</td>`;
+  // Header row 2 dates
+  h+=`<tr>`;
+  h+=`<td class="rt-fix-date">Date</td>`;
   DCOLS.forEach(c=>{
     const cls=c.type==='week'?'rt-dw':c.type==='month'?'rt-dm':'rt-dy';
     const dstr=c.type==='week'?c.date.split('-').reverse().join('/'):'';
-    h+=`<td class="${cls}" style="position:sticky;top:34px;z-index:9;">${dstr}</td>`;
+    h+=`<td class="${cls}">${dstr}</td>`;
   });
-  h+=`</tr>`;
-  h+=`</thead><tbody>`;
+  h+=`</tr></thead><tbody>`;
 
-  // Helper: data row
-  const row=(label,getter,type,isProfit=false,isSub=false,isHeader=false,rs=allR)=>{
-    let lc;
-    if(isHeader)lc='rt-lbl-sec rt-col-fix';
-    else if(isSub)lc='rt-lbl-sub rt-col-fix';
-    else if(isProfit||['Total Revenue Gross','Total Net Revenue','Total - Cost','Gross Profit','Net Profit','Profit %'].includes(label))lc='rt-lbl-bold rt-col-fix';
-    else lc='rt-lbl rt-col-fix';
-
-    let r=`<tr><td class="${lc}" style="position:sticky;left:0;">${label}</td>`;
+  const row=(label,getter,type,isProfit=false,isSub=false,rs=allR)=>{
+    const isBold=['Total Revenue Gross','Total Net Revenue','Total - Cost','Gross Profit','Net Profit','Profit %'].includes(label);
+    const lc=isSub?'rt-fix1':isBold?'rt-fix-bold':'rt-fix1';
+    let r=`<tr><td class="${lc}">${label}</td>`;
     DCOLS.forEach(col=>{
       const dates=col.type==='week'?[col.date]:(col.dates||[]);
-      const m=agg(rs,dates);
-      const v=getter(m);
+      const m=agg(rs,dates);const v=getter(m);
       const base=col.type==='week'?'rt-w':col.type==='month'?'rt-m':'rt-y';
       const pc=isProfit&&v!==0?(v>=0?' rt-profit':' rt-loss'):'';
       const show=hasData(col,rs)?fv(v,type):'';
@@ -745,10 +731,9 @@ function buildReport(containerId,rests,title){
     return r+'</tr>';
   };
 
-  const empty=()=>{let r='<tr class="rt-empty"><td class="rt-col-fix" style="position:sticky;left:0;background:#f8f8f8;border:1px solid #f0f0f0;"></td>';DCOLS.forEach(()=>r+='<td></td>');return r+'</tr>';};
-  const sec=(lbl,rs=allR)=>{let r=`<tr><td class="rt-lbl-sec rt-col-fix" style="position:sticky;left:0;">${lbl}</td>`;DCOLS.forEach(col=>{const dates=col.type==='week'?[col.date]:(col.dates||[]);r+=`<td style="background:#f0f2f5;border:1px solid #e0e0e0;height:22px;"></td>`;});return r+'</tr>';};
+  const empty=()=>{let r='<tr class="rt-empty"><td style="position:sticky;left:0;background:#f8f8f8;border:1px solid #f0f0f0;"></td>';DCOLS.forEach(()=>r+='<td></td>');return r+'</tr>';};
+  const sec=(lbl,rs=allR)=>{let r=`<tr><td class="rt-fix-sec">${lbl}</td>`;DCOLS.forEach(()=>r+='<td style="background:#f0f2f5;border:1px solid #e0e0e0;height:22px;"></td>');return r+'</tr>';};
 
-  // Summary
   h+=sec('SUMMARY — COMBINED');
   h+=row('Total Number of Transaction',m=>m.total_orders,'num');
   h+=row('Per Transaction Revenue',m=>m.per_txn,'cur');
@@ -762,7 +747,6 @@ function buildReport(containerId,rests,title){
   h+=row('Food',m=>m.food,'cur',false,true);
   h+=row('Staff',m=>m.staff,'cur',false,true);
   h+=row('Operation',m=>m.ops,'cur',false,true);
-  h+=row('Rent',m=>m.rent,'cur',false,true);
   h+=row('Other',m=>m.other,'cur',false,true);
   h+=row('Gross Profit',m=>m.gp,'cur',true);
   h+=row('Net Profit',m=>m.np,'cur',true);
@@ -771,44 +755,37 @@ function buildReport(containerId,rests,title){
 
   if(r1){
     h+=sec('1. '+r1,[r1]);
-    h+=row('# of Transaction Store',m=>m.store_orders,'num',false,false,false,[r1]);
-    h+=row('Net Revenue Store',m=>m.store_net,'cur',false,false,false,[r1]);
-    h+=row('Per Transaction Store Revenue',m=>m.store_ptr,'cur',false,false,false,[r1]);
-    h+=row('# of Transaction Online',m=>m.online_orders,'num',false,false,false,[r1]);
-    h+=row('Uber',m=>m.uber_orders,'num',false,true,false,[r1]);
-    h+=row('DoorDash',m=>m.dd_orders,'num',false,true,false,[r1]);
-    h+=row('Menulog',m=>m.ml_orders,'num',false,true,false,[r1]);
-    h+=row('Gross Revenue Online',m=>m.online_gross,'cur',false,false,false,[r1]);
-    h+=row('Uber',m=>m.uber_gross,'cur',false,true,false,[r1]);
-    h+=row('DoorDash',m=>m.dd_gross,'cur',false,true,false,[r1]);
-    h+=row('Menulog',m=>m.ml_gross,'cur',false,true,false,[r1]);
-    h+=row('Net Revenue (After Commission)',m=>m.online_net,'cur',false,false,false,[r1]);
-    h+=row('Uber',m=>m.uber_net,'cur',false,true,false,[r1]);
-    h+=row('DoorDash',m=>m.dd_net,'cur',false,true,false,[r1]);
-    h+=row('Menulog',m=>m.ml_net,'cur',false,true,false,[r1]);
-    h+=row('Per Transaction Revenue',m=>m.online_ptr,'cur',false,false,false,[r1]);
+    h+=row('# of Transaction Store',m=>m.store_orders,'num',false,false,[r1]);
+    h+=row('Net Revenue Store',m=>m.store_net,'cur',false,false,[r1]);
+    h+=row('Per Transaction Store Revenue',m=>m.store_ptr,'cur',false,false,[r1]);
+    h+=row('# of Transaction Online',m=>m.online_orders,'num',false,false,[r1]);
+    h+=row('Uber',m=>m.uber_orders,'num',false,true,[r1]);
+    h+=row('DoorDash',m=>m.dd_orders,'num',false,true,[r1]);
+    h+=row('Gross Revenue Online',m=>m.online_gross,'cur',false,false,[r1]);
+    h+=row('Uber',m=>m.uber_gross,'cur',false,true,[r1]);
+    h+=row('DoorDash',m=>m.dd_gross,'cur',false,true,[r1]);
+    h+=row('Net Revenue (After Commission)',m=>m.online_net,'cur',false,false,[r1]);
+    h+=row('Uber',m=>m.uber_net,'cur',false,true,[r1]);
+    h+=row('DoorDash',m=>m.dd_net,'cur',false,true,[r1]);
+    h+=row('Per Transaction Revenue',m=>m.online_ptr,'cur',false,false,[r1]);
     h+=empty();
   }
   if(r2){
     h+=sec('2. '+r2,[r2]);
-    h+=row('# of Transaction Store',m=>m.store_orders,'num',false,false,false,[r2]);
-    h+=row('Net Revenue Store',m=>m.store_net,'cur',false,false,false,[r2]);
-    h+=row('Per Transaction Store Revenue',m=>m.store_ptr,'cur',false,false,false,[r2]);
-    h+=row('# of Transaction Online',m=>m.online_orders,'num',false,false,false,[r2]);
-    h+=row('Uber',m=>m.uber_orders,'num',false,true,false,[r2]);
-    h+=row('DoorDash',m=>m.dd_orders,'num',false,true,false,[r2]);
-    h+=row('Menulog',m=>m.ml_orders,'num',false,true,false,[r2]);
-    h+=row('Gross Revenue Online',m=>m.online_gross,'cur',false,false,false,[r2]);
-    h+=row('Uber',m=>m.uber_gross,'cur',false,true,false,[r2]);
-    h+=row('DoorDash',m=>m.dd_gross,'cur',false,true,false,[r2]);
-    h+=row('Menulog',m=>m.ml_gross,'cur',false,true,false,[r2]);
-    h+=row('Net Revenue (After Commission)',m=>m.online_net,'cur',false,false,false,[r2]);
-    h+=row('Uber',m=>m.uber_net,'cur',false,true,false,[r2]);
-    h+=row('DoorDash',m=>m.dd_net,'cur',false,true,false,[r2]);
-    h+=row('Menulog',m=>m.ml_net,'cur',false,true,false,[r2]);
-    h+=row('Per Transaction Revenue',m=>m.online_ptr,'cur',false,false,false,[r2]);
+    h+=row('# of Transaction Store',m=>m.store_orders,'num',false,false,[r2]);
+    h+=row('Net Revenue Store',m=>m.store_net,'cur',false,false,[r2]);
+    h+=row('Per Transaction Store Revenue',m=>m.store_ptr,'cur',false,false,[r2]);
+    h+=row('# of Transaction Online',m=>m.online_orders,'num',false,false,[r2]);
+    h+=row('Uber',m=>m.uber_orders,'num',false,true,[r2]);
+    h+=row('DoorDash',m=>m.dd_orders,'num',false,true,[r2]);
+    h+=row('Gross Revenue Online',m=>m.online_gross,'cur',false,false,[r2]);
+    h+=row('Uber',m=>m.uber_gross,'cur',false,true,[r2]);
+    h+=row('DoorDash',m=>m.dd_gross,'cur',false,true,[r2]);
+    h+=row('Net Revenue (After Commission)',m=>m.online_net,'cur',false,false,[r2]);
+    h+=row('Uber',m=>m.uber_net,'cur',false,true,[r2]);
+    h+=row('DoorDash',m=>m.dd_net,'cur',false,true,[r2]);
+    h+=row('Per Transaction Revenue',m=>m.online_ptr,'cur',false,false,[r2]);
   }
-
   h+=`</tbody></table></div>`;
   document.getElementById(containerId).innerHTML=h;
 }
@@ -848,12 +825,11 @@ function fd(v){return v===0?'-':(v<0?'-':'')+'A$'+Math.abs(Math.round(v)).toLoca
 function fp(v){return(v*100).toFixed(1)+'%';}
 
 function buildDashboard(section){
-  const el=document.getElementById('dash-'+section);
-  if(!el)return;
+  const el=document.getElementById('dash-'+section);if(!el)return;
   const tot=agg(RESTS,allDates);
-  const mLabels=MONTHS.filter(m=>entries.some(e=>mDates(m).includes(e.date)));
+  const mLabels=MONTHS.filter(m=>entries.some(e=>!e.hidden&&mDates(m).includes(e.date)));
 
-  const kpiHtml=(cards)=>`<div class="kpi-grid">${cards.map(c=>`<div class="kpi-card" style="border-left:4px solid ${c.color||'#1e2a38'}"><div class="kpi-icon">${c.icon}</div><div class="kpi-val" style="color:${c.vc||'#1a1a1a'}">${c.val}</div><div class="kpi-lbl">${c.lbl}</div></div>`).join('')}</div>`;
+  const kpiHtml=cards=>`<div class="kpi-grid">${cards.map(c=>`<div class="kpi-card" style="border-left:4px solid ${c.color||'#1e2a38'}"><div class="kpi-icon">${c.icon}</div><div class="kpi-val" style="color:${c.vc||'#1a1a1a'}">${c.val}</div><div class="kpi-lbl">${c.lbl}</div></div>`).join('')}</div>`;
 
   if(section==='overview'){
     el.innerHTML=`<div class="page-pad">
@@ -893,8 +869,8 @@ function buildDashboard(section){
         {icon:'🛵',val:fd(tot.online_gross),lbl:'Online Gross Revenue',color:'#9b59b6'},
         {icon:'💚',val:fd(tot.uber_gross),lbl:'Uber Eats Gross',color:'#2ecc71'},
         {icon:'❤️',val:fd(tot.dd_gross),lbl:'DoorDash Gross',color:'#e74c3c'},
-        {icon:'🟠',val:fd(tot.ml_gross),lbl:'Menulog Gross',color:'#f39c12'},
         {icon:'📦',val:fd(tot.per_txn),lbl:'Avg Order Value',color:'#3498db'},
+        {icon:'🧾',val:tot.total_orders.toLocaleString(),lbl:'Total Orders',color:'#f39c12'},
       ])}
       <div class="chart-grid">
         <div class="chart-card"><div class="chart-title">Revenue by Channel</div><canvas id="ch-rev-ch" height="180"></canvas></div>
@@ -902,7 +878,7 @@ function buildDashboard(section){
       </div>
     </div>`;
     setTimeout(()=>{
-      mkChart('ch-rev-ch','doughnut',['Store','Uber Eats','DoorDash','Menulog'],[{data:[tot.store_gross,tot.uber_gross,tot.dd_gross,tot.ml_gross],backgroundColor:['#1e2a38','#2ecc71','#e74c3c','#f39c12']}],{scales:{}});
+      mkChart('ch-rev-ch','doughnut',['Store','Uber Eats','DoorDash'],[{data:[tot.store_gross,tot.uber_gross,tot.dd_gross],backgroundColor:['#1e2a38','#2ecc71','#e74c3c']}],{scales:{}});
       mkChart('ch-rev-mo','bar',mLabels,[
         {label:'Store',data:mLabels.map(m=>agg(RESTS,mDates(m)).store_gross),backgroundColor:'rgba(30,42,56,0.7)'},
         {label:'Online',data:mLabels.map(m=>agg(RESTS,mDates(m)).online_gross),backgroundColor:'rgba(155,89,182,0.7)'},
@@ -917,9 +893,9 @@ function buildDashboard(section){
         {icon:'🍔',val:fd(tot.food),lbl:`Food Cost (${fp(tot.food_net_pct)})`,color:'#e74c3c'},
         {icon:'👥',val:fd(tot.staff),lbl:`Staff Cost (${fp(tot.staff_pct)})`,color:'#3498db'},
         {icon:'⚙️',val:fd(tot.ops),lbl:`Operation Cost (${fp(tot.ops_pct)})`,color:'#f39c12'},
-        {icon:'🏠',val:fd(tot.rent),lbl:'Rent',color:'#9b59b6'},
-        {icon:'📦',val:fd(tot.other),lbl:'Other',color:'#95a5a6'},
+        {icon:'📦',val:fd(tot.other),lbl:'Other Cost',color:'#95a5a6'},
         {icon:'💰',val:fd(tot.tc),lbl:'Total Cost',color:'#1e2a38'},
+        {icon:'💵',val:fd(tot.tn),lbl:'Net Revenue',color:'#2ecc71'},
       ])}
       <div class="chart-grid">
         <div class="chart-card"><div class="chart-title">Cost Breakdown</div><canvas id="ch-cost-br" height="180"></canvas></div>
@@ -927,7 +903,7 @@ function buildDashboard(section){
       </div>
     </div>`;
     setTimeout(()=>{
-      mkChart('ch-cost-br','doughnut',['Food','Staff','Operation','Rent','Other'],[{data:[tot.food,tot.staff,tot.ops,tot.rent,tot.other],backgroundColor:['#e74c3c','#3498db','#f39c12','#9b59b6','#95a5a6']}],{scales:{}});
+      mkChart('ch-cost-br','doughnut',['Food','Staff','Operation','Other'],[{data:[tot.food,tot.staff,tot.ops,tot.other],backgroundColor:['#e74c3c','#3498db','#f39c12','#95a5a6']}],{scales:{}});
       mkChart('ch-cost-tr','line',mLabels,[
         {label:'Food',data:mLabels.map(m=>agg(RESTS,mDates(m)).food),borderColor:'#e74c3c',fill:false,tension:0.3},
         {label:'Staff',data:mLabels.map(m=>agg(RESTS,mDates(m)).staff),borderColor:'#3498db',fill:false,tension:0.3},
@@ -1004,10 +980,10 @@ function buildDashboard(section){
     el.innerHTML=`<div class="page-pad">
       <div style="font-size:15px;font-weight:700;margin-bottom:12px;">🛵 Online Orders</div>
       ${kpiHtml([
-        {icon:'💚',val:fd(tot.uber_gross),lbl:`Uber Eats Gross → Net: ${fd(tot.uber_net)}`,color:'#2ecc71'},
+        {icon:'💚',val:fd(tot.uber_gross),lbl:`Uber Gross → Net: ${fd(tot.uber_net)}`,color:'#2ecc71'},
         {icon:'❤️',val:fd(tot.dd_gross),lbl:`DoorDash Gross → Net: ${fd(tot.dd_net)}`,color:'#e74c3c'},
-        {icon:'🟠',val:fd(tot.ml_gross),lbl:`Menulog Gross → Net: ${fd(tot.ml_net)}`,color:'#f39c12'},
         {icon:'📦',val:tot.online_orders.toLocaleString(),lbl:'Total Online Orders',color:'#9b59b6'},
+        {icon:'💵',val:fd(tot.online_ptr),lbl:'Avg Online Order Value',color:'#3498db'},
       ])}
       <div class="chart-grid">
         <div class="chart-card"><div class="chart-title">Online Revenue Split</div><canvas id="ch-on-split" height="180"></canvas></div>
@@ -1015,10 +991,10 @@ function buildDashboard(section){
       </div>
     </div>`;
     setTimeout(()=>{
-      mkChart('ch-on-split','doughnut',['Uber Eats','DoorDash','Menulog'],[{data:[tot.uber_gross,tot.dd_gross,tot.ml_gross],backgroundColor:['#2ecc71','#e74c3c','#f39c12']}],{scales:{}});
-      mkChart('ch-on-comm','bar',['Uber Eats','DoorDash','Menulog'],[
-        {label:'Gross Revenue',data:[tot.uber_gross,tot.dd_gross,tot.ml_gross],backgroundColor:'rgba(30,42,56,0.7)'},
-        {label:'Net Revenue',data:[tot.uber_net,tot.dd_net,tot.ml_net],backgroundColor:'rgba(46,204,113,0.7)'},
+      mkChart('ch-on-split','doughnut',['Uber Eats','DoorDash'],[{data:[tot.uber_gross,tot.dd_gross],backgroundColor:['#2ecc71','#e74c3c']}],{scales:{}});
+      mkChart('ch-on-comm','bar',['Uber Eats','DoorDash'],[
+        {label:'Gross Revenue',data:[tot.uber_gross,tot.dd_gross],backgroundColor:'rgba(30,42,56,0.7)'},
+        {label:'Net Revenue',data:[tot.uber_net,tot.dd_net],backgroundColor:'rgba(46,204,113,0.7)'},
       ]);
     },100);
   }
