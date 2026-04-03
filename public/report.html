@@ -11,8 +11,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f0f2f5;font-family:'Inter',Arial,sans-serif;min-height:100vh;color:#1a1a1a;font-size:13px;}
-input,button,select{outline:none;font-family:'Inter',Arial,sans-serif;}
-
+input,button,select,textarea{outline:none;font-family:'Inter',Arial,sans-serif;}
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#1e2a38;}
 .login-box{background:#fff;border-radius:16px;padding:40px;width:360px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.3);}
 .login-box img{width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid #f5c842;}
@@ -21,7 +20,6 @@ input,button,select{outline:none;font-family:'Inter',Arial,sans-serif;}
 .login-box input{width:100%;padding:11px 14px;border-radius:8px;border:1px solid #ddd;font-size:14px;margin-bottom:10px;color:#1a1a1a;}
 .err-msg{color:#c0392b;font-size:12px;margin-bottom:8px;display:none;}
 .login-btn{width:100%;padding:11px;border-radius:8px;background:#1e2a38;color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;}
-
 #app{display:none;min-height:100vh;flex-direction:column;}
 .topbar{background:#1e2a38;height:50px;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:300;position:sticky;top:0;}
 .topbar img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #f5c842;cursor:pointer;}
@@ -32,7 +30,6 @@ input,button,select{outline:none;font-family:'Inter',Arial,sans-serif;}
 .ttab.active{background:#f5c842;color:#1a1a1a;font-weight:700;}
 .ttab:not(.active){background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);}
 .logout-btn{padding:6px 12px;border-radius:6px;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);border:none;cursor:pointer;font-size:12px;}
-
 .main-body{display:flex;flex:1;overflow:hidden;height:calc(100vh - 50px);}
 .sidebar{width:180px;background:#fff;border-right:1px solid #e0e0e0;flex-shrink:0;display:none;flex-direction:column;overflow-y:auto;}
 .sidebar.show{display:flex;}
@@ -44,25 +41,26 @@ input,button,select{outline:none;font-family:'Inter',Arial,sans-serif;}
 .sheet{display:none;}
 .sheet.active{display:block;}
 .page-pad{padding:16px;}
-
 .card{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);border:1px solid #e8e8e8;}
 .card-title{font-size:12px;font-weight:700;color:#1a1a1a;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f0f0f0;}
-.toast{background:#d4edda;color:#155724;border-radius:6px;padding:8px 14px;font-size:12px;font-weight:600;margin-bottom:10px;display:none;}
+.toast{background:#d4edda;color:#155724;border-radius:6px;padding:8px 14px;font-size:12px;font-weight:600;margin-bottom:10px;display:none;position:sticky;top:0;z-index:50;}
 .toggle-btn{background:#f0f0f0;border:1px solid #ddd;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;color:#1a1a1a;}
-
 .upload-zone{border:2px dashed #1e2a38;border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:#f8f9fa;transition:all 0.2s;margin-bottom:10px;}
 .upload-zone:hover{background:#eef2ff;}
-
 /* Input table */
 .input-table-wrap{overflow-x:auto;}
-.input-table{width:100%;border-collapse:collapse;min-width:1100px;}
+.input-table{width:100%;border-collapse:collapse;min-width:1200px;}
 .input-table th{background:#1e2a38;color:#fff;padding:10px 12px;font-size:12px;font-weight:700;text-align:left;border:1px solid #152030;white-space:nowrap;}
-.input-table td{padding:8px;border:1px solid #e0e0e0;background:#fff;vertical-align:middle;}
-.input-table td input, .input-table td select{width:100%;padding:7px 8px;border:1px solid #ddd;border-radius:6px;font-size:12px;color:#1a1a1a;background:#fff;}
-.input-table td input:focus, .input-table td select:focus{border-color:#1e2a38;}
+.input-table td{padding:8px;border:1px solid #e0e0e0;background:#fff;vertical-align:top;}
+.input-table td input,.input-table td select{width:100%;padding:7px 8px;border:1px solid #ddd;border-radius:6px;font-size:12px;color:#1a1a1a;background:#fff;}
+.input-table td input:focus,.input-table td select:focus{border-color:#1e2a38;}
 .save-row-btn{padding:7px 14px;background:#1e2a38;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
-.save-row-btn:hover{background:#152030;}
-
+/* Multi expense */
+.exp-row{display:flex;gap:6px;align-items:center;margin-bottom:6px;}
+.exp-row select{flex:1;padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:11px;}
+.exp-row input{width:90px;padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:11px;}
+.exp-add-btn{padding:4px 10px;background:#e8f4fd;color:#0c5460;border:1px solid #bee5eb;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.exp-rm-btn{padding:4px 8px;background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:5px;font-size:11px;cursor:pointer;}
 /* Entries table */
 .entries-table-wrap{overflow-x:auto;border-radius:8px;border:1px solid #e0e0e0;}
 .entries-table{width:100%;border-collapse:collapse;font-size:11px;background:#fff;min-width:1000px;}
@@ -75,29 +73,27 @@ input,button,select{outline:none;font-family:'Inter',Arial,sans-serif;}
 .btn-hide{background:#fff3cd;color:#856404;border-color:#ffeeba;}
 .btn-show{background:#e8f5e9;color:#155724;border-color:#c3e6cb;}
 .btn-del{background:#fee;color:#c0392b;border-color:#fcc;}
-
 /* Report table */
 .rtwrap{overflow:auto;max-height:calc(100vh - 160px);position:relative;}
 table.rt{border-collapse:collapse;font-size:11px;background:#fff;border:1px solid #ccc;}
 table.rt th,table.rt td{font-family:'Inter',Arial,sans-serif;color:#1a1a1a;}
 .rt-fix1{background:#fff;color:#1a1a1a;font-weight:400;padding:5px 10px;border:1px solid #e0e0e0;white-space:nowrap;position:sticky;left:0;z-index:5;text-align:right;min-width:200px;width:200px;font-size:11px;}
-.rt-fix-bold{background:#f5f5f5;color:#1a1a1a;font-weight:700;padding:6px 10px;border:1px solid #d0d0d0;white-space:nowrap;position:sticky;left:0;z-index:5;text-align:right;min-width:200px;width:200px;font-size:11px;}
-.rt-fix-sec{background:#1e2a38;color:#fff;font-weight:700;padding:6px 10px;border:1px solid #152030;white-space:nowrap;position:sticky;left:0;z-index:5;text-align:right;font-size:11px;min-width:200px;width:200px;}
-.rt-fix-header{background:#1a1a1a;color:#fff;font-weight:700;padding:7px 10px;border:1px solid #111;white-space:nowrap;position:sticky;left:0;z-index:6;text-align:center;font-size:12px;min-width:200px;width:200px;}
-.rt-thw{background:#2c3e50;color:#fff;font-weight:700;font-size:11px;padding:7px 6px;border:1px solid #1e2a38;white-space:nowrap;min-width:70px;width:70px;text-align:center;position:sticky;top:0;z-index:4;}
-.rt-thm{background:#546e7a;color:#fff;font-weight:700;font-size:11px;padding:7px 6px;border:1px solid #455a64;white-space:nowrap;min-width:80px;width:80px;text-align:center;position:sticky;top:0;z-index:4;}
-.rt-thy{background:#1a1a1a;color:#f5c842;font-weight:700;font-size:11px;padding:7px 6px;border:1px solid #000;white-space:nowrap;min-width:85px;width:85px;text-align:center;position:sticky;top:0;z-index:4;}
-.rt-dw{background:#546e7a;color:#fff;font-size:9px;padding:4px 4px;border:1px solid #455a64;text-align:center;position:sticky;top:34px;z-index:3;}
-.rt-dm{background:#607d8b;color:#fff;font-size:9px;padding:4px 4px;border:1px solid #546e7a;text-align:center;position:sticky;top:34px;z-index:3;}
-.rt-dy{background:#263238;color:#f5c842;font-size:9px;padding:4px 4px;border:1px solid #1a1a1a;text-align:center;position:sticky;top:34px;z-index:3;}
-.rt-fix-date{background:#37474f;color:#fff;font-size:10px;padding:5px 10px;border:1px solid #263238;text-align:right;font-weight:500;position:sticky;left:0;top:34px;z-index:7;}
+.rt-fix-bold{background:#f0f0f0;color:#1a1a1a;font-weight:700;padding:6px 10px;border:1px solid #d0d0d0;white-space:nowrap;position:sticky;left:0;z-index:5;text-align:right;min-width:200px;width:200px;font-size:11px;}
+.rt-fix-sec{background:#e8edf2;color:#1a1a1a;font-weight:700;padding:6px 10px;border:1px solid #c8d0d8;white-space:nowrap;position:sticky;left:0;z-index:5;text-align:right;font-size:11px;min-width:200px;width:200px;}
+.rt-fix-header{background:#f0f2f5;color:#1a1a1a;font-weight:700;padding:7px 10px;border:1px solid #d0d5db;white-space:nowrap;position:sticky;left:0;z-index:6;text-align:center;font-size:12px;min-width:200px;width:200px;}
+.rt-thw{background:#e8edf2;color:#1a1a1a;font-weight:700;font-size:11px;padding:7px 6px;border:1px solid #c8d0d8;white-space:nowrap;min-width:70px;width:70px;text-align:center;position:sticky;top:0;z-index:4;}
+.rt-thm{background:#d0d8e0;color:#1a1a1a;font-weight:700;font-size:11px;padding:7px 6px;border:1px solid #b0bcc8;white-space:nowrap;min-width:80px;width:80px;text-align:center;position:sticky;top:0;z-index:4;}
+.rt-thy{background:#1e2a38;color:#f5c842;font-weight:700;font-size:11px;padding:7px 6px;border:1px solid #111;white-space:nowrap;min-width:85px;width:85px;text-align:center;position:sticky;top:0;z-index:4;}
+.rt-dw{background:#e8edf2;color:#1a1a1a;font-size:9px;padding:4px;border:1px solid #c8d0d8;text-align:center;position:sticky;top:34px;z-index:3;}
+.rt-dm{background:#d0d8e0;color:#1a1a1a;font-size:9px;padding:4px;border:1px solid #b0bcc8;text-align:center;position:sticky;top:34px;z-index:3;}
+.rt-dy{background:#263238;color:#f5c842;font-size:9px;padding:4px;border:1px solid #1a1a1a;text-align:center;position:sticky;top:34px;z-index:3;}
+.rt-fix-date{background:#e8edf2;color:#1a1a1a;font-size:10px;padding:5px 10px;border:1px solid #c8d0d8;text-align:right;font-weight:500;position:sticky;left:0;top:34px;z-index:7;}
 .rt-w{text-align:right;padding:4px 8px;border:1px solid #e8e8e8;color:#1a1a1a;background:#fff;}
 .rt-m{text-align:right;padding:4px 8px;border:1px solid #d0d0d0;color:#1a1a1a;background:#f5f5f5;font-weight:700;}
 .rt-y{text-align:right;padding:4px 8px;border:1px solid #bbb;color:#1a1a1a;background:#ebebeb;font-weight:700;}
 .rt-empty td{height:8px;background:#f8f8f8;border:1px solid #f0f0f0;}
 .rt-profit{color:#1a7a3c!important;font-weight:700;}
 .rt-loss{color:#c0392b!important;font-weight:700;}
-
 /* Dashboard */
 .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
 .kpi-card{background:#fff;border-radius:10px;padding:14px;border:1px solid #e8e8e8;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
@@ -111,16 +107,11 @@ table.rt th,table.rt td{font-family:'Inter',Arial,sans-serif;color:#1a1a1a;}
 .dash-table th{background:#1e2a38;color:#fff;padding:8px 10px;text-align:left;border:1px solid #152030;font-weight:700;}
 .dash-table td{padding:7px 10px;border:1px solid #e8e8e8;color:#1a1a1a;}
 .dash-table tr:nth-child(even) td{background:#fafafa;}
-
 @media(max-width:768px){
   .top-tabs{overflow-x:auto;}
   .kpi-grid{grid-template-columns:1fr 1fr;}
   .chart-grid{grid-template-columns:1fr;}
   .main-body{height:auto;flex-direction:column;}
-  .sidebar{width:100%;border-right:none;border-bottom:1px solid #e0e0e0;}
-  .sidebar.show{display:flex;flex-direction:row;flex-wrap:wrap;}
-  .sb-item{padding:7px 10px;font-size:11px;border-left:none;border-bottom:3px solid transparent;}
-  .sb-item.active{border-bottom-color:#1e2a38;border-left-color:transparent;}
 }
 </style>
 </head>
@@ -172,7 +163,6 @@ table.rt th,table.rt td{font-family:'Inter',Arial,sans-serif;color:#1a1a1a;}
     </div>
 
     <div class="content">
-
       <!-- DASHBOARD -->
       <div id="tab-dash" class="sheet active">
         <div id="dash-overview" class="dash-section"></div>
@@ -186,34 +176,26 @@ table.rt th,table.rt td{font-family:'Inter',Arial,sans-serif;color:#1a1a1a;}
       </div>
 
       <!-- REPORT TABS -->
-      <div id="tab-overall" class="sheet">
-        <div class="page-pad">
-          <div style="font-size:15px;font-weight:700;margin-bottom:2px;">📊 Overall — All 6 Restaurants</div>
-          <div style="font-size:11px;color:#888;margin-bottom:10px;">All locations combined · AUD</div>
-          <div class="rtwrap"><div id="r-overall"></div></div>
-        </div>
-      </div>
-      <div id="tab-stalbans" class="sheet">
-        <div class="page-pad">
-          <div style="font-size:15px;font-weight:700;margin-bottom:2px;">📍 ST ALBANS</div>
-          <div style="font-size:11px;color:#888;margin-bottom:10px;">Angie's ST Albans + Golden Flames ST Albans</div>
-          <div class="rtwrap"><div id="r-stalbans"></div></div>
-        </div>
-      </div>
-      <div id="tab-fitzroy" class="sheet">
-        <div class="page-pad">
-          <div style="font-size:15px;font-weight:700;margin-bottom:2px;">📍 FITZROY NORTH</div>
-          <div style="font-size:11px;color:#888;margin-bottom:10px;">Angie's Fitzroy North + Lamb on Nicholson</div>
-          <div class="rtwrap"><div id="r-fitzroy"></div></div>
-        </div>
-      </div>
-      <div id="tab-ascot" class="sheet">
-        <div class="page-pad">
-          <div style="font-size:15px;font-weight:700;margin-bottom:2px;">📍 ASCOT VALE</div>
-          <div style="font-size:11px;color:#888;margin-bottom:10px;">Angie's Ascot Vale + Ascot Vale Kebabs</div>
-          <div class="rtwrap"><div id="r-ascot"></div></div>
-        </div>
-      </div>
+      <div id="tab-overall" class="sheet"><div class="page-pad">
+        <div style="font-size:15px;font-weight:700;margin-bottom:2px;">📊 Overall — All 6 Restaurants</div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px;">All locations combined · AUD</div>
+        <div class="rtwrap"><div id="r-overall"></div></div>
+      </div></div>
+      <div id="tab-stalbans" class="sheet"><div class="page-pad">
+        <div style="font-size:15px;font-weight:700;margin-bottom:2px;">📍 ST ALBANS</div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px;">Angie's ST Albans + Golden Flames ST Albans</div>
+        <div class="rtwrap"><div id="r-stalbans"></div></div>
+      </div></div>
+      <div id="tab-fitzroy" class="sheet"><div class="page-pad">
+        <div style="font-size:15px;font-weight:700;margin-bottom:2px;">📍 FITZROY NORTH</div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px;">Angie's Fitzroy North + Lamb on Nicholson</div>
+        <div class="rtwrap"><div id="r-fitzroy"></div></div>
+      </div></div>
+      <div id="tab-ascot" class="sheet"><div class="page-pad">
+        <div style="font-size:15px;font-weight:700;margin-bottom:2px;">📍 ASCOT VALE</div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px;">Angie's Ascot Vale + Ascot Vale Kebabs</div>
+        <div class="rtwrap"><div id="r-ascot"></div></div>
+      </div></div>
 
       <!-- DATA INPUT -->
       <div id="tab-input" class="sheet">
@@ -239,7 +221,7 @@ table.rt th,table.rt td{font-family:'Inter',Arial,sans-serif;color:#1a1a1a;}
               </div>
             </div>
             <div id="preview-section" style="display:none;margin-top:10px;">
-              <div style="font-size:11px;font-weight:700;color:#1a1a1a;margin-bottom:6px;">👁️ Preview — <span id="prev-count">0</span> rows</div>
+              <div style="font-size:11px;font-weight:700;margin-bottom:6px;">👁️ Preview — <span id="prev-count">0</span> rows</div>
               <div style="overflow-x:auto;border-radius:6px;border:1px solid #ddd;max-height:180px;overflow-y:auto;">
                 <table id="prev-table" style="width:100%;border-collapse:collapse;font-size:10px;background:#fff;">
                   <thead id="prev-head"></thead>
@@ -265,8 +247,7 @@ table.rt th,table.rt td{font-family:'Inter',Arial,sans-serif;color:#1a1a1a;}
                     <th style="min-width:110px;">🔢 No. of Orders</th>
                     <th style="min-width:130px;">💰 Gross Revenue</th>
                     <th style="min-width:130px;">💵 Net Revenue</th>
-                    <th style="min-width:140px;">💸 Expenses Type</th>
-                    <th style="min-width:130px;">💲 Exp. Amount</th>
+                    <th style="min-width:220px;">💸 Expenses (Type + Amount)</th>
                     <th style="min-width:150px;">📝 Note</th>
                     <th style="min-width:80px;text-align:center;">Action</th>
                   </tr>
@@ -277,16 +258,12 @@ table.rt th,table.rt td{font-family:'Inter',Arial,sans-serif;color:#1a1a1a;}
                     <td>
                       <select id="f-loc" onchange="filterRestByLoc()">
                         <option value="">Select...</option>
-                        <option value="ST ALBANS">ST ALBANS</option>
-                        <option value="ASCOT VALE">ASCOT VALE</option>
-                        <option value="FITZROY NORTH">FITZROY NORTH</option>
+                        <option>ST ALBANS</option>
+                        <option>ASCOT VALE</option>
+                        <option>FITZROY NORTH</option>
                       </select>
                     </td>
-                    <td>
-                      <select id="f-rest">
-                        <option value="">Select location first</option>
-                      </select>
-                    </td>
+                    <td><select id="f-rest"><option value="">Select location first</option></select></td>
                     <td>
                       <select id="f-partner">
                         <option value="store">Physical Store</option>
@@ -298,17 +275,22 @@ table.rt th,table.rt td{font-family:'Inter',Arial,sans-serif;color:#1a1a1a;}
                     <td><input type="number" id="f-gross" placeholder="0.00" min="0" step="0.01"/></td>
                     <td><input type="number" id="f-net" placeholder="0.00" min="0" step="0.01"/></td>
                     <td>
-                      <select id="f-exptype">
-                        <option value="">None</option>
-                        <option value="food">Food</option>
-                        <option value="staff">Staff</option>
-                        <option value="operation">Operation</option>
-                        <option value="other">Others</option>
-                      </select>
+                      <div id="exp-rows">
+                        <div class="exp-row" id="exp-0">
+                          <select class="exp-type-sel">
+                            <option value="">None</option>
+                            <option value="food">Food</option>
+                            <option value="staff">Staff</option>
+                            <option value="operation">Operation</option>
+                            <option value="other">Others</option>
+                          </select>
+                          <input type="number" class="exp-amt-inp" placeholder="$0.00" min="0" step="0.01"/>
+                        </div>
+                      </div>
+                      <button class="exp-add-btn" onclick="addExpRow()">+ Add More</button>
                     </td>
-                    <td><input type="number" id="f-expamt" placeholder="0.00" min="0" step="0.01"/></td>
                     <td><input type="text" id="f-notes" placeholder="Optional..."/></td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center;vertical-align:middle;">
                       <button class="save-row-btn" onclick="saveEntry()">💾 Save</button>
                     </td>
                   </tr>
@@ -319,7 +301,7 @@ table.rt th,table.rt td{font-family:'Inter',Arial,sans-serif;color:#1a1a1a;}
 
           <!-- SAVED ENTRIES -->
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <div style="font-size:13px;font-weight:700;color:#1a1a1a;">Saved Entries (<span id="ecount">0</span>)</div>
+            <div style="font-size:13px;font-weight:700;">Saved Entries (<span id="ecount">0</span>)</div>
             <div style="display:flex;gap:8px;">
               <button class="toggle-btn" id="toggle-btn" onclick="toggleEntries()">👁️ Show Entries</button>
               <button onclick="clearAll()" style="padding:6px 12px;background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">🗑️ Clear All</button>
@@ -332,7 +314,7 @@ table.rt th,table.rt td{font-family:'Inter',Arial,sans-serif;color:#1a1a1a;}
                   <tr>
                     <th>Date</th><th>Week</th><th>Location</th><th>Restaurant</th>
                     <th>Partner</th><th>Orders</th><th>Gross</th><th>Net</th>
-                    <th>Exp Type</th><th>Exp Amt</th><th>Note</th><th>Actions</th>
+                    <th>Expenses</th><th>Note</th><th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="etbody"></tbody>
@@ -341,16 +323,18 @@ table.rt th,table.rt td{font-family:'Inter',Arial,sans-serif;color:#1a1a1a;}
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
 <script>
 const PASS="angies2024";
-let entries=JSON.parse(localStorage.getItem('pl_v4')||'[]');
+const EXCEL_DATA=[{"id":1000,"date":"2026-01-04","restaurant":"ANGIES - ST ALBANS","week":"Week-1","location":"ST ALBANS","rev_type":"store","partner":"store","orders":303,"gross":7820,"net":7820,"expenses":[{"type":"food","amt":5586}],"notes":"","hidden":false},{"id":1001,"date":"2026-01-04","restaurant":"ANGIES - ST ALBANS","week":"Week-1","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":131,"gross":5344,"net":2788,"expenses":[{"type":"staff","amt":2970}],"notes":"","hidden":false},{"id":1002,"date":"2026-01-04","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-1","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":173,"gross":8411,"net":4148,"expenses":[{"type":"operation","amt":2033}],"notes":"","hidden":false},{"id":1003,"date":"2026-01-04","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-1","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":51,"gross":1828,"net":1221,"expenses":[],"notes":"","hidden":false},{"id":1004,"date":"2026-01-04","restaurant":"ANGIES - ST ALBANS","week":"Week-1","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":82,"gross":2486,"net":1409,"expenses":[],"notes":"","hidden":false},{"id":1005,"date":"2026-01-04","restaurant":"ANGIES - ASCOT VALE","week":"Week-1","location":"ASCOT VALE","rev_type":"store","partner":"store","orders":322,"gross":7741,"net":7741,"expenses":[{"type":"food","amt":3451}],"notes":"","hidden":false},{"id":1006,"date":"2026-01-04","restaurant":"ASCOT VALE KEBABS","week":"Week-1","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":70,"gross":2663,"net":1430,"expenses":[{"type":"staff","amt":3520}],"notes":"","hidden":false},{"id":1007,"date":"2026-01-04","restaurant":"ANGIES - ASCOT VALE","week":"Week-1","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":83,"gross":3127,"net":1848,"expenses":[{"type":"operation","amt":3314}],"notes":"","hidden":false},{"id":1008,"date":"2026-01-04","restaurant":"ASCOT VALE KEBABS","week":"Week-1","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":0,"gross":0,"net":0,"expenses":[],"notes":"","hidden":false},{"id":1010,"date":"2026-01-04","restaurant":"ANGIES - FITZROY NORTH","week":"Week-1","location":"FITZROY NORTH","rev_type":"store","partner":"store","orders":160,"gross":3442,"net":3442,"expenses":[{"type":"food","amt":690}],"notes":"","hidden":false},{"id":1011,"date":"2026-01-04","restaurant":"LAMB ON NICHOLSON","week":"Week-1","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":54,"gross":1650,"net":1020,"expenses":[{"type":"staff","amt":1088}],"notes":"","hidden":false},{"id":1012,"date":"2026-01-04","restaurant":"ANGIES - FITZROY NORTH","week":"Week-1","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":19,"gross":650,"net":418,"expenses":[{"type":"operation","amt":1544}],"notes":"","hidden":false},{"id":1013,"date":"2026-01-04","restaurant":"LAMB ON NICHOLSON","week":"Week-1","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":12,"gross":400,"net":241,"expenses":[],"notes":"","hidden":false},{"id":1014,"date":"2026-01-04","restaurant":"ANGIES - FITZROY NORTH","week":"Week-1","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":10,"gross":250,"net":164,"expenses":[],"notes":"","hidden":false},{"id":1015,"date":"2026-01-11","restaurant":"ANGIES - ST ALBANS","week":"Week-2","location":"ST ALBANS","rev_type":"store","partner":"store","orders":218,"gross":5848,"net":5848,"expenses":[{"type":"food","amt":4638}],"notes":"","hidden":false},{"id":1016,"date":"2026-01-11","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-2","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":173,"gross":7800,"net":4148,"expenses":[{"type":"staff","amt":3096}],"notes":"","hidden":false},{"id":1017,"date":"2026-01-11","restaurant":"ANGIES - ST ALBANS","week":"Week-2","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":131,"gross":5500,"net":2728,"expenses":[{"type":"operation","amt":2033}],"notes":"","hidden":false},{"id":1018,"date":"2026-01-11","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-2","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":51,"gross":2211,"net":1221,"expenses":[],"notes":"","hidden":false},{"id":1019,"date":"2026-01-11","restaurant":"ANGIES - ST ALBANS","week":"Week-2","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":82,"gross":2400,"net":1409,"expenses":[],"notes":"","hidden":false},{"id":1020,"date":"2026-01-11","restaurant":"ANGIES - ASCOT VALE","week":"Week-2","location":"ASCOT VALE","rev_type":"store","partner":"store","orders":248,"gross":5970,"net":5970,"expenses":[{"type":"food","amt":4244}],"notes":"","hidden":false},{"id":1021,"date":"2026-01-11","restaurant":"ASCOT VALE KEBABS","week":"Week-2","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":37,"gross":1100,"net":685,"expenses":[{"type":"staff","amt":3144}],"notes":"","hidden":false},{"id":1022,"date":"2026-01-11","restaurant":"ANGIES - ASCOT VALE","week":"Week-2","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":83,"gross":2900,"net":1531,"expenses":[{"type":"operation","amt":3314}],"notes":"","hidden":false},{"id":1023,"date":"2026-01-11","restaurant":"ASCOT VALE KEBABS","week":"Week-2","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":28,"gross":1100,"net":602,"expenses":[],"notes":"","hidden":false},{"id":1024,"date":"2026-01-11","restaurant":"ANGIES - ASCOT VALE","week":"Week-2","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":49,"gross":1250,"net":798,"expenses":[],"notes":"","hidden":false},{"id":1025,"date":"2026-01-11","restaurant":"ANGIES - FITZROY NORTH","week":"Week-2","location":"FITZROY NORTH","rev_type":"store","partner":"store","orders":175,"gross":3800,"net":3800,"expenses":[{"type":"food","amt":690}],"notes":"","hidden":false},{"id":1026,"date":"2026-01-11","restaurant":"LAMB ON NICHOLSON","week":"Week-2","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":31,"gross":700,"net":404,"expenses":[{"type":"staff","amt":1009}],"notes":"","hidden":false},{"id":1027,"date":"2026-01-11","restaurant":"ANGIES - FITZROY NORTH","week":"Week-2","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":6,"gross":250,"net":114,"expenses":[{"type":"operation","amt":1544}],"notes":"","hidden":false},{"id":1028,"date":"2026-01-11","restaurant":"LAMB ON NICHOLSON","week":"Week-2","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":8,"gross":150,"net":75,"expenses":[],"notes":"","hidden":false},{"id":1029,"date":"2026-01-11","restaurant":"ANGIES - FITZROY NORTH","week":"Week-2","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":12,"gross":250,"net":127,"expenses":[],"notes":"","hidden":false},{"id":1030,"date":"2026-01-18","restaurant":"ANGIES - ST ALBANS","week":"Week-3","location":"ST ALBANS","rev_type":"store","partner":"store","orders":226,"gross":5976,"net":5976,"expenses":[{"type":"food","amt":4600}],"notes":"","hidden":false},{"id":1031,"date":"2026-01-18","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-3","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":84,"gross":4200,"net":2101,"expenses":[{"type":"staff","amt":2334}],"notes":"","hidden":false},{"id":1032,"date":"2026-01-18","restaurant":"ANGIES - ST ALBANS","week":"Week-3","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":67,"gross":2600,"net":1335,"expenses":[{"type":"operation","amt":2033}],"notes":"","hidden":false},{"id":1033,"date":"2026-01-18","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-3","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":47,"gross":1500,"net":880,"expenses":[],"notes":"","hidden":false},{"id":1034,"date":"2026-01-18","restaurant":"ANGIES - ST ALBANS","week":"Week-3","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":68,"gross":2100,"net":1230,"expenses":[],"notes":"","hidden":false},{"id":1035,"date":"2026-01-18","restaurant":"ANGIES - ASCOT VALE","week":"Week-3","location":"ASCOT VALE","rev_type":"store","partner":"store","orders":269,"gross":6584,"net":6584,"expenses":[{"type":"food","amt":4240}],"notes":"","hidden":false},{"id":1036,"date":"2026-01-18","restaurant":"ASCOT VALE KEBABS","week":"Week-3","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":20,"gross":500,"net":253,"expenses":[{"type":"staff","amt":3136}],"notes":"","hidden":false},{"id":1037,"date":"2026-01-18","restaurant":"ANGIES - ASCOT VALE","week":"Week-3","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":72,"gross":2800,"net":1592,"expenses":[{"type":"operation","amt":3314}],"notes":"","hidden":false},{"id":1038,"date":"2026-01-18","restaurant":"ASCOT VALE KEBABS","week":"Week-3","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":13,"gross":450,"net":225,"expenses":[],"notes":"","hidden":false},{"id":1039,"date":"2026-01-18","restaurant":"ANGIES - ASCOT VALE","week":"Week-3","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":49,"gross":1500,"net":831,"expenses":[],"notes":"","hidden":false},{"id":1040,"date":"2026-01-18","restaurant":"ANGIES - FITZROY NORTH","week":"Week-3","location":"FITZROY NORTH","rev_type":"store","partner":"store","orders":202,"gross":4258,"net":4258,"expenses":[{"type":"food","amt":690}],"notes":"","hidden":false},{"id":1041,"date":"2026-01-18","restaurant":"LAMB ON NICHOLSON","week":"Week-3","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":32,"gross":750,"net":429,"expenses":[{"type":"staff","amt":1244}],"notes":"","hidden":false},{"id":1042,"date":"2026-01-18","restaurant":"ANGIES - FITZROY NORTH","week":"Week-3","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":9,"gross":250,"net":128,"expenses":[{"type":"operation","amt":1514}],"notes":"","hidden":false},{"id":1043,"date":"2026-01-18","restaurant":"LAMB ON NICHOLSON","week":"Week-3","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":7,"gross":200,"net":107,"expenses":[],"notes":"","hidden":false},{"id":1044,"date":"2026-01-18","restaurant":"ANGIES - FITZROY NORTH","week":"Week-3","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":6,"gross":180,"net":96,"expenses":[],"notes":"","hidden":false},{"id":1045,"date":"2026-01-25","restaurant":"ANGIES - ST ALBANS","week":"Week-4","location":"ST ALBANS","rev_type":"store","partner":"store","orders":234,"gross":6319,"net":6319,"expenses":[{"type":"food","amt":5000}],"notes":"","hidden":false},{"id":1046,"date":"2026-01-25","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-4","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":93,"gross":4500,"net":2357,"expenses":[{"type":"staff","amt":2677}],"notes":"","hidden":false},{"id":1047,"date":"2026-01-25","restaurant":"ANGIES - ST ALBANS","week":"Week-4","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":80,"gross":3200,"net":1687,"expenses":[{"type":"operation","amt":2033}],"notes":"","hidden":false},{"id":1048,"date":"2026-01-25","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-4","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":42,"gross":1500,"net":812,"expenses":[],"notes":"","hidden":false},{"id":1049,"date":"2026-01-25","restaurant":"ANGIES - ST ALBANS","week":"Week-4","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":61,"gross":1900,"net":1010,"expenses":[],"notes":"","hidden":false},{"id":1050,"date":"2026-01-25","restaurant":"ANGIES - ASCOT VALE","week":"Week-4","location":"ASCOT VALE","rev_type":"store","partner":"store","orders":280,"gross":6194,"net":6194,"expenses":[{"type":"food","amt":3020}],"notes":"","hidden":false},{"id":1051,"date":"2026-01-25","restaurant":"ASCOT VALE KEBABS","week":"Week-4","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":22,"gross":800,"net":440,"expenses":[{"type":"staff","amt":3132}],"notes":"","hidden":false},{"id":1052,"date":"2026-01-25","restaurant":"ANGIES - ASCOT VALE","week":"Week-4","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":59,"gross":2200,"net":1122,"expenses":[{"type":"operation","amt":3314}],"notes":"","hidden":false},{"id":1053,"date":"2026-01-25","restaurant":"ASCOT VALE KEBABS","week":"Week-4","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":19,"gross":600,"net":375,"expenses":[],"notes":"","hidden":false},{"id":1054,"date":"2026-01-25","restaurant":"ANGIES - ASCOT VALE","week":"Week-4","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":50,"gross":1500,"net":890,"expenses":[],"notes":"","hidden":false},{"id":1055,"date":"2026-01-25","restaurant":"ANGIES - FITZROY NORTH","week":"Week-4","location":"FITZROY NORTH","rev_type":"store","partner":"store","orders":168,"gross":3609,"net":3609,"expenses":[{"type":"food","amt":690}],"notes":"","hidden":false},{"id":1056,"date":"2026-01-25","restaurant":"LAMB ON NICHOLSON","week":"Week-4","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":24,"gross":500,"net":317,"expenses":[{"type":"staff","amt":1091}],"notes":"","hidden":false},{"id":1057,"date":"2026-01-25","restaurant":"ANGIES - FITZROY NORTH","week":"Week-4","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":4,"gross":70,"net":35,"expenses":[{"type":"operation","amt":1544}],"notes":"","hidden":false},{"id":1058,"date":"2026-01-25","restaurant":"LAMB ON NICHOLSON","week":"Week-4","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":6,"gross":150,"net":78,"expenses":[],"notes":"","hidden":false},{"id":1059,"date":"2026-01-25","restaurant":"ANGIES - FITZROY NORTH","week":"Week-4","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":3,"gross":100,"net":54,"expenses":[],"notes":"","hidden":false},{"id":1060,"date":"2026-02-01","restaurant":"ANGIES - ST ALBANS","week":"Week-5","location":"ST ALBANS","rev_type":"store","partner":"store","orders":244,"gross":6134,"net":6134,"expenses":[{"type":"food","amt":3600}],"notes":"","hidden":false},{"id":1061,"date":"2026-02-01","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-5","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":95,"gross":4100,"net":2295,"expenses":[{"type":"staff","amt":2800}],"notes":"","hidden":false},{"id":1062,"date":"2026-02-01","restaurant":"ANGIES - ST ALBANS","week":"Week-5","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":92,"gross":3200,"net":1785,"expenses":[{"type":"operation","amt":2033}],"notes":"","hidden":false},{"id":1063,"date":"2026-02-01","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-5","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":27,"gross":1000,"net":622,"expenses":[],"notes":"","hidden":false},{"id":1064,"date":"2026-02-01","restaurant":"ANGIES - ST ALBANS","week":"Week-5","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":68,"gross":1800,"net":1103,"expenses":[],"notes":"","hidden":false},{"id":1065,"date":"2026-02-01","restaurant":"ANGIES - ASCOT VALE","week":"Week-5","location":"ASCOT VALE","rev_type":"store","partner":"store","orders":275,"gross":7115,"net":7115,"expenses":[{"type":"food","amt":2995}],"notes":"","hidden":false},{"id":1066,"date":"2026-02-01","restaurant":"ASCOT VALE KEBABS","week":"Week-5","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":30,"gross":1100,"net":612,"expenses":[{"type":"staff","amt":3122}],"notes":"","hidden":false},{"id":1067,"date":"2026-02-01","restaurant":"ANGIES - ASCOT VALE","week":"Week-5","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":79,"gross":3600,"net":1975,"expenses":[{"type":"operation","amt":3314}],"notes":"","hidden":false},{"id":1068,"date":"2026-02-01","restaurant":"ASCOT VALE KEBABS","week":"Week-5","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":20,"gross":700,"net":422,"expenses":[],"notes":"","hidden":false},{"id":1069,"date":"2026-02-01","restaurant":"ANGIES - ASCOT VALE","week":"Week-5","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":37,"gross":1500,"net":802,"expenses":[],"notes":"","hidden":false},{"id":1070,"date":"2026-02-01","restaurant":"ANGIES - FITZROY NORTH","week":"Week-5","location":"FITZROY NORTH","rev_type":"store","partner":"store","orders":192,"gross":4077,"net":4077,"expenses":[{"type":"food","amt":690}],"notes":"","hidden":false},{"id":1071,"date":"2026-02-01","restaurant":"LAMB ON NICHOLSON","week":"Week-5","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":16,"gross":250,"net":138,"expenses":[{"type":"staff","amt":1200}],"notes":"","hidden":false},{"id":1072,"date":"2026-02-01","restaurant":"ANGIES - FITZROY NORTH","week":"Week-5","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":0,"gross":0,"net":0,"expenses":[{"type":"operation","amt":1544}],"notes":"","hidden":false},{"id":1073,"date":"2026-02-01","restaurant":"LAMB ON NICHOLSON","week":"Week-5","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":3,"gross":70,"net":36,"expenses":[],"notes":"","hidden":false},{"id":1074,"date":"2026-02-01","restaurant":"ANGIES - FITZROY NORTH","week":"Week-5","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":13,"gross":220,"net":116,"expenses":[],"notes":"","hidden":false},{"id":1075,"date":"2026-02-08","restaurant":"ANGIES - ST ALBANS","week":"Week-6","location":"ST ALBANS","rev_type":"store","partner":"store","orders":249,"gross":6283,"net":6283,"expenses":[{"type":"food","amt":4350}],"notes":"","hidden":false},{"id":1076,"date":"2026-02-08","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-6","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":73,"gross":3000,"net":1643,"expenses":[{"type":"staff","amt":2667}],"notes":"","hidden":false},{"id":1077,"date":"2026-02-08","restaurant":"ANGIES - ST ALBANS","week":"Week-6","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":81,"gross":3000,"net":1674,"expenses":[{"type":"operation","amt":2033}],"notes":"","hidden":false},{"id":1078,"date":"2026-02-08","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-6","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":48,"gross":1750,"net":920,"expenses":[],"notes":"","hidden":false},{"id":1079,"date":"2026-02-08","restaurant":"ANGIES - ST ALBANS","week":"Week-6","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":43,"gross":1100,"net":675,"expenses":[],"notes":"","hidden":false},{"id":1080,"date":"2026-02-08","restaurant":"ANGIES - ASCOT VALE","week":"Week-6","location":"ASCOT VALE","rev_type":"store","partner":"store","orders":249,"gross":5473,"net":5473,"expenses":[{"type":"food","amt":4554}],"notes":"","hidden":false},{"id":1081,"date":"2026-02-08","restaurant":"ASCOT VALE KEBABS","week":"Week-6","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":13,"gross":450,"net":283,"expenses":[{"type":"staff","amt":3104}],"notes":"","hidden":false},{"id":1082,"date":"2026-02-08","restaurant":"ANGIES - ASCOT VALE","week":"Week-6","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":82,"gross":3300,"net":1778,"expenses":[{"type":"operation","amt":3314}],"notes":"","hidden":false},{"id":1083,"date":"2026-02-08","restaurant":"ASCOT VALE KEBABS","week":"Week-6","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":22,"gross":750,"net":460,"expenses":[],"notes":"","hidden":false},{"id":1084,"date":"2026-02-08","restaurant":"ANGIES - ASCOT VALE","week":"Week-6","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":46,"gross":1150,"net":686,"expenses":[],"notes":"","hidden":false},{"id":1085,"date":"2026-02-08","restaurant":"ANGIES - FITZROY NORTH","week":"Week-6","location":"FITZROY NORTH","rev_type":"store","partner":"store","orders":186,"gross":4029,"net":4029,"expenses":[{"type":"food","amt":690}],"notes":"","hidden":false},{"id":1086,"date":"2026-02-08","restaurant":"LAMB ON NICHOLSON","week":"Week-6","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":18,"gross":500,"net":260,"expenses":[{"type":"staff","amt":655}],"notes":"","hidden":false},{"id":1087,"date":"2026-02-08","restaurant":"ANGIES - FITZROY NORTH","week":"Week-6","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":3,"gross":60,"net":37,"expenses":[{"type":"operation","amt":1544}],"notes":"","hidden":false},{"id":1088,"date":"2026-02-08","restaurant":"LAMB ON NICHOLSON","week":"Week-6","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":3,"gross":69,"net":37,"expenses":[],"notes":"","hidden":false},{"id":1089,"date":"2026-02-08","restaurant":"ANGIES - FITZROY NORTH","week":"Week-6","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":6,"gross":150,"net":87,"expenses":[],"notes":"","hidden":false},{"id":1090,"date":"2026-02-15","restaurant":"ANGIES - ASCOT VALE","week":"Week-7","location":"ASCOT VALE","rev_type":"store","partner":"store","orders":299,"gross":7089,"net":7089,"expenses":[{"type":"food","amt":3949}],"notes":"","hidden":false},{"id":1091,"date":"2026-02-15","restaurant":"ASCOT VALE KEBABS","week":"Week-7","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":29,"gross":985,"net":603,"expenses":[{"type":"staff","amt":3077}],"notes":"","hidden":false},{"id":1092,"date":"2026-02-15","restaurant":"ANGIES - ASCOT VALE","week":"Week-7","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":68,"gross":2398,"net":1351,"expenses":[{"type":"operation","amt":3314}],"notes":"","hidden":false},{"id":1093,"date":"2026-02-15","restaurant":"ASCOT VALE KEBABS","week":"Week-7","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":25,"gross":739,"net":382,"expenses":[],"notes":"","hidden":false},{"id":1094,"date":"2026-02-15","restaurant":"ANGIES - ASCOT VALE","week":"Week-7","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":44,"gross":1272,"net":639,"expenses":[],"notes":"","hidden":false},{"id":1095,"date":"2026-02-15","restaurant":"ANGIES - ST ALBANS","week":"Week-7","location":"ST ALBANS","rev_type":"store","partner":"store","orders":204,"gross":4905,"net":4905,"expenses":[{"type":"food","amt":4839}],"notes":"","hidden":false},{"id":1096,"date":"2026-02-15","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-7","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":89,"gross":3792,"net":2095,"expenses":[{"type":"staff","amt":2690}],"notes":"","hidden":false},{"id":1097,"date":"2026-02-15","restaurant":"ANGIES - ST ALBANS","week":"Week-7","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":78,"gross":2702,"net":1526,"expenses":[{"type":"operation","amt":2033}],"notes":"","hidden":false},{"id":1098,"date":"2026-02-15","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-7","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":42,"gross":1279,"net":785,"expenses":[],"notes":"","hidden":false},{"id":1099,"date":"2026-02-15","restaurant":"ANGIES - ST ALBANS","week":"Week-7","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":64,"gross":1838,"net":1063,"expenses":[],"notes":"","hidden":false},{"id":1100,"date":"2026-02-15","restaurant":"ANGIES - FITZROY NORTH","week":"Week-7","location":"FITZROY NORTH","rev_type":"store","partner":"store","orders":177,"gross":3939,"net":3939,"expenses":[{"type":"food","amt":830}],"notes":"","hidden":false},{"id":1101,"date":"2026-02-15","restaurant":"LAMB ON NICHOLSON","week":"Week-7","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":25,"gross":1020,"net":315,"expenses":[{"type":"staff","amt":953}],"notes":"","hidden":false},{"id":1102,"date":"2026-02-15","restaurant":"ANGIES - FITZROY NORTH","week":"Week-7","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":7,"gross":239,"net":27,"expenses":[{"type":"operation","amt":1544}],"notes":"","hidden":false},{"id":1103,"date":"2026-02-15","restaurant":"LAMB ON NICHOLSON","week":"Week-7","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":5,"gross":143,"net":83,"expenses":[],"notes":"","hidden":false},{"id":1104,"date":"2026-02-15","restaurant":"ANGIES - FITZROY NORTH","week":"Week-7","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":19,"gross":470,"net":268,"expenses":[],"notes":"","hidden":false},{"id":1105,"date":"2026-02-22","restaurant":"ANGIES - ASCOT VALE","week":"Week-8","location":"ASCOT VALE","rev_type":"store","partner":"store","orders":274,"gross":6208,"net":6208,"expenses":[{"type":"food","amt":3182}],"notes":"","hidden":false},{"id":1106,"date":"2026-02-22","restaurant":"ASCOT VALE KEBABS","week":"Week-8","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":44,"gross":1505,"net":807,"expenses":[{"type":"staff","amt":3046}],"notes":"","hidden":false},{"id":1107,"date":"2026-02-22","restaurant":"ANGIES - ASCOT VALE","week":"Week-8","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":53,"gross":1849,"net":1072,"expenses":[{"type":"operation","amt":3314}],"notes":"","hidden":false},{"id":1108,"date":"2026-02-22","restaurant":"ASCOT VALE KEBABS","week":"Week-8","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":24,"gross":712,"net":375,"expenses":[],"notes":"","hidden":false},{"id":1109,"date":"2026-02-22","restaurant":"ANGIES - ASCOT VALE","week":"Week-8","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":44,"gross":1158,"net":586,"expenses":[],"notes":"","hidden":false},{"id":1110,"date":"2026-02-22","restaurant":"ANGIES - ST ALBANS","week":"Week-8","location":"ST ALBANS","rev_type":"store","partner":"store","orders":197,"gross":4996,"net":4996,"expenses":[{"type":"food","amt":3132}],"notes":"","hidden":false},{"id":1111,"date":"2026-02-22","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-8","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":99,"gross":4410,"net":2483,"expenses":[{"type":"staff","amt":2519}],"notes":"","hidden":false},{"id":1112,"date":"2026-02-22","restaurant":"ANGIES - ST ALBANS","week":"Week-8","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":70,"gross":2428,"net":1364,"expenses":[{"type":"operation","amt":2033}],"notes":"","hidden":false},{"id":1113,"date":"2026-02-22","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-8","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":42,"gross":1121,"net":685,"expenses":[],"notes":"","hidden":false},{"id":1114,"date":"2026-02-22","restaurant":"ANGIES - ST ALBANS","week":"Week-8","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":65,"gross":1977,"net":1120,"expenses":[],"notes":"","hidden":false},{"id":1115,"date":"2026-02-22","restaurant":"ANGIES - FITZROY NORTH","week":"Week-8","location":"FITZROY NORTH","rev_type":"store","partner":"store","orders":122,"gross":2276,"net":2276,"expenses":[{"type":"food","amt":830}],"notes":"","hidden":false},{"id":1116,"date":"2026-02-22","restaurant":"LAMB ON NICHOLSON","week":"Week-8","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":13,"gross":575,"net":156,"expenses":[{"type":"staff","amt":765}],"notes":"","hidden":false},{"id":1117,"date":"2026-02-22","restaurant":"ANGIES - FITZROY NORTH","week":"Week-8","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":2,"gross":67,"net":11,"expenses":[{"type":"operation","amt":1544}],"notes":"","hidden":false},{"id":1118,"date":"2026-02-22","restaurant":"LAMB ON NICHOLSON","week":"Week-8","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":0,"gross":0,"net":0,"expenses":[],"notes":"","hidden":false},{"id":1119,"date":"2026-02-22","restaurant":"ANGIES - FITZROY NORTH","week":"Week-8","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":6,"gross":138,"net":69,"expenses":[],"notes":"","hidden":false},{"id":1120,"date":"2026-03-01","restaurant":"ANGIES - ASCOT VALE","week":"Week-9","location":"ASCOT VALE","rev_type":"store","partner":"store","orders":263,"gross":6061,"net":6061,"expenses":[{"type":"food","amt":2963}],"notes":"","hidden":false},{"id":1121,"date":"2026-03-01","restaurant":"ASCOT VALE KEBABS","week":"Week-9","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":33,"gross":995,"net":556,"expenses":[{"type":"staff","amt":3094}],"notes":"","hidden":false},{"id":1122,"date":"2026-03-01","restaurant":"ANGIES - ASCOT VALE","week":"Week-9","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":55,"gross":1926,"net":1098,"expenses":[{"type":"operation","amt":3314}],"notes":"","hidden":false},{"id":1123,"date":"2026-03-01","restaurant":"ASCOT VALE KEBABS","week":"Week-9","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":24,"gross":732,"net":385,"expenses":[],"notes":"","hidden":false},{"id":1124,"date":"2026-03-01","restaurant":"ANGIES - ASCOT VALE","week":"Week-9","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":40,"gross":1278,"net":703,"expenses":[],"notes":"","hidden":false},{"id":1125,"date":"2026-03-01","restaurant":"ANGIES - ST ALBANS","week":"Week-9","location":"ST ALBANS","rev_type":"store","partner":"store","orders":209,"gross":5265,"net":5265,"expenses":[{"type":"food","amt":4086}],"notes":"","hidden":false},{"id":1126,"date":"2026-03-01","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-9","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":58,"gross":2223,"net":1243,"expenses":[{"type":"staff","amt":2343}],"notes":"","hidden":false},{"id":1127,"date":"2026-03-01","restaurant":"ANGIES - ST ALBANS","week":"Week-9","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":76,"gross":2848,"net":1639,"expenses":[{"type":"operation","amt":2033}],"notes":"","hidden":false},{"id":1128,"date":"2026-03-01","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-9","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":42,"gross":1313,"net":814,"expenses":[],"notes":"","hidden":false},{"id":1129,"date":"2026-03-01","restaurant":"ANGIES - ST ALBANS","week":"Week-9","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":61,"gross":1665,"net":965,"expenses":[],"notes":"","hidden":false},{"id":1130,"date":"2026-03-01","restaurant":"ANGIES - FITZROY NORTH","week":"Week-9","location":"FITZROY NORTH","rev_type":"store","partner":"store","orders":140,"gross":2994,"net":2994,"expenses":[{"type":"food","amt":830}],"notes":"","hidden":false},{"id":1131,"date":"2026-03-01","restaurant":"LAMB ON NICHOLSON","week":"Week-9","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":19,"gross":725,"net":293,"expenses":[{"type":"staff","amt":891}],"notes":"","hidden":false},{"id":1132,"date":"2026-03-01","restaurant":"ANGIES - FITZROY NORTH","week":"Week-9","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":6,"gross":230,"net":61,"expenses":[{"type":"operation","amt":1544}],"notes":"","hidden":false},{"id":1133,"date":"2026-03-01","restaurant":"LAMB ON NICHOLSON","week":"Week-9","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":3,"gross":61,"net":20,"expenses":[],"notes":"","hidden":false},{"id":1134,"date":"2026-03-01","restaurant":"ANGIES - FITZROY NORTH","week":"Week-9","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":8,"gross":231,"net":112,"expenses":[],"notes":"","hidden":false},{"id":1135,"date":"2026-03-08","restaurant":"ANGIES - ASCOT VALE","week":"Week-10","location":"ASCOT VALE","rev_type":"store","partner":"store","orders":219,"gross":5159,"net":5159,"expenses":[{"type":"food","amt":3234}],"notes":"","hidden":false},{"id":1136,"date":"2026-03-08","restaurant":"ASCOT VALE KEBABS","week":"Week-10","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":32,"gross":980,"net":534,"expenses":[{"type":"staff","amt":2908}],"notes":"","hidden":false},{"id":1137,"date":"2026-03-08","restaurant":"ANGIES - ASCOT VALE","week":"Week-10","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":66,"gross":2090,"net":1181,"expenses":[{"type":"operation","amt":3314}],"notes":"","hidden":false},{"id":1138,"date":"2026-03-08","restaurant":"ASCOT VALE KEBABS","week":"Week-10","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":29,"gross":847,"net":414,"expenses":[],"notes":"","hidden":false},{"id":1139,"date":"2026-03-08","restaurant":"ANGIES - ASCOT VALE","week":"Week-10","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":58,"gross":1661,"net":891,"expenses":[],"notes":"","hidden":false},{"id":1140,"date":"2026-03-08","restaurant":"ANGIES - ST ALBANS","week":"Week-10","location":"ST ALBANS","rev_type":"store","partner":"store","orders":203,"gross":5022,"net":5022,"expenses":[{"type":"food","amt":3432}],"notes":"","hidden":false},{"id":1141,"date":"2026-03-08","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-10","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":74,"gross":3374,"net":1889,"expenses":[{"type":"staff","amt":2544}],"notes":"","hidden":false},{"id":1142,"date":"2026-03-08","restaurant":"ANGIES - ST ALBANS","week":"Week-10","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":59,"gross":2037,"net":1032,"expenses":[{"type":"operation","amt":2033}],"notes":"","hidden":false},{"id":1143,"date":"2026-03-08","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-10","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":38,"gross":1276,"net":782,"expenses":[],"notes":"","hidden":false},{"id":1144,"date":"2026-03-08","restaurant":"ANGIES - ST ALBANS","week":"Week-10","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":55,"gross":1595,"net":879,"expenses":[],"notes":"","hidden":false},{"id":1145,"date":"2026-03-08","restaurant":"ANGIES - FITZROY NORTH","week":"Week-10","location":"FITZROY NORTH","rev_type":"store","partner":"store","orders":113,"gross":2351,"net":2351,"expenses":[{"type":"food","amt":830}],"notes":"","hidden":false},{"id":1146,"date":"2026-03-08","restaurant":"LAMB ON NICHOLSON","week":"Week-10","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":16,"gross":644,"net":198,"expenses":[{"type":"staff","amt":862}],"notes":"","hidden":false},{"id":1147,"date":"2026-03-08","restaurant":"ANGIES - FITZROY NORTH","week":"Week-10","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":3,"gross":93,"net":7,"expenses":[{"type":"operation","amt":1544}],"notes":"","hidden":false},{"id":1148,"date":"2026-03-08","restaurant":"LAMB ON NICHOLSON","week":"Week-10","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":5,"gross":181,"net":149,"expenses":[],"notes":"","hidden":false},{"id":1149,"date":"2026-03-08","restaurant":"ANGIES - FITZROY NORTH","week":"Week-10","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":2,"gross":58,"net":29,"expenses":[],"notes":"","hidden":false},{"id":1150,"date":"2026-03-15","restaurant":"ANGIES - ASCOT VALE","week":"Week-11","location":"ASCOT VALE","rev_type":"store","partner":"store","orders":239,"gross":5543,"net":5543,"expenses":[{"type":"food","amt":3201}],"notes":"","hidden":false},{"id":1151,"date":"2026-03-15","restaurant":"ASCOT VALE KEBABS","week":"Week-11","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":27,"gross":878,"net":489,"expenses":[{"type":"staff","amt":3105}],"notes":"","hidden":false},{"id":1152,"date":"2026-03-15","restaurant":"ANGIES - ASCOT VALE","week":"Week-11","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":63,"gross":2228,"net":1164,"expenses":[{"type":"operation","amt":3314}],"notes":"","hidden":false},{"id":1153,"date":"2026-03-15","restaurant":"ASCOT VALE KEBABS","week":"Week-11","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":29,"gross":845,"net":444,"expenses":[],"notes":"","hidden":false},{"id":1154,"date":"2026-03-15","restaurant":"ANGIES - ASCOT VALE","week":"Week-11","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":35,"gross":936,"net":489,"expenses":[],"notes":"","hidden":false},{"id":1155,"date":"2026-03-15","restaurant":"ANGIES - ST ALBANS","week":"Week-11","location":"ST ALBANS","rev_type":"store","partner":"store","orders":226,"gross":6065,"net":6065,"expenses":[{"type":"food","amt":5339}],"notes":"","hidden":false},{"id":1156,"date":"2026-03-15","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-11","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":81,"gross":3253,"net":1759,"expenses":[{"type":"staff","amt":2000}],"notes":"","hidden":false},{"id":1157,"date":"2026-03-15","restaurant":"ANGIES - ST ALBANS","week":"Week-11","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":80,"gross":3117,"net":1677,"expenses":[{"type":"operation","amt":2033}],"notes":"","hidden":false},{"id":1158,"date":"2026-03-15","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-11","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":47,"gross":1387,"net":836,"expenses":[],"notes":"","hidden":false},{"id":1159,"date":"2026-03-15","restaurant":"ANGIES - ST ALBANS","week":"Week-11","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":82,"gross":2250,"net":1259,"expenses":[],"notes":"","hidden":false},{"id":1160,"date":"2026-03-15","restaurant":"ANGIES - FITZROY NORTH","week":"Week-11","location":"FITZROY NORTH","rev_type":"store","partner":"store","orders":97,"gross":2242,"net":2242,"expenses":[{"type":"food","amt":1014}],"notes":"","hidden":false},{"id":1161,"date":"2026-03-15","restaurant":"LAMB ON NICHOLSON","week":"Week-11","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":22,"gross":898,"net":251,"expenses":[{"type":"staff","amt":1464}],"notes":"","hidden":false},{"id":1162,"date":"2026-03-15","restaurant":"ANGIES - FITZROY NORTH","week":"Week-11","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":0,"gross":0,"net":0,"expenses":[{"type":"operation","amt":1544}],"notes":"","hidden":false},{"id":1163,"date":"2026-03-15","restaurant":"LAMB ON NICHOLSON","week":"Week-11","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":1,"gross":95,"net":61,"expenses":[],"notes":"","hidden":false},{"id":1164,"date":"2026-03-15","restaurant":"ANGIES - FITZROY NORTH","week":"Week-11","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":11,"gross":340,"net":163,"expenses":[],"notes":"","hidden":false},{"id":1165,"date":"2026-03-22","restaurant":"ANGIES - ASCOT VALE","week":"Week-12","location":"ASCOT VALE","rev_type":"store","partner":"store","orders":235,"gross":5727,"net":5727,"expenses":[{"type":"food","amt":2735}],"notes":"","hidden":false},{"id":1166,"date":"2026-03-22","restaurant":"ASCOT VALE KEBABS","week":"Week-12","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":33,"gross":965,"net":605,"expenses":[{"type":"staff","amt":2834}],"notes":"","hidden":false},{"id":1167,"date":"2026-03-22","restaurant":"ANGIES - ASCOT VALE","week":"Week-12","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":55,"gross":1935,"net":976,"expenses":[{"type":"operation","amt":3314}],"notes":"","hidden":false},{"id":1168,"date":"2026-03-22","restaurant":"ASCOT VALE KEBABS","week":"Week-12","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":31,"gross":1029,"net":504,"expenses":[],"notes":"","hidden":false},{"id":1169,"date":"2026-03-22","restaurant":"ANGIES - ASCOT VALE","week":"Week-12","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":54,"gross":1648,"net":917,"expenses":[],"notes":"","hidden":false},{"id":1170,"date":"2026-03-22","restaurant":"ANGIES - ST ALBANS","week":"Week-12","location":"ST ALBANS","rev_type":"store","partner":"store","orders":238,"gross":5768,"net":5768,"expenses":[{"type":"food","amt":3635}],"notes":"","hidden":false},{"id":1171,"date":"2026-03-22","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-12","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":85,"gross":3421,"net":1832,"expenses":[{"type":"staff","amt":2267}],"notes":"","hidden":false},{"id":1172,"date":"2026-03-22","restaurant":"ANGIES - ST ALBANS","week":"Week-12","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":76,"gross":2662,"net":1381,"expenses":[{"type":"operation","amt":2033}],"notes":"","hidden":false},{"id":1173,"date":"2026-03-22","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-12","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":51,"gross":1407,"net":777,"expenses":[],"notes":"","hidden":false},{"id":1174,"date":"2026-03-22","restaurant":"ANGIES - ST ALBANS","week":"Week-12","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":63,"gross":1780,"net":1027,"expenses":[],"notes":"","hidden":false},{"id":1175,"date":"2026-03-22","restaurant":"ANGIES - FITZROY NORTH","week":"Week-12","location":"FITZROY NORTH","rev_type":"store","partner":"store","orders":160,"gross":3404,"net":3404,"expenses":[{"type":"food","amt":589}],"notes":"","hidden":false},{"id":1176,"date":"2026-03-22","restaurant":"LAMB ON NICHOLSON","week":"Week-12","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":18,"gross":805,"net":218,"expenses":[{"type":"staff","amt":935}],"notes":"","hidden":false},{"id":1177,"date":"2026-03-22","restaurant":"ANGIES - FITZROY NORTH","week":"Week-12","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":0,"gross":0,"net":0,"expenses":[{"type":"operation","amt":1544}],"notes":"","hidden":false},{"id":1178,"date":"2026-03-22","restaurant":"LAMB ON NICHOLSON","week":"Week-12","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":3,"gross":72,"net":29,"expenses":[],"notes":"","hidden":false},{"id":1179,"date":"2026-03-22","restaurant":"ANGIES - FITZROY NORTH","week":"Week-12","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":12,"gross":361,"net":145,"expenses":[],"notes":"","hidden":false},{"id":1180,"date":"2026-03-29","restaurant":"ANGIES - ASCOT VALE","week":"Week-13","location":"ASCOT VALE","rev_type":"store","partner":"store","orders":249,"gross":5528,"net":5528,"expenses":[{"type":"food","amt":2419}],"notes":"","hidden":false},{"id":1181,"date":"2026-03-29","restaurant":"ASCOT VALE KEBABS","week":"Week-13","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":31,"gross":1126,"net":609,"expenses":[{"type":"staff","amt":3000}],"notes":"","hidden":false},{"id":1182,"date":"2026-03-29","restaurant":"ANGIES - ASCOT VALE","week":"Week-13","location":"ASCOT VALE","rev_type":"uber","partner":"uber","orders":60,"gross":2383,"net":1318,"expenses":[{"type":"operation","amt":3314}],"notes":"","hidden":false},{"id":1183,"date":"2026-03-29","restaurant":"ASCOT VALE KEBABS","week":"Week-13","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":35,"gross":980,"net":526,"expenses":[],"notes":"","hidden":false},{"id":1184,"date":"2026-03-29","restaurant":"ANGIES - ASCOT VALE","week":"Week-13","location":"ASCOT VALE","rev_type":"doordash","partner":"doordash","orders":47,"gross":1333,"net":722,"expenses":[],"notes":"","hidden":false},{"id":1185,"date":"2026-03-29","restaurant":"ANGIES - ST ALBANS","week":"Week-13","location":"ST ALBANS","rev_type":"store","partner":"store","orders":223,"gross":5532,"net":5532,"expenses":[{"type":"food","amt":3032}],"notes":"","hidden":false},{"id":1186,"date":"2026-03-29","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-13","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":73,"gross":2956,"net":1597,"expenses":[{"type":"staff","amt":2600}],"notes":"","hidden":false},{"id":1187,"date":"2026-03-29","restaurant":"ANGIES - ST ALBANS","week":"Week-13","location":"ST ALBANS","rev_type":"uber","partner":"uber","orders":75,"gross":2935,"net":1697,"expenses":[{"type":"operation","amt":2033}],"notes":"","hidden":false},{"id":1188,"date":"2026-03-29","restaurant":"GOLDEN FLAMES - ST ALBANS","week":"Week-13","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":44,"gross":1182,"net":747,"expenses":[],"notes":"","hidden":false},{"id":1189,"date":"2026-03-29","restaurant":"ANGIES - ST ALBANS","week":"Week-13","location":"ST ALBANS","rev_type":"doordash","partner":"doordash","orders":55,"gross":1559,"net":847,"expenses":[],"notes":"","hidden":false},{"id":1190,"date":"2026-03-29","restaurant":"ANGIES - FITZROY NORTH","week":"Week-13","location":"FITZROY NORTH","rev_type":"store","partner":"store","orders":138,"gross":2938,"net":2938,"expenses":[{"type":"food","amt":1200}],"notes":"","hidden":false},{"id":1191,"date":"2026-03-29","restaurant":"LAMB ON NICHOLSON","week":"Week-13","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":13,"gross":509,"net":33,"expenses":[{"type":"staff","amt":900}],"notes":"","hidden":false},{"id":1192,"date":"2026-03-29","restaurant":"ANGIES - FITZROY NORTH","week":"Week-13","location":"FITZROY NORTH","rev_type":"uber","partner":"uber","orders":0,"gross":0,"net":0,"expenses":[{"type":"operation","amt":1544}],"notes":"","hidden":false},{"id":1193,"date":"2026-03-29","restaurant":"LAMB ON NICHOLSON","week":"Week-13","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":6,"gross":134,"net":48,"expenses":[],"notes":"","hidden":false},{"id":1194,"date":"2026-03-29","restaurant":"ANGIES - FITZROY NORTH","week":"Week-13","location":"FITZROY NORTH","rev_type":"doordash","partner":"doordash","orders":6,"gross":199,"net":71,"expenses":[],"notes":"","hidden":false}];
+
+let entries=[];
 let upRows=[],upHeaders=[];
 let chartInst={};
+let expRowCount=0;
 
 const RESTS=['ANGIES - ST ALBANS','GOLDEN FLAMES - ST ALBANS','ANGIES - FITZROY NORTH','LAMB ON NICHOLSON','ANGIES - ASCOT VALE','ASCOT VALE KEBABS'];
 const LOC_MAP={'ANGIES - ST ALBANS':'stalbans','GOLDEN FLAMES - ST ALBANS':'stalbans','ANGIES - FITZROY NORTH':'fitzroy','LAMB ON NICHOLSON':'fitzroy','ANGIES - ASCOT VALE':'ascot','ASCOT VALE KEBABS':'ascot'};
@@ -368,7 +352,7 @@ const ALL_WEEKS=[
   {w:"Week-36",d:"2026-09-06",m:"September"},{w:"Week-37",d:"2026-09-13",m:"September"},{w:"Week-38",d:"2026-09-20",m:"September"},{w:"Week-39",d:"2026-09-27",m:"September"},
   {w:"Week-40",d:"2026-10-04",m:"October"},{w:"Week-41",d:"2026-10-11",m:"October"},{w:"Week-42",d:"2026-10-18",m:"October"},{w:"Week-43",d:"2026-10-25",m:"October"},{w:"Week-44",d:"2026-11-01",m:"October"},
   {w:"Week-45",d:"2026-11-08",m:"November"},{w:"Week-46",d:"2026-11-15",m:"November"},{w:"Week-47",d:"2026-11-22",m:"November"},{w:"Week-48",d:"2026-11-29",m:"November"},
-  {w:"Week-49",d:"2026-12-06",m:"December"},{w:"Week-50",d:"2026-12-13",m:"December"},{w:"Week-51",d:"2026-12-20",m:"December"},{w:"Week-52",d:"2026-12-27",m:"December"},{w:"Week-1",d:"2027-01-03",m:"December"},
+  {w:"Week-49",d:"2026-12-06",m:"December"},{w:"Week-50",d:"2026-12-13",m:"December"},{w:"Week-51",d:"2026-12-20",m:"December"},{w:"Week-52",d:"2026-12-27",m:"December"},
 ];
 
 function buildDCols(){
@@ -380,8 +364,22 @@ function buildDCols(){
   return res;
 }
 const DCOLS=buildDCols();
-
 function d2w(d){const c=ALL_WEEKS.find(x=>x.d===d);return c?c.w:'';}
+
+function initEntries(){
+  const saved=JSON.parse(localStorage.getItem('pl_v4')||'[]');
+  const savedIds=new Set(saved.map(e=>e.id));
+  // Migrate old format entries
+  const migrated=saved.map(e=>{
+    if(!e.expenses){
+      return{...e,expenses:e.exp_type?[{type:e.exp_type,amt:e.exp_amt||0}]:[]};
+    }
+    return e;
+  });
+  const excelNew=EXCEL_DATA.filter(e=>!savedIds.has(e.id));
+  entries=[...migrated,...excelNew];
+  localStorage.setItem('pl_v4',JSON.stringify(entries));
+}
 
 function parseDate(v){
   if(!v)return'';
@@ -397,13 +395,13 @@ function parseDate(v){
 function matchRest(v){
   if(!v)return'';const u=String(v).toUpperCase().trim();
   if(RESTS.includes(u))return u;
-  const sc=RESTS.map(r=>({r,s:u.split(/\s+/).filter(w=>w.length>2&&r.includes(w)).length}));
-  sc.sort((a,b)=>b.s-a.s);return sc[0].s>0?sc[0].r:u;
+  const map={'ANGIES- ST ALBANS':'ANGIES - ST ALBANS','GOLDEN FLAMES':'GOLDEN FLAMES - ST ALBANS','ANGIES- FITZROY NORTH':'ANGIES - FITZROY NORTH'};
+  return map[u]||u;
 }
 
 const COL_DEFS=[
   {id:'cm-date',label:'Date',keys:['date','week date','period']},
-  {id:'cm-loc',label:'Location',keys:['location','resturent location','restaurant location','area']},
+  {id:'cm-loc',label:'Location',keys:['location','resturent location','restaurant location']},
   {id:'cm-rest',label:'Restaurant Name',keys:['restaurant name','resturent name','restaurant','store','name']},
   {id:'cm-partner',label:'Delivery Partner',keys:['delivery partner','partner','platform','channel']},
   {id:'cm-orders',label:'Number of Orders',keys:['number of order','orders','txn','transactions']},
@@ -418,11 +416,12 @@ function detectCol(headers,keys){
   return headers.find(h=>kl.includes(h.toLowerCase().trim()))||headers.find(h=>kl.some(k=>h.toLowerCase().includes(k)))||'';
 }
 
-// UI
+// LOGIN
 function doLogin(){
   if(document.getElementById('pass-input').value===PASS){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='flex';
+    initEntries();
     renderEntries();
     showTab('dash',document.querySelectorAll('.ttab')[0]);
   }else{document.getElementById('err-msg').style.display='block';}
@@ -436,7 +435,7 @@ function showTab(name,btn){
   document.querySelectorAll('.sheet').forEach(e=>e.classList.remove('active'));
   document.querySelectorAll('.ttab').forEach(e=>e.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
-  btn.classList.add('active');
+  if(btn)btn.classList.add('active');
   const sb=document.getElementById('sidebar');
   if(name==='dash'){sb.classList.add('show');buildDashboard('overview');document.querySelector('.sb-item').classList.add('active');}
   else{sb.classList.remove('show');if(name!=='input')refreshReports();}
@@ -446,7 +445,7 @@ function showDash(name,el){
   document.querySelectorAll('.dash-section').forEach(e=>e.style.display='none');
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
   const sec=document.getElementById('dash-'+name);if(sec)sec.style.display='block';
-  el.classList.add('active');
+  if(el)el.classList.add('active');
   buildDashboard(name);
 }
 
@@ -454,7 +453,23 @@ function filterRestByLoc(){
   const loc=document.getElementById('f-loc').value;
   const sel=document.getElementById('f-rest');
   sel.innerHTML='<option value="">Select restaurant</option>';
-  if(loc&&REST_BY_LOC[loc]){REST_BY_LOC[loc].forEach(r=>sel.innerHTML+=`<option value="${r}">${r}</option>`);}
+  if(loc&&REST_BY_LOC[loc])REST_BY_LOC[loc].forEach(r=>sel.innerHTML+=`<option value="${r}">${r}</option>`);
+}
+
+function addExpRow(){
+  expRowCount++;
+  const div=document.createElement('div');
+  div.className='exp-row';div.id='exp-'+expRowCount;
+  div.innerHTML=`<select class="exp-type-sel"><option value="">None</option><option value="food">Food</option><option value="staff">Staff</option><option value="operation">Operation</option><option value="other">Others</option></select><input type="number" class="exp-amt-inp" placeholder="$0.00" min="0" step="0.01"/><button class="exp-rm-btn" onclick="this.parentElement.remove()">✕</button>`;
+  document.getElementById('exp-rows').appendChild(div);
+}
+
+function getExpenses(){
+  return [...document.querySelectorAll('#exp-rows .exp-row')].map(row=>{
+    const t=row.querySelector('.exp-type-sel').value;
+    const a=parseFloat(row.querySelector('.exp-amt-inp').value)||0;
+    return t?{type:t,amt:a}:null;
+  }).filter(Boolean);
 }
 
 function toggleEntries(){
@@ -491,11 +506,11 @@ function processRows(rows){
   document.getElementById('map-grid').innerHTML=COL_DEFS.map(def=>{
     const auto=detectCol(upHeaders,def.keys);
     const opts='<option value="">— Skip —</option>'+upHeaders.map(h=>`<option value="${h}"${h===auto?' selected':''}>${h}</option>`).join('');
-    return`<div><div style="font-size:10px;font-weight:700;color:#333;margin-bottom:3px">${def.label}</div><select id="${def.id}" style="width:100%;padding:6px 8px;border-radius:5px;border:1px solid #ddd;font-size:11px;color:#1a1a1a;">${opts}</select></div>`;
+    return`<div><div style="font-size:10px;font-weight:700;color:#333;margin-bottom:3px">${def.label}</div><select id="${def.id}" style="width:100%;padding:6px 8px;border-radius:5px;border:1px solid #ddd;font-size:11px;">${opts}</select></div>`;
   }).join('');
   document.getElementById('map-section').style.display='block';
   document.getElementById('prev-head').innerHTML='<tr>'+upHeaders.map(h=>`<th style="background:#1e2a38;color:#fff;padding:5px 7px;border:1px solid #152030;font-size:10px;white-space:nowrap">${h}</th>`).join('')+'</tr>';
-  document.getElementById('prev-body').innerHTML=rows.slice(0,5).map(r=>'<tr>'+upHeaders.map(h=>`<td style="padding:4px 7px;border:1px solid #e8e8e8;font-size:10px;white-space:nowrap;color:#1a1a1a">${r[h]!==undefined?r[h]:''}</td>`).join('')+'</tr>').join('');
+  document.getElementById('prev-body').innerHTML=rows.slice(0,5).map(r=>'<tr>'+upHeaders.map(h=>`<td style="padding:4px 7px;border:1px solid #e8e8e8;font-size:10px;white-space:nowrap">${r[h]!==undefined?r[h]:''}</td>`).join('')+'</tr>').join('');
   document.getElementById('prev-count').textContent=rows.length;
   document.getElementById('preview-section').style.display='block';
 }
@@ -506,24 +521,24 @@ function saveUploaded(){
   if(!upRows.length){alert('No data!');return;}
   let added=0;
   upRows.forEach((row,i)=>{
-    const dateRaw=gm('cm-date')?row[gm('cm-date')]:'';
-    if(!dateRaw)return;
+    const dateRaw=gm('cm-date')?row[gm('cm-date')]:'';if(!dateRaw)return;
     const date=parseDate(dateRaw);if(!date)return;
     const restaurant=matchRest(gm('cm-rest')?row[gm('cm-rest')]:'');
     const partnerRaw=gm('cm-partner')?String(row[gm('cm-partner')]||'').toLowerCase():'';
-    const grossRaw=gm('cm-gross')?+row[gm('cm-gross')]||0:0;
-    const netRaw=gm('cm-net')?+row[gm('cm-net')]||0:0;
-    let rev_type='store';
-    if(/uber/.test(partnerRaw))rev_type='uber';
-    else if(/door|dd/.test(partnerRaw))rev_type='doordash';
+    const gross=gm('cm-gross')?+row[gm('cm-gross')]||0:0;
+    const net=gm('cm-net')?+row[gm('cm-net')]||0:0;
+    let partner='store';
+    if(/uber/.test(partnerRaw))partner='uber';
+    else if(/door|dd/.test(partnerRaw))partner='doordash';
+    const expType=gm('cm-exptype')?String(row[gm('cm-exptype')]||'').toLowerCase().replace('others','other'):'';
+    const expAmt=gm('cm-expamt')?+row[gm('cm-expamt')]||0:0;
     entries.push({
       id:Date.now()+i,date,restaurant,week:d2w(date),
       location:gm('cm-loc')?row[gm('cm-loc')]:'',
-      rev_type,partner:partnerRaw||'store',
+      rev_type:partner,partner,
       orders:gm('cm-orders')?+row[gm('cm-orders')]||0:0,
-      gross:grossRaw,net:netRaw||grossRaw*(rev_type==='store'?1:0.70),
-      exp_type:gm('cm-exptype')?String(row[gm('cm-exptype')]||'').toLowerCase():'',
-      exp_amt:gm('cm-expamt')?+row[gm('cm-expamt')]||0:0,
+      gross,net,
+      expenses:expType?[{type:expType,amt:expAmt}]:[],
       notes:'',hidden:false,
     });added++;
   });
@@ -546,28 +561,23 @@ function saveEntry(){
   const restaurant=document.getElementById('f-rest').value;
   if(!date||!restaurant){alert('Date and Restaurant required!');return;}
   const partner=document.getElementById('f-partner').value;
-  let rev_type='store';
-  if(partner==='uber')rev_type='uber';
-  else if(partner==='doordash')rev_type='doordash';
-  const gross=+document.getElementById('f-gross').value||0;
-  const net=+document.getElementById('f-net').value||0;
   entries.push({
     id:Date.now(),date,restaurant,week:d2w(date),
     location:document.getElementById('f-loc').value,
-    rev_type,partner,
+    rev_type:partner,partner,
     orders:+document.getElementById('f-orders').value||0,
-    gross,net,
-    exp_type:document.getElementById('f-exptype').value,
-    exp_amt:+document.getElementById('f-expamt').value||0,
+    gross:+document.getElementById('f-gross').value||0,
+    net:+document.getElementById('f-net').value||0,
+    expenses:getExpenses(),
     notes:document.getElementById('f-notes').value,
     hidden:false,
   });
   localStorage.setItem('pl_v4',JSON.stringify(entries));
-  // Reset fields — keep date & location
-  ['f-orders','f-gross','f-net','f-expamt','f-notes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f-exptype').value='';
+  ['f-orders','f-gross','f-net','f-notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-partner').value='store';
   document.getElementById('f-rest').value='';
+  document.getElementById('exp-rows').innerHTML=`<div class="exp-row" id="exp-0"><select class="exp-type-sel"><option value="">None</option><option value="food">Food</option><option value="staff">Staff</option><option value="operation">Operation</option><option value="other">Others</option></select><input type="number" class="exp-amt-inp" placeholder="$0.00" min="0" step="0.01"/></div>`;
+  expRowCount=0;
   renderEntries();
   showToast('✅ Entry saved!');
   setTimeout(()=>{
@@ -581,22 +591,22 @@ function saveEntry(){
 function renderEntries(){
   document.getElementById('ecount').textContent=entries.length;
   const f=v=>v?'A$'+Math.round(v).toLocaleString():'-';
-  document.getElementById('etbody').innerHTML=entries.slice().reverse().map(e=>`
-    <tr style="opacity:${e.hidden?0.4:1};background:${e.hidden?'#f9f9f9':''};">
+  document.getElementById('etbody').innerHTML=entries.slice().reverse().map(e=>{
+    const exps=(e.expenses||[]).filter(x=>x.type).map(x=>`<span style="display:inline-block;background:#f0f0f0;border-radius:4px;padding:1px 6px;margin:1px;font-size:10px;">${x.type}: A$${Math.round(x.amt).toLocaleString()}</span>`).join('');
+    return`<tr style="opacity:${e.hidden?0.4:1};background:${e.hidden?'#f9f9f9':''};">
       <td>${e.date}</td><td>${e.week||'-'}</td><td>${e.location||'-'}</td>
       <td style="font-weight:700;">${e.restaurant}</td>
       <td>${e.partner||'-'}</td><td>${e.orders||'-'}</td>
       <td>${f(e.gross)}</td><td>${f(e.net)}</td>
-      <td>${e.exp_type||'-'}</td><td>${f(e.exp_amt)}</td>
-      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;">${e.notes||'-'}</td>
-      <td>
-        <div style="display:flex;gap:4px;">
-          <button class="act-btn btn-edit" onclick="editEntry(${e.id})">✏️</button>
-          <button class="act-btn ${e.hidden?'btn-show':'btn-hide'}" onclick="toggleHideEntry(${e.id})">${e.hidden?'👁️':'🙈'}</button>
-          <button class="act-btn btn-del" onclick="delEntry(${e.id})">🗑️</button>
-        </div>
-      </td>
-    </tr>`).join('');
+      <td style="max-width:200px;">${exps||'-'}</td>
+      <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;">${e.notes||'-'}</td>
+      <td><div style="display:flex;gap:4px;">
+        <button class="act-btn btn-edit" onclick="editEntry(${e.id})">✏️</button>
+        <button class="act-btn ${e.hidden?'btn-show':'btn-hide'}" onclick="toggleHideEntry(${e.id})">${e.hidden?'👁️':'🙈'}</button>
+        <button class="act-btn btn-del" onclick="delEntry(${e.id})">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
 }
 
 function editEntry(id){
@@ -610,9 +620,17 @@ function editEntry(id){
     document.getElementById('f-orders').value=e.orders||'';
     document.getElementById('f-gross').value=e.gross||'';
     document.getElementById('f-net').value=e.net||'';
-    document.getElementById('f-exptype').value=e.exp_type||'';
-    document.getElementById('f-expamt').value=e.exp_amt||'';
     document.getElementById('f-notes').value=e.notes||'';
+    // Restore expenses
+    const exps=e.expenses||[];
+    document.getElementById('exp-rows').innerHTML='';expRowCount=0;
+    exps.forEach((ex,i)=>{
+      const div=document.createElement('div');div.className='exp-row';div.id='exp-'+i;
+      div.innerHTML=`<select class="exp-type-sel"><option value="">None</option><option value="food"${ex.type==='food'?' selected':''}>Food</option><option value="staff"${ex.type==='staff'?' selected':''}>Staff</option><option value="operation"${ex.type==='operation'?' selected':''}>Operation</option><option value="other"${ex.type==='other'?' selected':''}>Others</option></select><input type="number" class="exp-amt-inp" value="${ex.amt||''}" placeholder="$0.00" min="0" step="0.01"/>${i>0?`<button class="exp-rm-btn" onclick="this.parentElement.remove()">✕</button>`:''}`;
+      document.getElementById('exp-rows').appendChild(div);
+      expRowCount=i;
+    });
+    if(!exps.length){document.getElementById('exp-rows').innerHTML=`<div class="exp-row" id="exp-0"><select class="exp-type-sel"><option value="">None</option><option value="food">Food</option><option value="staff">Staff</option><option value="operation">Operation</option><option value="other">Others</option></select><input type="number" class="exp-amt-inp" placeholder="$0.00" min="0" step="0.01"/></div>`;}
   },100);
   entries=entries.filter(x=>x.id!==id);
   localStorage.setItem('pl_v4',JSON.stringify(entries));
@@ -626,22 +644,9 @@ function toggleHideEntry(id){
   localStorage.setItem('pl_v4',JSON.stringify(entries));
   renderEntries();
 }
-
-function delEntry(id){
-  entries=entries.filter(e=>e.id!==id);
-  localStorage.setItem('pl_v4',JSON.stringify(entries));
-  renderEntries();
-}
-
-function clearAll(){
-  if(confirm('Delete all data?')){entries=[];localStorage.removeItem('pl_v4');renderEntries();}
-}
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.style.display='block';
-  setTimeout(()=>t.style.display='none',3000);
-}
+function delEntry(id){entries=entries.filter(e=>e.id!==id);localStorage.setItem('pl_v4',JSON.stringify(entries));renderEntries();}
+function clearAll(){if(confirm('Delete all data?')){entries=[];localStorage.removeItem('pl_v4');renderEntries();}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',3000);}
 
 // AGGREGATE
 function agg(rests,dates){
@@ -657,24 +662,19 @@ function agg(rests,dates){
   const sg=arr=>arr.reduce((a,r)=>a+(r.gross||0),0);
   const sn=arr=>arr.reduce((a,r)=>a+(r.net||0),0);
   const so=arr=>arr.reduce((a,r)=>a+(r.orders||0),0);
-  const se=t=>rows.filter(r=>r.exp_type===t).reduce((a,r)=>a+(r.exp_amt||0),0);
+  const seNew=(t)=>rows.reduce((a,r)=>{
+    const exps=r.expenses||[];
+    return a+exps.filter(x=>x.type===t).reduce((s,x)=>s+(x.amt||0),0);
+  },0);
   const sgr=sg(sr),snr=sn(sr),sor=so(sr);
   const ugr=sg(ur),unr=sn(ur),uor=so(ur);
   const dgr=sg(dr),dnr=sn(dr),dor=so(dr);
   const og=ugr+dgr,on_=unr+dnr,oo=uor+dor;
   const tg=sgr+og,tn=snr+on_,to=sor+oo;
-  const food=se('food'),staff=se('staff'),ops=se('operation'),other=se('other');
+  const food=seNew('food'),staff=seNew('staff'),ops=seNew('operation'),other=seNew('other');
   const tc=food+staff+ops+other;
   const gp=tn-food-staff,np=tn-tc;
-  return{
-    total_orders:to,per_txn:to>0?tg/to:0,
-    staff_pct:tn>0?staff/tn:0,food_gross_pct:tg>0?food/tg:0,food_net_pct:tn>0?food/tn:0,ops_pct:tn>0?ops/tn:0,
-    tg,tn,tc,food,staff,ops,other,gp,np,profit_pct:tn>0?np/tn:0,
-    store_orders:sor,store_gross:sgr,store_net:snr,store_ptr:sor>0?sgr/sor:0,
-    uber_orders:uor,uber_gross:ugr,uber_net:unr,
-    dd_orders:dor,dd_gross:dgr,dd_net:dnr,
-    online_orders:oo,online_gross:og,online_net:on_,online_ptr:oo>0?on_/oo:0,
-  };
+  return{total_orders:to,per_txn:to>0?tg/to:0,staff_pct:tn>0?staff/tn:0,food_gross_pct:tg>0?food/tg:0,food_net_pct:tn>0?food/tn:0,ops_pct:tn>0?ops/tn:0,tg,tn,tc,food,staff,ops,other,gp,np,profit_pct:tn>0?np/tn:0,store_orders:sor,store_gross:sgr,store_net:snr,store_ptr:sor>0?sgr/sor:0,uber_orders:uor,uber_gross:ugr,uber_net:unr,dd_orders:dor,dd_gross:dgr,dd_net:dnr,online_orders:oo,online_gross:og,online_net:on_,online_ptr:oo>0?on_/oo:0};
 }
 
 function fv(v,t){
@@ -687,35 +687,18 @@ function fv(v,t){
 
 function hasData(col,rests){
   const dates=col.type==='week'?[col.date]:(col.dates||[]);
-  return entries.some(e=>{
-    if(e.hidden)return false;
-    const inR=rests==='all'||rests.includes(e.restaurant);
-    return inR&&dates.includes(e.date);
-  });
+  return entries.some(e=>{if(e.hidden)return false;const inR=rests==='all'||rests.includes(e.restaurant);return inR&&dates.includes(e.date);});
 }
 
 function buildReport(containerId,rests,title){
   const allR=rests==='all'?RESTS:rests;
   const r1=allR[0],r2=allR.length>1?allR[1]:null;
-  let h=`<div style="overflow:auto;max-height:calc(100vh - 150px);position:relative;"><table class="rt">`;
-  // Header row 1
-  h+=`<thead><tr>`;
+  let h=`<div style="overflow:auto;max-height:calc(100vh - 150px);position:relative;"><table class="rt"><thead><tr>`;
   h+=`<th class="rt-fix-header" style="position:sticky;top:0;left:0;z-index:10;">${title}</th>`;
-  DCOLS.forEach(c=>{
-    const cls=c.type==='week'?'rt-thw':c.type==='month'?'rt-thm':'rt-thy';
-    h+=`<th class="${cls}">${c.label}</th>`;
-  });
-  h+=`</tr>`;
-  // Header row 2 dates
-  h+=`<tr>`;
-  h+=`<td class="rt-fix-date">Date</td>`;
-  DCOLS.forEach(c=>{
-    const cls=c.type==='week'?'rt-dw':c.type==='month'?'rt-dm':'rt-dy';
-    const dstr=c.type==='week'?c.date.split('-').reverse().join('/'):'';
-    h+=`<td class="${cls}">${dstr}</td>`;
-  });
+  DCOLS.forEach(c=>{const cls=c.type==='week'?'rt-thw':c.type==='month'?'rt-thm':'rt-thy';h+=`<th class="${cls}">${c.label}</th>`;});
+  h+=`</tr><tr><td class="rt-fix-date">Date</td>`;
+  DCOLS.forEach(c=>{const cls=c.type==='week'?'rt-dw':c.type==='month'?'rt-dm':'rt-dy';const dstr=c.type==='week'?c.date.split('-').reverse().join('/'):'';h+=`<td class="${cls}">${dstr}</td>`;});
   h+=`</tr></thead><tbody>`;
-
   const row=(label,getter,type,isProfit=false,isSub=false,rs=allR)=>{
     const isBold=['Total Revenue Gross','Total Net Revenue','Total - Cost','Gross Profit','Net Profit','Profit %'].includes(label);
     const lc=isSub?'rt-fix1':isBold?'rt-fix-bold':'rt-fix1';
@@ -730,10 +713,8 @@ function buildReport(containerId,rests,title){
     });
     return r+'</tr>';
   };
-
   const empty=()=>{let r='<tr class="rt-empty"><td style="position:sticky;left:0;background:#f8f8f8;border:1px solid #f0f0f0;"></td>';DCOLS.forEach(()=>r+='<td></td>');return r+'</tr>';};
   const sec=(lbl,rs=allR)=>{let r=`<tr><td class="rt-fix-sec">${lbl}</td>`;DCOLS.forEach(()=>r+='<td style="background:#f0f2f5;border:1px solid #e0e0e0;height:22px;"></td>');return r+'</tr>';};
-
   h+=sec('SUMMARY — COMBINED');
   h+=row('Total Number of Transaction',m=>m.total_orders,'num');
   h+=row('Per Transaction Revenue',m=>m.per_txn,'cur');
@@ -752,7 +733,6 @@ function buildReport(containerId,rests,title){
   h+=row('Net Profit',m=>m.np,'cur',true);
   h+=row('Profit %',m=>m.profit_pct,'pct',true);
   h+=empty();
-
   if(r1){
     h+=sec('1. '+r1,[r1]);
     h+=row('# of Transaction Store',m=>m.store_orders,'num',false,false,[r1]);
@@ -762,12 +742,7 @@ function buildReport(containerId,rests,title){
     h+=row('Uber',m=>m.uber_orders,'num',false,true,[r1]);
     h+=row('DoorDash',m=>m.dd_orders,'num',false,true,[r1]);
     h+=row('Gross Revenue Online',m=>m.online_gross,'cur',false,false,[r1]);
-    h+=row('Uber',m=>m.uber_gross,'cur',false,true,[r1]);
-    h+=row('DoorDash',m=>m.dd_gross,'cur',false,true,[r1]);
     h+=row('Net Revenue (After Commission)',m=>m.online_net,'cur',false,false,[r1]);
-    h+=row('Uber',m=>m.uber_net,'cur',false,true,[r1]);
-    h+=row('DoorDash',m=>m.dd_net,'cur',false,true,[r1]);
-    h+=row('Per Transaction Revenue',m=>m.online_ptr,'cur',false,false,[r1]);
     h+=empty();
   }
   if(r2){
@@ -779,12 +754,7 @@ function buildReport(containerId,rests,title){
     h+=row('Uber',m=>m.uber_orders,'num',false,true,[r2]);
     h+=row('DoorDash',m=>m.dd_orders,'num',false,true,[r2]);
     h+=row('Gross Revenue Online',m=>m.online_gross,'cur',false,false,[r2]);
-    h+=row('Uber',m=>m.uber_gross,'cur',false,true,[r2]);
-    h+=row('DoorDash',m=>m.dd_gross,'cur',false,true,[r2]);
     h+=row('Net Revenue (After Commission)',m=>m.online_net,'cur',false,false,[r2]);
-    h+=row('Uber',m=>m.uber_net,'cur',false,true,[r2]);
-    h+=row('DoorDash',m=>m.dd_net,'cur',false,true,[r2]);
-    h+=row('Per Transaction Revenue',m=>m.online_ptr,'cur',false,false,[r2]);
   }
   h+=`</tbody></table></div>`;
   document.getElementById(containerId).innerHTML=h;
@@ -810,15 +780,7 @@ const LOCS=[
 function mkChart(id,type,labels,datasets,extra={}){
   if(chartInst[id]){try{chartInst[id].destroy();}catch(e){}}
   const ctx=document.getElementById(id);if(!ctx)return;
-  chartInst[id]=new Chart(ctx,{type,data:{labels,datasets},options:{
-    responsive:true,maintainAspectRatio:true,
-    plugins:{legend:{labels:{font:{family:'Inter',size:11},color:'#1a1a1a'}}},
-    scales:type!=='pie'&&type!=='doughnut'?{
-      x:{ticks:{font:{family:'Inter',size:10},color:'#1a1a1a'}},
-      y:{ticks:{font:{family:'Inter',size:10},color:'#1a1a1a',callback:v=>'A$'+Math.round(v).toLocaleString()}}
-    }:{},
-    ...extra
-  }});
+  chartInst[id]=new Chart(ctx,{type,data:{labels,datasets},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{font:{family:'Inter',size:11},color:'#1a1a1a'}}},scales:type!=='pie'&&type!=='doughnut'?{x:{ticks:{font:{family:'Inter',size:10},color:'#1a1a1a'}},y:{ticks:{font:{family:'Inter',size:10},color:'#1a1a1a',callback:v=>'A$'+Math.round(v).toLocaleString()}}}:{}, ...extra}});
 }
 
 function fd(v){return v===0?'-':(v<0?'-':'')+'A$'+Math.abs(Math.round(v)).toLocaleString();}
@@ -828,29 +790,26 @@ function buildDashboard(section){
   const el=document.getElementById('dash-'+section);if(!el)return;
   const tot=agg(RESTS,allDates);
   const mLabels=MONTHS.filter(m=>entries.some(e=>!e.hidden&&mDates(m).includes(e.date)));
-
   const kpiHtml=cards=>`<div class="kpi-grid">${cards.map(c=>`<div class="kpi-card" style="border-left:4px solid ${c.color||'#1e2a38'}"><div class="kpi-icon">${c.icon}</div><div class="kpi-val" style="color:${c.vc||'#1a1a1a'}">${c.val}</div><div class="kpi-lbl">${c.lbl}</div></div>`).join('')}</div>`;
 
   if(section==='overview'){
-    el.innerHTML=`<div class="page-pad">
-      <div style="font-size:15px;font-weight:700;margin-bottom:12px;">📋 Overview</div>
-      ${kpiHtml([
-        {icon:'💰',val:fd(tot.tg),lbl:'Total Gross Revenue',color:'#1e2a38'},
-        {icon:'📊',val:fd(tot.tn),lbl:'Total Net Revenue',color:'#546e7a'},
-        {icon:tot.np>=0?'📈':'📉',val:fd(tot.np),lbl:`Net Profit (${fp(tot.profit_pct)})`,color:tot.np>=0?'#2ecc71':'#e74c3c',vc:tot.np>=0?'#1a7a3c':'#c0392b'},
-        {icon:'🧾',val:tot.total_orders.toLocaleString(),lbl:'Total Transactions',color:'#f39c12'},
-        {icon:'🛵',val:fd(tot.online_gross),lbl:'Online Gross Revenue',color:'#9b59b6'},
-        {icon:'💸',val:fd(tot.tc),lbl:'Total Cost',color:'#e74c3c'},
-      ])}
-      <div class="chart-grid">
-        <div class="chart-card"><div class="chart-title">Monthly Revenue & Profit</div><canvas id="ch-ov-monthly" height="180"></canvas></div>
-        <div class="chart-card"><div class="chart-title">Revenue by Location</div><canvas id="ch-ov-loc" height="180"></canvas></div>
-      </div>
-      <div class="card"><div class="card-title">Location Summary</div>
-        <table class="dash-table"><thead><tr><th>Location</th><th>Gross Revenue</th><th>Net Revenue</th><th>Net Profit</th><th>Profit %</th><th>Transactions</th></tr></thead>
-        <tbody>${LOCS.map(l=>{const m=agg(l.rests,allDates);return`<tr><td><b>${l.name}</b></td><td>${fd(m.tg)}</td><td>${fd(m.tn)}</td><td style="color:${m.np>=0?'#1a7a3c':'#c0392b'};font-weight:700">${fd(m.np)}</td><td>${fp(m.profit_pct)}</td><td>${m.total_orders.toLocaleString()}</td></tr>`;}).join('')}</tbody></table>
-      </div>
-    </div>`;
+    el.innerHTML=`<div class="page-pad"><div style="font-size:15px;font-weight:700;margin-bottom:12px;">📋 Overview</div>
+    ${kpiHtml([
+      {icon:'💰',val:fd(tot.tg),lbl:'Total Gross Revenue',color:'#1e2a38'},
+      {icon:'📊',val:fd(tot.tn),lbl:'Total Net Revenue',color:'#546e7a'},
+      {icon:tot.np>=0?'📈':'📉',val:fd(tot.np),lbl:`Net Profit (${fp(tot.profit_pct)})`,color:tot.np>=0?'#2ecc71':'#e74c3c',vc:tot.np>=0?'#1a7a3c':'#c0392b'},
+      {icon:'🧾',val:tot.total_orders.toLocaleString(),lbl:'Total Transactions',color:'#f39c12'},
+      {icon:'🛵',val:fd(tot.online_gross),lbl:'Online Gross Revenue',color:'#9b59b6'},
+      {icon:'💸',val:fd(tot.tc),lbl:'Total Cost',color:'#e74c3c'},
+    ])}
+    <div class="chart-grid">
+      <div class="chart-card"><div class="chart-title">Monthly Revenue & Profit</div><canvas id="ch-ov-monthly" height="180"></canvas></div>
+      <div class="chart-card"><div class="chart-title">Revenue by Location</div><canvas id="ch-ov-loc" height="180"></canvas></div>
+    </div>
+    <div class="card"><div class="card-title">Location Summary</div>
+      <table class="dash-table"><thead><tr><th>Location</th><th>Gross Revenue</th><th>Net Revenue</th><th>Net Profit</th><th>Profit %</th><th>Transactions</th></tr></thead>
+      <tbody>${LOCS.map(l=>{const m=agg(l.rests,allDates);return`<tr><td><b>${l.name}</b></td><td>${fd(m.tg)}</td><td>${fd(m.tn)}</td><td style="color:${m.np>=0?'#1a7a3c':'#c0392b'};font-weight:700">${fd(m.np)}</td><td>${fp(m.profit_pct)}</td><td>${m.total_orders.toLocaleString()}</td></tr>`;}).join('')}</tbody></table>
+    </div></div>`;
     setTimeout(()=>{
       mkChart('ch-ov-monthly','bar',mLabels,[
         {label:'Net Revenue',data:mLabels.map(m=>agg(RESTS,mDates(m)).tn),backgroundColor:'rgba(30,42,56,0.7)'},
@@ -860,142 +819,76 @@ function buildDashboard(section){
       mkChart('ch-ov-loc','doughnut',LOCS.map(l=>l.name),[{data:LOCS.map(l=>agg(l.rests,allDates).tg),backgroundColor:LOCS.map(l=>l.color)}],{scales:{}});
     },100);
   }
-
   else if(section==='revenue'){
-    el.innerHTML=`<div class="page-pad">
-      <div style="font-size:15px;font-weight:700;margin-bottom:12px;">💰 Revenue Analysis</div>
-      ${kpiHtml([
-        {icon:'🏪',val:fd(tot.store_gross),lbl:'Store Gross Revenue',color:'#1e2a38'},
-        {icon:'🛵',val:fd(tot.online_gross),lbl:'Online Gross Revenue',color:'#9b59b6'},
-        {icon:'💚',val:fd(tot.uber_gross),lbl:'Uber Eats Gross',color:'#2ecc71'},
-        {icon:'❤️',val:fd(tot.dd_gross),lbl:'DoorDash Gross',color:'#e74c3c'},
-        {icon:'📦',val:fd(tot.per_txn),lbl:'Avg Order Value',color:'#3498db'},
-        {icon:'🧾',val:tot.total_orders.toLocaleString(),lbl:'Total Orders',color:'#f39c12'},
-      ])}
-      <div class="chart-grid">
-        <div class="chart-card"><div class="chart-title">Revenue by Channel</div><canvas id="ch-rev-ch" height="180"></canvas></div>
-        <div class="chart-card"><div class="chart-title">Store vs Online Monthly</div><canvas id="ch-rev-mo" height="180"></canvas></div>
-      </div>
-    </div>`;
+    el.innerHTML=`<div class="page-pad"><div style="font-size:15px;font-weight:700;margin-bottom:12px;">💰 Revenue Analysis</div>
+    ${kpiHtml([{icon:'🏪',val:fd(tot.store_gross),lbl:'Store Gross Revenue',color:'#1e2a38'},{icon:'🛵',val:fd(tot.online_gross),lbl:'Online Gross Revenue',color:'#9b59b6'},{icon:'💚',val:fd(tot.uber_gross),lbl:'Uber Eats Gross',color:'#2ecc71'},{icon:'❤️',val:fd(tot.dd_gross),lbl:'DoorDash Gross',color:'#e74c3c'},{icon:'📦',val:fd(tot.per_txn),lbl:'Avg Order Value',color:'#3498db'},{icon:'🧾',val:tot.total_orders.toLocaleString(),lbl:'Total Orders',color:'#f39c12'}])}
+    <div class="chart-grid">
+      <div class="chart-card"><div class="chart-title">Revenue by Channel</div><canvas id="ch-rev-ch" height="180"></canvas></div>
+      <div class="chart-card"><div class="chart-title">Store vs Online Monthly</div><canvas id="ch-rev-mo" height="180"></canvas></div>
+    </div></div>`;
     setTimeout(()=>{
       mkChart('ch-rev-ch','doughnut',['Store','Uber Eats','DoorDash'],[{data:[tot.store_gross,tot.uber_gross,tot.dd_gross],backgroundColor:['#1e2a38','#2ecc71','#e74c3c']}],{scales:{}});
-      mkChart('ch-rev-mo','bar',mLabels,[
-        {label:'Store',data:mLabels.map(m=>agg(RESTS,mDates(m)).store_gross),backgroundColor:'rgba(30,42,56,0.7)'},
-        {label:'Online',data:mLabels.map(m=>agg(RESTS,mDates(m)).online_gross),backgroundColor:'rgba(155,89,182,0.7)'},
-      ]);
+      mkChart('ch-rev-mo','bar',mLabels,[{label:'Store',data:mLabels.map(m=>agg(RESTS,mDates(m)).store_gross),backgroundColor:'rgba(30,42,56,0.7)'},{label:'Online',data:mLabels.map(m=>agg(RESTS,mDates(m)).online_gross),backgroundColor:'rgba(155,89,182,0.7)'}]);
     },100);
   }
-
   else if(section==='cost'){
-    el.innerHTML=`<div class="page-pad">
-      <div style="font-size:15px;font-weight:700;margin-bottom:12px;">💸 Cost Analysis</div>
-      ${kpiHtml([
-        {icon:'🍔',val:fd(tot.food),lbl:`Food Cost (${fp(tot.food_net_pct)})`,color:'#e74c3c'},
-        {icon:'👥',val:fd(tot.staff),lbl:`Staff Cost (${fp(tot.staff_pct)})`,color:'#3498db'},
-        {icon:'⚙️',val:fd(tot.ops),lbl:`Operation Cost (${fp(tot.ops_pct)})`,color:'#f39c12'},
-        {icon:'📦',val:fd(tot.other),lbl:'Other Cost',color:'#95a5a6'},
-        {icon:'💰',val:fd(tot.tc),lbl:'Total Cost',color:'#1e2a38'},
-        {icon:'💵',val:fd(tot.tn),lbl:'Net Revenue',color:'#2ecc71'},
-      ])}
-      <div class="chart-grid">
-        <div class="chart-card"><div class="chart-title">Cost Breakdown</div><canvas id="ch-cost-br" height="180"></canvas></div>
-        <div class="chart-card"><div class="chart-title">Monthly Cost Trend</div><canvas id="ch-cost-tr" height="180"></canvas></div>
-      </div>
-    </div>`;
+    el.innerHTML=`<div class="page-pad"><div style="font-size:15px;font-weight:700;margin-bottom:12px;">💸 Cost Analysis</div>
+    ${kpiHtml([{icon:'🍔',val:fd(tot.food),lbl:`Food Cost (${fp(tot.food_net_pct)})`,color:'#e74c3c'},{icon:'👥',val:fd(tot.staff),lbl:`Staff Cost (${fp(tot.staff_pct)})`,color:'#3498db'},{icon:'⚙️',val:fd(tot.ops),lbl:`Operation (${fp(tot.ops_pct)})`,color:'#f39c12'},{icon:'📦',val:fd(tot.other),lbl:'Other Cost',color:'#95a5a6'},{icon:'💰',val:fd(tot.tc),lbl:'Total Cost',color:'#1e2a38'},{icon:'💵',val:fd(tot.tn),lbl:'Net Revenue',color:'#2ecc71'}])}
+    <div class="chart-grid">
+      <div class="chart-card"><div class="chart-title">Cost Breakdown</div><canvas id="ch-cost-br" height="180"></canvas></div>
+      <div class="chart-card"><div class="chart-title">Monthly Cost Trend</div><canvas id="ch-cost-tr" height="180"></canvas></div>
+    </div></div>`;
     setTimeout(()=>{
       mkChart('ch-cost-br','doughnut',['Food','Staff','Operation','Other'],[{data:[tot.food,tot.staff,tot.ops,tot.other],backgroundColor:['#e74c3c','#3498db','#f39c12','#95a5a6']}],{scales:{}});
-      mkChart('ch-cost-tr','line',mLabels,[
-        {label:'Food',data:mLabels.map(m=>agg(RESTS,mDates(m)).food),borderColor:'#e74c3c',fill:false,tension:0.3},
-        {label:'Staff',data:mLabels.map(m=>agg(RESTS,mDates(m)).staff),borderColor:'#3498db',fill:false,tension:0.3},
-        {label:'Operation',data:mLabels.map(m=>agg(RESTS,mDates(m)).ops),borderColor:'#f39c12',fill:false,tension:0.3},
-      ]);
+      mkChart('ch-cost-tr','line',mLabels,[{label:'Food',data:mLabels.map(m=>agg(RESTS,mDates(m)).food),borderColor:'#e74c3c',fill:false,tension:0.3},{label:'Staff',data:mLabels.map(m=>agg(RESTS,mDates(m)).staff),borderColor:'#3498db',fill:false,tension:0.3},{label:'Operation',data:mLabels.map(m=>agg(RESTS,mDates(m)).ops),borderColor:'#f39c12',fill:false,tension:0.3}]);
     },100);
   }
-
   else if(section==='pnl'){
-    el.innerHTML=`<div class="page-pad">
-      <div style="font-size:15px;font-weight:700;margin-bottom:12px;">📈 P&L Summary</div>
-      ${kpiHtml([
-        {icon:'💰',val:fd(tot.tg),lbl:'Gross Revenue',color:'#1e2a38'},
-        {icon:'📊',val:fd(tot.tn),lbl:'Net Revenue',color:'#546e7a'},
-        {icon:'💚',val:fd(tot.gp),lbl:'Gross Profit',color:'#2ecc71'},
-        {icon:tot.np>=0?'📈':'📉',val:fd(tot.np),lbl:'Net Profit',color:tot.np>=0?'#2ecc71':'#e74c3c',vc:tot.np>=0?'#1a7a3c':'#c0392b'},
-        {icon:'💸',val:fd(tot.tc),lbl:'Total Cost',color:'#e74c3c'},
-        {icon:'%',val:fp(tot.profit_pct),lbl:'Net Profit Margin',color:'#9b59b6'},
-      ])}
-      <div class="chart-grid">
-        <div class="chart-card"><div class="chart-title">Monthly P&L</div><canvas id="ch-pnl-mo" height="180"></canvas></div>
-        <div class="chart-card"><div class="chart-title">P&L by Location</div><canvas id="ch-pnl-loc" height="180"></canvas></div>
-      </div>
-      <div class="card"><div class="card-title">Monthly P&L Table</div>
-        <table class="dash-table"><thead><tr><th>Month</th><th>Gross Rev</th><th>Net Rev</th><th>Total Cost</th><th>Gross Profit</th><th>Net Profit</th><th>Margin</th></tr></thead>
-        <tbody>${mLabels.map(m=>{const md=agg(RESTS,mDates(m));return`<tr><td><b>${m}</b></td><td>${fd(md.tg)}</td><td>${fd(md.tn)}</td><td>${fd(md.tc)}</td><td style="color:${md.gp>=0?'#1a7a3c':'#c0392b'};font-weight:700">${fd(md.gp)}</td><td style="color:${md.np>=0?'#1a7a3c':'#c0392b'};font-weight:700">${fd(md.np)}</td><td>${fp(md.profit_pct)}</td></tr>`;}).join('')}</tbody></table>
-      </div>
-    </div>`;
+    el.innerHTML=`<div class="page-pad"><div style="font-size:15px;font-weight:700;margin-bottom:12px;">📈 P&L Summary</div>
+    ${kpiHtml([{icon:'💰',val:fd(tot.tg),lbl:'Gross Revenue',color:'#1e2a38'},{icon:'📊',val:fd(tot.tn),lbl:'Net Revenue',color:'#546e7a'},{icon:'💚',val:fd(tot.gp),lbl:'Gross Profit',color:'#2ecc71'},{icon:tot.np>=0?'📈':'📉',val:fd(tot.np),lbl:'Net Profit',color:tot.np>=0?'#2ecc71':'#e74c3c',vc:tot.np>=0?'#1a7a3c':'#c0392b'},{icon:'💸',val:fd(tot.tc),lbl:'Total Cost',color:'#e74c3c'},{icon:'%',val:fp(tot.profit_pct),lbl:'Net Profit Margin',color:'#9b59b6'}])}
+    <div class="chart-grid">
+      <div class="chart-card"><div class="chart-title">Monthly P&L</div><canvas id="ch-pnl-mo" height="180"></canvas></div>
+      <div class="chart-card"><div class="chart-title">P&L by Location</div><canvas id="ch-pnl-loc" height="180"></canvas></div>
+    </div>
+    <div class="card"><div class="card-title">Monthly P&L Table</div>
+      <table class="dash-table"><thead><tr><th>Month</th><th>Gross Rev</th><th>Net Rev</th><th>Total Cost</th><th>Gross Profit</th><th>Net Profit</th><th>Margin</th></tr></thead>
+      <tbody>${mLabels.map(m=>{const md=agg(RESTS,mDates(m));return`<tr><td><b>${m}</b></td><td>${fd(md.tg)}</td><td>${fd(md.tn)}</td><td>${fd(md.tc)}</td><td style="color:${md.gp>=0?'#1a7a3c':'#c0392b'};font-weight:700">${fd(md.gp)}</td><td style="color:${md.np>=0?'#1a7a3c':'#c0392b'};font-weight:700">${fd(md.np)}</td><td>${fp(md.profit_pct)}</td></tr>`;}).join('')}</tbody></table>
+    </div></div>`;
     setTimeout(()=>{
-      mkChart('ch-pnl-mo','bar',mLabels,[
-        {label:'Net Revenue',data:mLabels.map(m=>agg(RESTS,mDates(m)).tn),backgroundColor:'rgba(30,42,56,0.7)'},
-        {label:'Total Cost',data:mLabels.map(m=>agg(RESTS,mDates(m)).tc),backgroundColor:'rgba(231,76,60,0.7)'},
-        {label:'Net Profit',data:mLabels.map(m=>agg(RESTS,mDates(m)).np),backgroundColor:'rgba(46,204,113,0.7)'},
-      ]);
-      mkChart('ch-pnl-loc','bar',LOCS.map(l=>l.name),[
-        {label:'Net Revenue',data:LOCS.map(l=>agg(l.rests,allDates).tn),backgroundColor:'rgba(30,42,56,0.7)'},
-        {label:'Net Profit',data:LOCS.map(l=>agg(l.rests,allDates).np),backgroundColor:LOCS.map(l=>agg(l.rests,allDates).np>=0?'rgba(46,204,113,0.7)':'rgba(231,76,60,0.7)')},
-      ]);
+      mkChart('ch-pnl-mo','bar',mLabels,[{label:'Net Revenue',data:mLabels.map(m=>agg(RESTS,mDates(m)).tn),backgroundColor:'rgba(30,42,56,0.7)'},{label:'Total Cost',data:mLabels.map(m=>agg(RESTS,mDates(m)).tc),backgroundColor:'rgba(231,76,60,0.7)'},{label:'Net Profit',data:mLabels.map(m=>agg(RESTS,mDates(m)).np),backgroundColor:'rgba(46,204,113,0.7)'}]);
+      mkChart('ch-pnl-loc','bar',LOCS.map(l=>l.name),[{label:'Net Revenue',data:LOCS.map(l=>agg(l.rests,allDates).tn),backgroundColor:'rgba(30,42,56,0.7)'},{label:'Net Profit',data:LOCS.map(l=>agg(l.rests,allDates).np),backgroundColor:LOCS.map(l=>agg(l.rests,allDates).np>=0?'rgba(46,204,113,0.7)':'rgba(231,76,60,0.7)')}]);
     },100);
   }
-
+  else if(section==='online'){
+    el.innerHTML=`<div class="page-pad"><div style="font-size:15px;font-weight:700;margin-bottom:12px;">🛵 Online Orders</div>
+    ${kpiHtml([{icon:'💚',val:fd(tot.uber_gross),lbl:`Uber Gross → Net: ${fd(tot.uber_net)}`,color:'#2ecc71'},{icon:'❤️',val:fd(tot.dd_gross),lbl:`DoorDash Gross → Net: ${fd(tot.dd_net)}`,color:'#e74c3c'},{icon:'📦',val:tot.online_orders.toLocaleString(),lbl:'Total Online Orders',color:'#9b59b6'},{icon:'💵',val:fd(tot.online_ptr),lbl:'Avg Online Order Value',color:'#3498db'}])}
+    <div class="chart-grid">
+      <div class="chart-card"><div class="chart-title">Online Revenue Split</div><canvas id="ch-on-split" height="180"></canvas></div>
+      <div class="chart-card"><div class="chart-title">Gross vs Net by Platform</div><canvas id="ch-on-comm" height="180"></canvas></div>
+    </div></div>`;
+    setTimeout(()=>{
+      mkChart('ch-on-split','doughnut',['Uber Eats','DoorDash'],[{data:[tot.uber_gross,tot.dd_gross],backgroundColor:['#2ecc71','#e74c3c']}],{scales:{}});
+      mkChart('ch-on-comm','bar',['Uber Eats','DoorDash'],[{label:'Gross Revenue',data:[tot.uber_gross,tot.dd_gross],backgroundColor:'rgba(30,42,56,0.7)'},{label:'Net Revenue',data:[tot.uber_net,tot.dd_net],backgroundColor:'rgba(46,204,113,0.7)'}]);
+    },100);
+  }
   else if(section.startsWith('loc-')){
     const lk=section.replace('loc-','');
     const ld={stalbans:{name:'ST ALBANS',rests:['ANGIES - ST ALBANS','GOLDEN FLAMES - ST ALBANS'],color:'#e74c3c'},fitzroy:{name:'FITZROY NORTH',rests:['ANGIES - FITZROY NORTH','LAMB ON NICHOLSON'],color:'#3498db'},ascot:{name:'ASCOT VALE',rests:['ANGIES - ASCOT VALE','ASCOT VALE KEBABS'],color:'#2ecc71'}};
     const loc=ld[lk];if(!loc)return;
     const lt=agg(loc.rests,allDates);
-    el.innerHTML=`<div class="page-pad">
-      <div style="font-size:15px;font-weight:700;margin-bottom:12px;color:${loc.color}">📍 ${loc.name}</div>
-      ${kpiHtml([
-        {icon:'💰',val:fd(lt.tg),lbl:'Gross Revenue',color:loc.color},
-        {icon:'📊',val:fd(lt.tn),lbl:'Net Revenue',color:'#546e7a'},
-        {icon:lt.np>=0?'📈':'📉',val:fd(lt.np),lbl:`Net Profit (${fp(lt.profit_pct)})`,color:lt.np>=0?'#2ecc71':'#e74c3c',vc:lt.np>=0?'#1a7a3c':'#c0392b'},
-        {icon:'🧾',val:lt.total_orders.toLocaleString(),lbl:'Transactions',color:'#f39c12'},
-      ])}
-      <div class="chart-grid">
-        <div class="chart-card"><div class="chart-title">Monthly Revenue vs Cost</div><canvas id="ch-loc-mc" height="180"></canvas></div>
-        <div class="chart-card"><div class="chart-title">Revenue by Restaurant</div><canvas id="ch-loc-rest" height="180"></canvas></div>
-      </div>
-      <div class="card"><div class="card-title">Restaurant Comparison</div>
-        <table class="dash-table"><thead><tr><th>Restaurant</th><th>Gross Rev</th><th>Net Rev</th><th>Net Profit</th><th>Transactions</th><th>Avg Order</th></tr></thead>
-        <tbody>${loc.rests.map(r=>{const m=agg([r],allDates);return`<tr><td><b>${r}</b></td><td>${fd(m.tg)}</td><td>${fd(m.tn)}</td><td style="color:${m.np>=0?'#1a7a3c':'#c0392b'};font-weight:700">${fd(m.np)}</td><td>${m.total_orders.toLocaleString()}</td><td>${fd(m.per_txn)}</td></tr>`;}).join('')}</tbody></table>
-      </div>
-    </div>`;
+    el.innerHTML=`<div class="page-pad"><div style="font-size:15px;font-weight:700;margin-bottom:12px;color:${loc.color}">📍 ${loc.name}</div>
+    ${kpiHtml([{icon:'💰',val:fd(lt.tg),lbl:'Gross Revenue',color:loc.color},{icon:'📊',val:fd(lt.tn),lbl:'Net Revenue',color:'#546e7a'},{icon:lt.np>=0?'📈':'📉',val:fd(lt.np),lbl:`Net Profit (${fp(lt.profit_pct)})`,color:lt.np>=0?'#2ecc71':'#e74c3c',vc:lt.np>=0?'#1a7a3c':'#c0392b'},{icon:'🧾',val:lt.total_orders.toLocaleString(),lbl:'Transactions',color:'#f39c12'}])}
+    <div class="chart-grid">
+      <div class="chart-card"><div class="chart-title">Monthly Revenue vs Cost</div><canvas id="ch-loc-mc" height="180"></canvas></div>
+      <div class="chart-card"><div class="chart-title">Revenue by Restaurant</div><canvas id="ch-loc-rest" height="180"></canvas></div>
+    </div>
+    <div class="card"><div class="card-title">Restaurant Comparison</div>
+      <table class="dash-table"><thead><tr><th>Restaurant</th><th>Gross Rev</th><th>Net Rev</th><th>Net Profit</th><th>Transactions</th><th>Avg Order</th></tr></thead>
+      <tbody>${loc.rests.map(r=>{const m=agg([r],allDates);return`<tr><td><b>${r}</b></td><td>${fd(m.tg)}</td><td>${fd(m.tn)}</td><td style="color:${m.np>=0?'#1a7a3c':'#c0392b'};font-weight:700">${fd(m.np)}</td><td>${m.total_orders.toLocaleString()}</td><td>${fd(m.per_txn)}</td></tr>`;}).join('')}</tbody></table>
+    </div></div>`;
     setTimeout(()=>{
-      mkChart('ch-loc-mc','bar',mLabels,[
-        {label:'Net Revenue',data:mLabels.map(m=>agg(loc.rests,mDates(m)).tn),backgroundColor:'rgba(30,42,56,0.7)'},
-        {label:'Total Cost',data:mLabels.map(m=>agg(loc.rests,mDates(m)).tc),backgroundColor:'rgba(231,76,60,0.7)'},
-      ]);
+      mkChart('ch-loc-mc','bar',mLabels,[{label:'Net Revenue',data:mLabels.map(m=>agg(loc.rests,mDates(m)).tn),backgroundColor:'rgba(30,42,56,0.7)'},{label:'Total Cost',data:mLabels.map(m=>agg(loc.rests,mDates(m)).tc),backgroundColor:'rgba(231,76,60,0.7)'}]);
       mkChart('ch-loc-rest','doughnut',loc.rests,[{data:loc.rests.map(r=>agg([r],allDates).tg),backgroundColor:['rgba(30,42,56,0.8)','rgba(84,110,122,0.8)']}],{scales:{}});
-    },100);
-  }
-
-  else if(section==='online'){
-    el.innerHTML=`<div class="page-pad">
-      <div style="font-size:15px;font-weight:700;margin-bottom:12px;">🛵 Online Orders</div>
-      ${kpiHtml([
-        {icon:'💚',val:fd(tot.uber_gross),lbl:`Uber Gross → Net: ${fd(tot.uber_net)}`,color:'#2ecc71'},
-        {icon:'❤️',val:fd(tot.dd_gross),lbl:`DoorDash Gross → Net: ${fd(tot.dd_net)}`,color:'#e74c3c'},
-        {icon:'📦',val:tot.online_orders.toLocaleString(),lbl:'Total Online Orders',color:'#9b59b6'},
-        {icon:'💵',val:fd(tot.online_ptr),lbl:'Avg Online Order Value',color:'#3498db'},
-      ])}
-      <div class="chart-grid">
-        <div class="chart-card"><div class="chart-title">Online Revenue Split</div><canvas id="ch-on-split" height="180"></canvas></div>
-        <div class="chart-card"><div class="chart-title">Gross vs Net by Platform</div><canvas id="ch-on-comm" height="180"></canvas></div>
-      </div>
-    </div>`;
-    setTimeout(()=>{
-      mkChart('ch-on-split','doughnut',['Uber Eats','DoorDash'],[{data:[tot.uber_gross,tot.dd_gross],backgroundColor:['#2ecc71','#e74c3c']}],{scales:{}});
-      mkChart('ch-on-comm','bar',['Uber Eats','DoorDash'],[
-        {label:'Gross Revenue',data:[tot.uber_gross,tot.dd_gross],backgroundColor:'rgba(30,42,56,0.7)'},
-        {label:'Net Revenue',data:[tot.uber_net,tot.dd_net],backgroundColor:'rgba(46,204,113,0.7)'},
-      ]);
     },100);
   }
 }
