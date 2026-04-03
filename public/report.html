@@ -590,7 +590,7 @@ function saveEntry(){
 
 function renderEntries(){
   document.getElementById('ecount').textContent=entries.length;
-  const f=v=>v?'A$'+Math.round(v).toLocaleString():'-';
+  const f=v=>v?'$'+Math.round(v).toLocaleString():'-';
   document.getElementById('etbody').innerHTML=entries.slice().reverse().map(e=>{
     const exps=(e.expenses||[]).filter(x=>x.type).map(x=>`<span style="display:inline-block;background:#f0f0f0;border-radius:4px;padding:1px 6px;margin:1px;font-size:10px;">${x.type}: A$${Math.round(x.amt).toLocaleString()}</span>`).join('');
     return`<tr style="opacity:${e.hidden?0.4:1};background:${e.hidden?'#f9f9f9':''};">
@@ -679,7 +679,7 @@ function agg(rests,dates){
 
 function fv(v,t){
   if(v===0)return'-';
-  if(t==='cur')return(v<0?'-':'')+'A$'+Math.abs(Math.round(v)).toLocaleString();
+  if(t==='cur')return(v<0?'-':'')+'$'+Math.abs(Math.round(v)).toLocaleString();
   if(t==='pct')return(v*100).toFixed(2)+'%';
   if(t==='num')return Math.round(v).toLocaleString();
   return'-';
@@ -780,10 +780,10 @@ const LOCS=[
 function mkChart(id,type,labels,datasets,extra={}){
   if(chartInst[id]){try{chartInst[id].destroy();}catch(e){}}
   const ctx=document.getElementById(id);if(!ctx)return;
-  chartInst[id]=new Chart(ctx,{type,data:{labels,datasets},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{font:{family:'Inter',size:11},color:'#1a1a1a'}}},scales:type!=='pie'&&type!=='doughnut'?{x:{ticks:{font:{family:'Inter',size:10},color:'#1a1a1a'}},y:{ticks:{font:{family:'Inter',size:10},color:'#1a1a1a',callback:v=>'A$'+Math.round(v).toLocaleString()}}}:{}, ...extra}});
+  chartInst[id]=new Chart(ctx,{type,data:{labels,datasets},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{font:{family:'Inter',size:11},color:'#1a1a1a'}}},scales:type!=='pie'&&type!=='doughnut'?{x:{ticks:{font:{family:'Inter',size:10},color:'#1a1a1a'}},y:{ticks:{font:{family:'Inter',size:10},color:'#1a1a1a',callback:v=>'$'+Math.round(v).toLocaleString()}}}:{}, ...extra}});
 }
 
-function fd(v){return v===0?'-':(v<0?'-':'')+'A$'+Math.abs(Math.round(v)).toLocaleString();}
+function fd(v){return v===0?'-':(v<0?'-':'')+'$'+Math.abs(Math.round(v)).toLocaleString();}
 function fp(v){return(v*100).toFixed(1)+'%';}
 
 function buildDashboard(section){
