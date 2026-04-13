@@ -386,9 +386,10 @@ textarea.fi{resize:vertical;min-height:80px;}
 <input type="text" id="item-ingredients" class="fi" placeholder="e.g. Lamb, Rice, Garlic sauce"/>
 </div>
 <div class="card">
-<div class="card-title">Customisation Options</div>
-<div id="addons-list"></div>
-<button onclick="addAddonRow()" style="padding:8px 16px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;">+ Add Option</button>
+<div class="card-title">Customisation Sections</div>
+<div id="sections-list"></div>
+<button onclick="addSection()" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;">+ Add Section</button>
+</div>
 </div>
 <div style="display:flex;gap:10px;margin-bottom:30px;">
 <button class="btn-primary" onclick="saveItem()" style="flex:1;padding:13px;">Save Item</button>
@@ -495,19 +496,63 @@ document.getElementById('upload-progress').style.display='none';
 showToast('Image uploaded!');
 }
 
-function addAddonRow(name='',price=0){
-addonCount++;
-const div=document.createElement('div');
-div.className='addon-row';div.id='addon-'+addonCount;
-div.innerHTML='<input type="text" class="fi" placeholder="Option name" value="'+name+'" style="flex:1"/><input type="number" class="fi" placeholder="Price $" value="'+price+'" step="0.50" min="0" style="width:90px;"/><button class="rm-btn" onclick="document.getElementById(\'addon-'+addonCount+'\').remove()">X</button>';
-document.getElementById('addons-list').appendChild(div);
+let sectionCount=0;
+
+function addSection(name='',type='checkbox',max=0,options=[]){
+  sectionCount++;
+  const sid=sectionCount;
+  const div=document.createElement('div');
+  div.id='section-'+sid;
+  div.style.cssText='background:#f8f8f8;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #e8e8e8;';
+  div.innerHTML=`
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">
+      <input type="text" class="fi" placeholder="Section name (e.g. Select Sauce)" value="${name}" style="flex:2;min-width:140px;" id="sec-name-${sid}"/>
+      <select class="fi" style="width:130px;" id="sec-type-${sid}">
+        <option value="checkbox" ${type==='checkbox'?'selected':''}>Checkbox (Multi)</option>
+        <option value="radio" ${type==='radio'?'selected':''}>Radio (Single)</option>
+      </select>
+      <input type="number" class="fi" placeholder="Max select (0=unlimited)" value="${max}" style="width:80px;" id="sec-max-${sid}" min="0"/>
+      <button class="rm-btn" onclick="document.getElementById('section-${sid}').remove()">Remove Section</button>
+    </div>
+    <div id="sec-opts-${sid}"></div>
+    <button onclick="addOption(${sid})" style="padding:6px 14px;background:#fff;color:#555;border:1px solid #ddd;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;margin-top:6px;">+ Add Option</button>
+  `;
+  document.getElementById('sections-list').appendChild(div);
+  options.forEach(o=>addOption(sid,o.name,o.price));
 }
 
-function getAddons(){
-return[...document.querySelectorAll('#addons-list .addon-row')].map(row=>{
-const inputs=row.querySelectorAll('input');
-return{name:inputs[0].value.trim(),price:parseFloat(inputs[1].value)||0};
-}).filter(a=>a.name);
+let optCount=0;
+function addOption(sid,name='',price=0){
+  optCount++;
+  const oid=optCount;
+  const div=document.createElement('div');
+  div.id='opt-'+oid;
+  div.style.cssText='display:flex;gap:8px;align-items:center;margin-bottom:6px;';
+  div.innerHTML=`
+    <input type="text" class="fi" placeholder="Option name" value="${name}" style="flex:2;"/>
+    <input type="number" class="fi" placeholder="Price $" value="${price}" step="0.01" min="0" style="width:90px;"/>
+    <button class="rm-btn" onclick="document.getElementById('opt-${oid}').remove()">X</button>
+  `;
+  document.getElementById('sec-opts-'+sid).appendChild(div);
+}
+
+function getSections(){
+  const sections=[];
+  document.querySelectorAll('#sections-list > div[id^="section-"]').forEach(sec=>{
+    const sid=sec.id.replace('section-','');
+    const name=document.getElementById('sec-name-'+sid)?.value.trim();
+    if(!name)return;
+    const type=document.getElementById('sec-type-'+sid)?.value||'checkbox';
+    const max=parseInt(document.getElementById('sec-max-'+sid)?.value)||0;
+    const options=[];
+    sec.querySelectorAll('div[id^="opt-"]').forEach(opt=>{
+      const inputs=opt.querySelectorAll('input');
+      const oname=inputs[0]?.value.trim();
+      if(oname)options.push({name:oname,price:parseFloat(inputs[1]?.value)||0});
+    });
+    sections.push({name,type,max,options});
+  });
+  return sections;
 }
 
 function showAddItemForm(){resetForm();showTab('add-item',null);}
@@ -517,7 +562,7 @@ const name=document.getElementById('item-name').value.trim();
 const category=document.getElementById('item-category').value.trim();
 const price=parseFloat(document.getElementById('item-price').value);
 if(!name||!category||!price){showToast('Name, Category, Price required!',true);return;}
-const item={name,category,price,description:document.getElementById('item-desc').value,image_url:document.getElementById('item-image-url').value||null,ingredients:document.getElementById('item-ingredients').value.split(',').map(s=>s.trim()).filter(Boolean),addons:getAddons(),available:document.getElementById('item-available').value==='true'};
+const item={name,category,price,description:document.getElementById('item-desc').value,image_url:document.getElementById('item-image-url').value||null,ingredients:document.getElementById('item-ingredients').value.split(',').map(s=>s.trim()).filter(Boolean),addons:getSections(),available:document.getElementById('item-available').value==='true'};
 const editId=document.getElementById('edit-id').value;
 const{error}=editId?await db.from('menu_items').update(item).eq('id',editId):await db.from('menu_items').insert(item);
 if(error){showToast('Error: '+error.message,true);return;}
@@ -526,6 +571,7 @@ showToast('Item saved!');resetForm();loadMenuItems();showTab('menu',null);
 
 function resetForm(){
 ['edit-id','item-name','item-category','item-price','item-desc','item-ingredients','item-image-url'].forEach(id=>document.getElementById(id).value='');
+document.getElementById('sections-list').innerHTML='';sectionCount=0;optCount=0;
 document.getElementById('item-available').value='true';
 document.getElementById('img-preview').style.display='none';
 document.getElementById('upload-placeholder').style.display='block';
@@ -571,7 +617,7 @@ document.getElementById('item-available').value=String(item.available);
 document.getElementById('item-image-url').value=item.image_url||'';
 if(item.image_url){document.getElementById('img-preview').src=item.image_url;document.getElementById('img-preview').style.display='block';document.getElementById('upload-placeholder').style.display='none';}
 document.getElementById('addons-list').innerHTML='';addonCount=0;
-(item.addons||[]).forEach(a=>addAddonRow(a.name,a.price));
+(item.addons||[]).forEach(s=>addSection(s.name,s.type||'checkbox',s.max||0,s.options||[]));
 document.getElementById('form-title').textContent='Edit: '+item.name;
 showTab('add-item',null);
 }
