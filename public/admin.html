@@ -65,7 +65,6 @@ textarea.fi{resize:vertical;min-height:80px;}
 .kpi-card{background:#fff;border-radius:12px;padding:16px;border:1px solid #e8e8e8;}
 .kpi-val{font-size:22px;font-weight:900;margin-bottom:4px;}
 .kpi-lbl{font-size:11px;color:#888;font-weight:600;}
-.addon-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
 .rm-btn{background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px;font-weight:700;}
 .staff-card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;border:1px solid #e8e8e8;display:flex;justify-content:space-between;align-items:flex-start;}
 .perm-check{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;cursor:pointer;}
@@ -87,16 +86,21 @@ textarea.fi{resize:vertical;min-height:80px;}
 .location-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:#e8f5e9;color:#2d6a4f;}
 .social-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;}
 .social-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.section-box{background:#f8f8f8;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #e8e8e8;}
+.section-header{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap;}
+.opt-row{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
 @media(max-width:768px){
 .ig2,.ig3{grid-template-columns:1fr;}
 .kpi-grid{grid-template-columns:1fr 1fr;}
 .menu-grid{grid-template-columns:1fr 1fr;}
 .order-grid{grid-template-columns:1fr;}
 .gallery-grid{grid-template-columns:1fr 1fr;}
+.section-header{flex-direction:column;align-items:stretch;}
 }
 </style>
 </head>
 <body>
+
 <div id="login-screen">
 <div class="login-box">
 <img src="/logo.jpg" alt="logo"/>
@@ -108,6 +112,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 <button class="login-btn" onclick="doLogin()">Login</button>
 </div>
 </div>
+
 <div id="app">
 <div class="topbar">
 <img src="/logo.jpg" onclick="window.location.href='/'"/>
@@ -118,6 +123,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 <div class="tabs" id="nav-tabs"></div>
 <button class="logout-btn" onclick="doLogout()">Logout</button>
 </div>
+
 <div class="content">
 <div class="toast" id="toast"></div>
 
@@ -386,10 +392,9 @@ textarea.fi{resize:vertical;min-height:80px;}
 <input type="text" id="item-ingredients" class="fi" placeholder="e.g. Lamb, Rice, Garlic sauce"/>
 </div>
 <div class="card">
-<div class="card-title">Customisation Sections</div>
+<div class="card-title">⚙️ Customisation Sections</div>
 <div id="sections-list"></div>
 <button onclick="addSection()" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;">+ Add Section</button>
-</div>
 </div>
 <div style="display:flex;gap:10px;margin-bottom:30px;">
 <button class="btn-primary" onclick="saveItem()" style="flex:1;padding:13px;">Save Item</button>
@@ -405,114 +410,116 @@ const SUPABASE_URL="https://egyxvzjfqnpcfdnwusxn.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVneXh2empmcW5wY2Zkbnd1c3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODMyMjUsImV4cCI6MjA4OTg1OTIyNX0.modzK6AhGyo3YBjZtDl2lK4tFQuj0B3KsDFIf2n-was";
 const{createClient}=supabase;
 const db=createClient(SUPABASE_URL,SUPABASE_KEY);
-let currentUser=null,allMenuItems=[],addonCount=0,allGalleryItems=[],gallerySelectedFile=null,quickLinkCount=0,allLocations=[];
+let currentUser=null,allMenuItems=[],allGalleryItems=[],gallerySelectedFile=null,allLocations=[];
+let sectionCount=0,optCount=0;
 
+// ===== AUTH =====
 async function doLogin(){
-const email=document.getElementById('login-email').value.trim();
-const pass=document.getElementById('login-pass').value;
-if(!email||!pass)return;
-const{data,error}=await db.from('staff').select('*').eq('email',email).eq('password',pass).eq('active',true).single();
-if(error||!data){document.getElementById('err-msg').style.display='block';return;}
-currentUser=data;
-document.getElementById('login-screen').style.display='none';
-document.getElementById('app').style.display='block';
-document.getElementById('topbar-user').textContent=data.name+' · '+data.role;
-buildNav();loadInitial();
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  if(!email||!pass)return;
+  const{data,error}=await db.from('staff').select('*').eq('email',email).eq('password',pass).eq('active',true).single();
+  if(error||!data){document.getElementById('err-msg').style.display='block';return;}
+  currentUser=data;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('topbar-user').textContent=data.name+' · '+data.role;
+  buildNav();loadInitial();
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
-document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 });
 
 function doLogout(){
-currentUser=null;
-document.getElementById('login-screen').style.display='flex';
-document.getElementById('app').style.display='none';
-document.getElementById('login-email').value='';
-document.getElementById('login-pass').value='';
+  currentUser=null;
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-email').value='';
+  document.getElementById('login-pass').value='';
 }
 
 function hasPerm(perm){
-if(!currentUser)return false;
-if(currentUser.role==='owner')return true;
-if(['gallery','locations','brand'].includes(perm))return currentUser.permissions?.[perm]!==false;
-return currentUser.permissions?.[perm]===true;
+  if(!currentUser)return false;
+  if(currentUser.role==='owner')return true;
+  if(['gallery','locations','brand'].includes(perm))return currentUser.permissions?.[perm]!==false;
+  return currentUser.permissions?.[perm]===true;
 }
 
 function buildNav(){
-const tabs=[];
-if(hasPerm('dashboard'))tabs.push({id:'dashboard',label:'Dashboard'});
-if(hasPerm('menu'))tabs.push({id:'menu',label:'Menu'});
-if(hasPerm('orders'))tabs.push({id:'orders',label:'Orders'});
-if(hasPerm('pages'))tabs.push({id:'pages',label:'Pages'});
-if(hasPerm('gallery'))tabs.push({id:'gallery',label:'Gallery'});
-if(hasPerm('locations'))tabs.push({id:'locations',label:'Locations'});
-if(hasPerm('brand'))tabs.push({id:'brand',label:'Brand'});
-if(hasPerm('staff'))tabs.push({id:'staff',label:'Staff'});
-const nav=document.getElementById('nav-tabs');
-nav.innerHTML=tabs.map((t,i)=>'<button class="tab'+(i===0?' active':'')+'" onclick="showTab(\''+t.id+'\',this)">'+t.label+'</button>').join('');
-if(tabs.length>0)showTab(tabs[0].id,null);
+  const tabs=[];
+  if(hasPerm('dashboard'))tabs.push({id:'dashboard',label:'Dashboard'});
+  if(hasPerm('menu'))tabs.push({id:'menu',label:'Menu'});
+  if(hasPerm('orders'))tabs.push({id:'orders',label:'Orders'});
+  if(hasPerm('pages'))tabs.push({id:'pages',label:'Pages'});
+  if(hasPerm('gallery'))tabs.push({id:'gallery',label:'Gallery'});
+  if(hasPerm('locations'))tabs.push({id:'locations',label:'Locations'});
+  if(hasPerm('brand'))tabs.push({id:'brand',label:'Brand'});
+  if(hasPerm('staff'))tabs.push({id:'staff',label:'Staff'});
+  const nav=document.getElementById('nav-tabs');
+  nav.innerHTML=tabs.map((t,i)=>'<button class="tab'+(i===0?' active':'')+'" onclick="showTab(\''+t.id+'\',this)">'+t.label+'</button>').join('');
+  if(tabs.length>0)showTab(tabs[0].id,null);
 }
 
 function loadInitial(){
-if(hasPerm('dashboard'))loadDashboard();
-if(hasPerm('menu'))loadMenuItems();
-if(hasPerm('orders'))loadOrders();
-if(hasPerm('pages'))loadPages();
-if(hasPerm('gallery'))loadGallery();
-if(hasPerm('locations'))loadLocations();
-if(hasPerm('brand'))loadBrand();
-if(hasPerm('staff'))loadStaff();
+  if(hasPerm('dashboard'))loadDashboard();
+  if(hasPerm('menu'))loadMenuItems();
+  if(hasPerm('orders'))loadOrders();
+  if(hasPerm('pages'))loadPages();
+  if(hasPerm('gallery'))loadGallery();
+  if(hasPerm('locations'))loadLocations();
+  if(hasPerm('brand'))loadBrand();
+  if(hasPerm('staff'))loadStaff();
 }
 
 function showTab(name,btn){
-document.querySelectorAll('.sheet').forEach(e=>e.classList.remove('active'));
-document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
-const sheet=document.getElementById('tab-'+name);
-if(sheet)sheet.classList.add('active');
-if(btn)btn.classList.add('active');
-else{const b=document.querySelector('.tab[onclick*="\''+name+'\'"]');if(b)b.classList.add('active');}
+  document.querySelectorAll('.sheet').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
+  const sheet=document.getElementById('tab-'+name);
+  if(sheet)sheet.classList.add('active');
+  if(btn)btn.classList.add('active');
+  else{const b=document.querySelector('.tab[onclick*="\''+name+'\'"]');if(b)b.classList.add('active');}
 }
 
 function showToast(msg,isError=false){
-const t=document.getElementById('toast');
-t.textContent=msg;t.className='toast'+(isError?' error':'');t.style.display='block';
-setTimeout(()=>t.style.display='none',3000);
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(isError?' error':'');t.style.display='block';
+  setTimeout(()=>t.style.display='none',3000);
 }
 
+// ===== IMAGE UPLOAD =====
 async function handleImageUpload(e){
-const file=e.target.files[0];if(!file)return;
-if(file.size>5*1024*1024){showToast('Max 5MB!',true);return;}
-document.getElementById('upload-progress').style.display='block';
-document.getElementById('upload-placeholder').style.display='none';
-const ext=file.name.split('.').pop();
-const fileName='menu/'+Date.now()+'.'+ext;
-const{error}=await db.storage.from('menu-images').upload(fileName,file,{upsert:true});
-if(error){showToast('Upload failed',true);document.getElementById('upload-progress').style.display='none';document.getElementById('upload-placeholder').style.display='block';return;}
-const{data:{publicUrl}}=db.storage.from('menu-images').getPublicUrl(fileName);
-document.getElementById('item-image-url').value=publicUrl;
-const p=document.getElementById('img-preview');p.src=publicUrl;p.style.display='block';
-document.getElementById('upload-progress').style.display='none';
-showToast('Image uploaded!');
+  const file=e.target.files[0];if(!file)return;
+  if(file.size>5*1024*1024){showToast('Max 5MB!',true);return;}
+  document.getElementById('upload-progress').style.display='block';
+  document.getElementById('upload-placeholder').style.display='none';
+  const ext=file.name.split('.').pop();
+  const fileName='menu/'+Date.now()+'.'+ext;
+  const{error}=await db.storage.from('menu-images').upload(fileName,file,{upsert:true});
+  if(error){showToast('Upload failed',true);document.getElementById('upload-progress').style.display='none';document.getElementById('upload-placeholder').style.display='block';return;}
+  const{data:{publicUrl}}=db.storage.from('menu-images').getPublicUrl(fileName);
+  document.getElementById('item-image-url').value=publicUrl;
+  const p=document.getElementById('img-preview');p.src=publicUrl;p.style.display='block';
+  document.getElementById('upload-progress').style.display='none';
+  showToast('Image uploaded!');
 }
 
-let sectionCount=0;
-
+// ===== CUSTOMISATION SECTIONS =====
 function addSection(name='',type='checkbox',max=0,options=[]){
   sectionCount++;
   const sid=sectionCount;
   const div=document.createElement('div');
   div.id='section-'+sid;
-  div.style.cssText='background:#f8f8f8;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #e8e8e8;';
+  div.className='section-box';
   div.innerHTML=`
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">
+    <div class="section-header">
       <input type="text" class="fi" placeholder="Section name (e.g. Select Sauce)" value="${name}" style="flex:2;min-width:140px;" id="sec-name-${sid}"/>
-      <select class="fi" style="width:130px;" id="sec-type-${sid}">
+      <select class="fi" style="width:150px;" id="sec-type-${sid}">
         <option value="checkbox" ${type==='checkbox'?'selected':''}>Checkbox (Multi)</option>
         <option value="radio" ${type==='radio'?'selected':''}>Radio (Single)</option>
       </select>
-      <input type="number" class="fi" placeholder="Max select (0=unlimited)" value="${max}" style="width:80px;" id="sec-max-${sid}" min="0"/>
-      <button class="rm-btn" onclick="document.getElementById('section-${sid}').remove()">Remove Section</button>
+      <input type="number" class="fi" placeholder="Max (0=any)" value="${max}" style="width:100px;" id="sec-max-${sid}" min="0"/>
+      <button class="btn-danger" onclick="document.getElementById('section-${sid}').remove()">Remove Section</button>
     </div>
     <div id="sec-opts-${sid}"></div>
     <button onclick="addOption(${sid})" style="padding:6px 14px;background:#fff;color:#555;border:1px solid #ddd;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;margin-top:6px;">+ Add Option</button>
@@ -521,17 +528,16 @@ function addSection(name='',type='checkbox',max=0,options=[]){
   options.forEach(o=>addOption(sid,o.name,o.price));
 }
 
-let optCount=0;
 function addOption(sid,name='',price=0){
   optCount++;
   const oid=optCount;
   const div=document.createElement('div');
   div.id='opt-'+oid;
-  div.style.cssText='display:flex;gap:8px;align-items:center;margin-bottom:6px;';
+  div.className='opt-row';
   div.innerHTML=`
-    <input type="text" class="fi" placeholder="Option name" value="${name}" style="flex:2;"/>
-    <input type="number" class="fi" placeholder="Price $" value="${price}" step="0.01" min="0" style="width:90px;"/>
-    <button class="rm-btn" onclick="document.getElementById('opt-${oid}').remove()">X</button>
+    <input type="text" class="fi" placeholder="Option name (e.g. BBQ Sauce)" value="${name}" style="flex:2;"/>
+    <input type="number" class="fi" placeholder="Extra price $" value="${price}" step="0.01" min="0" style="width:110px;"/>
+    <button class="rm-btn" onclick="document.getElementById('opt-${oid}').remove()">✕</button>
   `;
   document.getElementById('sec-opts-'+sid).appendChild(div);
 }
@@ -555,371 +561,400 @@ function getSections(){
   return sections;
 }
 
+// ===== MENU =====
 function showAddItemForm(){resetForm();showTab('add-item',null);}
 
 async function saveItem(){
-const name=document.getElementById('item-name').value.trim();
-const category=document.getElementById('item-category').value.trim();
-const price=parseFloat(document.getElementById('item-price').value);
-if(!name||!category||!price){showToast('Name, Category, Price required!',true);return;}
-const item={name,category,price,description:document.getElementById('item-desc').value,image_url:document.getElementById('item-image-url').value||null,ingredients:document.getElementById('item-ingredients').value.split(',').map(s=>s.trim()).filter(Boolean),addons:getSections(),available:document.getElementById('item-available').value==='true'};
-const editId=document.getElementById('edit-id').value;
-const{error}=editId?await db.from('menu_items').update(item).eq('id',editId):await db.from('menu_items').insert(item);
-if(error){showToast('Error: '+error.message,true);return;}
-showToast('Item saved!');resetForm();loadMenuItems();showTab('menu',null);
+  const name=document.getElementById('item-name').value.trim();
+  const category=document.getElementById('item-category').value.trim();
+  const price=parseFloat(document.getElementById('item-price').value);
+  if(!name||!category||!price){showToast('Name, Category, Price required!',true);return;}
+  const item={
+    name,category,price,
+    description:document.getElementById('item-desc').value,
+    image_url:document.getElementById('item-image-url').value||null,
+    ingredients:document.getElementById('item-ingredients').value.split(',').map(s=>s.trim()).filter(Boolean),
+    addons:getSections(),
+    available:document.getElementById('item-available').value==='true'
+  };
+  const editId=document.getElementById('edit-id').value;
+  const{error}=editId?await db.from('menu_items').update(item).eq('id',editId):await db.from('menu_items').insert(item);
+  if(error){showToast('Error: '+error.message,true);return;}
+  showToast('Item saved!');resetForm();loadMenuItems();showTab('menu',null);
 }
 
 function resetForm(){
-['edit-id','item-name','item-category','item-price','item-desc','item-ingredients','item-image-url'].forEach(id=>document.getElementById(id).value='');
-document.getElementById('sections-list').innerHTML='';
-sectionCount=0;optCount=0;
-document.getElementById('item-available').value='true';
-document.getElementById('img-preview').style.display='none';
-document.getElementById('upload-placeholder').style.display='block';
-document.getElementById('form-title').textContent='Add New Menu Item';
-addonCount=0;
+  ['edit-id','item-name','item-category','item-price','item-desc','item-ingredients','item-image-url'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('item-available').value='true';
+  document.getElementById('img-preview').style.display='none';
+  document.getElementById('upload-placeholder').style.display='block';
+  document.getElementById('sections-list').innerHTML='';
+  document.getElementById('form-title').textContent='Add New Menu Item';
+  sectionCount=0;optCount=0;
 }
 
 async function loadMenuItems(){
-const{data}=await db.from('menu_items').select('*').order('category');
-if(!data)return;
-allMenuItems=data;
-const cats=[...new Set(data.map(i=>i.category))];
-const catList=document.getElementById('cat-list');
-const filterCat=document.getElementById('filter-cat');
-if(catList)catList.innerHTML=cats.map(c=>'<option value="'+c+'">').join('');
-if(filterCat)filterCat.innerHTML='<option value="">All Categories</option>'+cats.map(c=>'<option value="'+c+'">'+c+'</option>').join('');
-if(document.getElementById('kpi-menu'))document.getElementById('kpi-menu').textContent=data.length;
-renderMenuGrid(data);
+  const{data}=await db.from('menu_items').select('*').order('category');
+  if(!data)return;
+  allMenuItems=data;
+  const cats=[...new Set(data.map(i=>i.category))];
+  const catList=document.getElementById('cat-list');
+  const filterCat=document.getElementById('filter-cat');
+  if(catList)catList.innerHTML=cats.map(c=>'<option value="'+c+'">').join('');
+  if(filterCat)filterCat.innerHTML='<option value="">All Categories</option>'+cats.map(c=>'<option value="'+c+'">'+c+'</option>').join('');
+  if(document.getElementById('kpi-menu'))document.getElementById('kpi-menu').textContent=data.length;
+  renderMenuGrid(data);
 }
 
 function filterMenuItems(){
-const cat=document.getElementById('filter-cat').value;
-renderMenuGrid(cat?allMenuItems.filter(i=>i.category===cat):allMenuItems);
+  const cat=document.getElementById('filter-cat').value;
+  renderMenuGrid(cat?allMenuItems.filter(i=>i.category===cat):allMenuItems);
 }
 
 function renderMenuGrid(items){
-const grid=document.getElementById('menu-grid');if(!grid)return;
-if(!items.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No items</div>';return;}
-const canEdit=hasPerm('menu');
-grid.innerHTML=items.map(item=>'<div class="menu-card">'+(item.image_url?'<img src="'+item.image_url+'" alt="'+item.name+'" loading="lazy"/>':'<div class="menu-card-no-img">🍔</div>')+'<div class="menu-card-body"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;"><div class="menu-card-name">'+item.name+'</div><span class="badge '+(item.available?'badge-available':'badge-unavailable')+'">'+(item.available?'Live':'Hidden')+'</span></div><div class="menu-card-cat">'+item.category+'</div><div class="menu-card-price">$'+item.price.toFixed(2)+'</div><div class="menu-card-actions">'+(canEdit?'<button class="btn-success" onclick="editItem(\''+item.id+'\')">Edit</button><button class="btn-warning" onclick="toggleAvailable(\''+item.id+'\','+item.available+')">'+(item.available?'Hide':'Show')+'</button><button class="btn-danger" onclick="deleteItem(\''+item.id+'\')">Delete</button>':'<span style="font-size:11px;color:#aaa">View only</span>')+'</div></div></div>').join('');
+  const grid=document.getElementById('menu-grid');if(!grid)return;
+  if(!items.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No items</div>';return;}
+  const canEdit=hasPerm('menu');
+  grid.innerHTML=items.map(item=>`
+    <div class="menu-card">
+      ${item.image_url?'<img src="'+item.image_url+'" alt="'+item.name+'" loading="lazy"/>':'<div class="menu-card-no-img">🍔</div>'}
+      <div class="menu-card-body">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+          <div class="menu-card-name">${item.name}</div>
+          <span class="badge ${item.available?'badge-available':'badge-unavailable'}">${item.available?'Live':'Hidden'}</span>
+        </div>
+        <div class="menu-card-cat">${item.category}</div>
+        <div class="menu-card-price">$${item.price.toFixed(2)}</div>
+        ${(item.addons||[]).length>0?'<div style="font-size:10px;color:#888;margin-bottom:8px;">'+item.addons.length+' customisation section(s)</div>':''}
+        <div class="menu-card-actions">
+          ${canEdit?'<button class="btn-success" onclick="editItem(\''+item.id+'\')">Edit</button><button class="btn-warning" onclick="toggleAvailable(\''+item.id+'\','+item.available+')">'+(item.available?'Hide':'Show')+'</button><button class="btn-danger" onclick="deleteItem(\''+item.id+'\')">Delete</button>':'<span style="font-size:11px;color:#aaa">View only</span>'}
+        </div>
+      </div>
+    </div>`).join('');
 }
 
 async function editItem(id){
-const item=allMenuItems.find(i=>i.id===id);if(!item)return;
-document.getElementById('edit-id').value=id;
-document.getElementById('item-name').value=item.name;
-document.getElementById('item-category').value=item.category;
-document.getElementById('item-price').value=item.price;
-document.getElementById('item-desc').value=item.description||'';
-document.getElementById('item-ingredients').value=(item.ingredients||[]).join(', ');
-document.getElementById('item-available').value=String(item.available);
-document.getElementById('item-image-url').value=item.image_url||'';
-if(item.image_url){document.getElementById('img-preview').src=item.image_url;document.getElementById('img-preview').style.display='block';document.getElementById('upload-placeholder').style.display='none';}
-document.getElementById('addons-list').innerHTML='';addonCount=0;
-(item.addons||[]).forEach(s=>addSection(s.name,s.type||'checkbox',s.max||0,s.options||[]));
-document.getElementById('form-title').textContent='Edit: '+item.name;
-showTab('add-item',null);
+  const item=allMenuItems.find(i=>i.id===id);if(!item)return;
+  document.getElementById('edit-id').value=id;
+  document.getElementById('item-name').value=item.name;
+  document.getElementById('item-category').value=item.category;
+  document.getElementById('item-price').value=item.price;
+  document.getElementById('item-desc').value=item.description||'';
+  document.getElementById('item-ingredients').value=(item.ingredients||[]).join(', ');
+  document.getElementById('item-available').value=String(item.available);
+  document.getElementById('item-image-url').value=item.image_url||'';
+  if(item.image_url){document.getElementById('img-preview').src=item.image_url;document.getElementById('img-preview').style.display='block';document.getElementById('upload-placeholder').style.display='none';}
+  document.getElementById('sections-list').innerHTML='';sectionCount=0;optCount=0;
+  (item.addons||[]).forEach(s=>addSection(s.name,s.type||'checkbox',s.max||0,s.options||[]));
+  document.getElementById('form-title').textContent='Edit: '+item.name;
+  showTab('add-item',null);
 }
 
 async function toggleAvailable(id,current){
-await db.from('menu_items').update({available:!current}).eq('id',id);
-showToast(current?'Item hidden':'Item visible');loadMenuItems();
+  await db.from('menu_items').update({available:!current}).eq('id',id);
+  showToast(current?'Item hidden':'Item visible');loadMenuItems();
 }
 
 async function deleteItem(id){
-if(!confirm('Delete this item?'))return;
-await db.from('menu_items').delete().eq('id',id);
-showToast('Deleted');loadMenuItems();
+  if(!confirm('Delete this item?'))return;
+  await db.from('menu_items').delete().eq('id',id);
+  showToast('Deleted');loadMenuItems();
 }
 
+// ===== ORDERS =====
 async function loadOrders(){
-const filter=document.getElementById('order-filter')?document.getElementById('order-filter').value:'';
-let query=db.from('orders').select('*').order('created_at',{ascending:false}).limit(50);
-if(filter)query=query.eq('status',filter);
-const{data}=await query;if(!data)return;
-const grid=document.getElementById('order-grid');if(!grid)return;
-if(!data.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No orders</div>';return;}
-const canUpdate=hasPerm('orders');
-grid.innerHTML=data.map(order=>{
-const items=Array.isArray(order.items)?order.items:[];
-return'<div class="order-card"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div><div style="font-size:14px;font-weight:900;">'+(order.order_number||'#'+order.id.slice(0,6))+'</div><div style="font-size:11px;color:#888;">'+getTimeAgo(order.created_at)+'</div></div><span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#f0f0f0">'+(order.order_type==='pickup'?'Pickup':'Delivery')+'</span></div><div style="font-size:12px;color:#555;margin-bottom:8px;line-height:1.8">'+items.map(i=>i.name+' x '+i.qty).join('<br>')+'</div><div style="font-size:15px;font-weight:900;margin-bottom:10px;">$'+parseFloat(order.total).toFixed(2)+'</div>'+(canUpdate?'<select style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid '+statusColor(order.status)+';font-size:12px;font-weight:700;cursor:pointer;color:'+statusColor(order.status)+'" onchange="updateOrderStatus(\''+order.id+'\',this)"><option value="pending" '+(order.status==='pending'?'selected':'')+'>Pending</option><option value="processing" '+(order.status==='processing'?'selected':'')+'>On Process</option><option value="ontheway" '+(order.status==='ontheway'?'selected':'')+'>On The Way</option><option value="delivered" '+(order.status==='delivered'?'selected':'')+'>Delivered</option><option value="cancelled" '+(order.status==='cancelled'?'selected':'')+'>Cancelled</option></select>':'<span style="font-size:12px;font-weight:700;color:'+statusColor(order.status)+'">'+order.status+'</span>')+'</div>';
-}).join('');
+  const filter=document.getElementById('order-filter')?document.getElementById('order-filter').value:'';
+  let query=db.from('orders').select('*').order('created_at',{ascending:false}).limit(50);
+  if(filter)query=query.eq('status',filter);
+  const{data}=await query;if(!data)return;
+  const grid=document.getElementById('order-grid');if(!grid)return;
+  if(!data.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No orders</div>';return;}
+  const canUpdate=hasPerm('orders');
+  grid.innerHTML=data.map(order=>{
+    const items=Array.isArray(order.items)?order.items:[];
+    return'<div class="order-card"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div><div style="font-size:14px;font-weight:900;">'+(order.order_number||'#'+order.id.slice(0,6))+'</div><div style="font-size:11px;color:#888;">'+getTimeAgo(order.created_at)+'</div></div><span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#f0f0f0">'+(order.order_type==='pickup'?'Pickup':'Delivery')+'</span></div><div style="font-size:12px;color:#555;margin-bottom:8px;line-height:1.8">'+items.map(i=>i.name+' x '+i.qty).join('<br>')+'</div><div style="font-size:15px;font-weight:900;margin-bottom:10px;">$'+parseFloat(order.total).toFixed(2)+'</div>'+(canUpdate?'<select style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid '+statusColor(order.status)+';font-size:12px;font-weight:700;cursor:pointer;color:'+statusColor(order.status)+'" onchange="updateOrderStatus(\''+order.id+'\',this)"><option value="pending" '+(order.status==='pending'?'selected':'')+'>Pending</option><option value="processing" '+(order.status==='processing'?'selected':'')+'>On Process</option><option value="ontheway" '+(order.status==='ontheway'?'selected':'')+'>On The Way</option><option value="delivered" '+(order.status==='delivered'?'selected':'')+'>Delivered</option><option value="cancelled" '+(order.status==='cancelled'?'selected':'')+'>Cancelled</option></select>':'<span style="font-size:12px;font-weight:700;color:'+statusColor(order.status)+'">'+order.status+'</span>')+'</div>';
+  }).join('');
 }
 
 async function updateOrderStatus(id,sel){
-await db.from('orders').update({status:sel.value,updated_at:new Date().toISOString()}).eq('id',id);
-sel.style.borderColor=statusColor(sel.value);sel.style.color=statusColor(sel.value);
-showToast('Status updated!');loadDashboard();
+  await db.from('orders').update({status:sel.value,updated_at:new Date().toISOString()}).eq('id',id);
+  sel.style.borderColor=statusColor(sel.value);sel.style.color=statusColor(sel.value);
+  showToast('Status updated!');loadDashboard();
 }
 
 function statusColor(s){return{pending:'#f39c12',processing:'#3498db',ontheway:'#9b59b6',delivered:'#2ecc71',cancelled:'#e74c3c'}[s]||'#95a5a6';}
 function getTimeAgo(d){const diff=Math.floor((Date.now()-new Date(d))/1000);if(diff<60)return diff+'s ago';if(diff<3600)return Math.floor(diff/60)+'m ago';if(diff<86400)return Math.floor(diff/3600)+'h ago';return Math.floor(diff/86400)+'d ago';}
 
+// ===== DASHBOARD =====
 async function loadDashboard(){
-const{data:orders}=await db.from('orders').select('*').order('created_at',{ascending:false});
-if(!orders)return;
-const total=orders.reduce((s,o)=>s+parseFloat(o.total||0),0);
-const pending=orders.filter(o=>o.status==='pending').length;
-if(document.getElementById('kpi-orders'))document.getElementById('kpi-orders').textContent=orders.length;
-if(document.getElementById('kpi-revenue'))document.getElementById('kpi-revenue').textContent='$'+Math.round(total).toLocaleString();
-if(document.getElementById('kpi-pending'))document.getElementById('kpi-pending').textContent=pending;
-const rl=document.getElementById('recent-orders-list');
-if(rl)rl.innerHTML=orders.slice(0,5).map(o=>'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f5f5f5;"><div><div style="font-size:13px;font-weight:700;">'+(o.order_number||'#'+o.id.slice(0,6))+'</div><div style="font-size:11px;color:#888;">'+getTimeAgo(o.created_at)+' · '+o.order_type+'</div></div><div style="display:flex;gap:10px;align-items:center;"><span style="font-size:13px;font-weight:700;">$'+parseFloat(o.total).toFixed(2)+'</span><span style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:'+statusColor(o.status)+'22;color:'+statusColor(o.status)+'">'+o.status+'</span></div></div>').join('')||'<div style="color:#aaa;padding:20px;text-align:center">No orders yet</div>';
-const ss=document.getElementById('status-summary');
-if(ss)ss.innerHTML=['pending','processing','ontheway','delivered','cancelled'].map(s=>'<div style="background:#f5f5f5;border-radius:10px;padding:10px 16px;text-align:center;min-width:90px;"><div style="font-size:18px;font-weight:900;color:'+statusColor(s)+'">'+orders.filter(o=>o.status===s).length+'</div><div style="font-size:11px;color:#888">'+(s==='ontheway'?'On The Way':s.charAt(0).toUpperCase()+s.slice(1))+'</div></div>').join('');
-db.channel('orders-rt').on('postgres_changes',{event:'INSERT',schema:'public',table:'orders'},()=>{loadDashboard();loadOrders();showToast('New order!');}).subscribe();
+  const{data:orders}=await db.from('orders').select('*').order('created_at',{ascending:false});
+  if(!orders)return;
+  const total=orders.reduce((s,o)=>s+parseFloat(o.total||0),0);
+  const pending=orders.filter(o=>o.status==='pending').length;
+  if(document.getElementById('kpi-orders'))document.getElementById('kpi-orders').textContent=orders.length;
+  if(document.getElementById('kpi-revenue'))document.getElementById('kpi-revenue').textContent='$'+Math.round(total).toLocaleString();
+  if(document.getElementById('kpi-pending'))document.getElementById('kpi-pending').textContent=pending;
+  const rl=document.getElementById('recent-orders-list');
+  if(rl)rl.innerHTML=orders.slice(0,5).map(o=>'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f5f5f5;"><div><div style="font-size:13px;font-weight:700;">'+(o.order_number||'#'+o.id.slice(0,6))+'</div><div style="font-size:11px;color:#888;">'+getTimeAgo(o.created_at)+' · '+o.order_type+'</div></div><div style="display:flex;gap:10px;align-items:center;"><span style="font-size:13px;font-weight:700;">$'+parseFloat(o.total).toFixed(2)+'</span><span style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:'+statusColor(o.status)+'22;color:'+statusColor(o.status)+'">'+o.status+'</span></div></div>').join('')||'<div style="color:#aaa;padding:20px;text-align:center">No orders yet</div>';
+  const ss=document.getElementById('status-summary');
+  if(ss)ss.innerHTML=['pending','processing','ontheway','delivered','cancelled'].map(s=>'<div style="background:#f5f5f5;border-radius:10px;padding:10px 16px;text-align:center;min-width:90px;"><div style="font-size:18px;font-weight:900;color:'+statusColor(s)+'">'+orders.filter(o=>o.status===s).length+'</div><div style="font-size:11px;color:#888">'+(s==='ontheway'?'On The Way':s.charAt(0).toUpperCase()+s.slice(1))+'</div></div>').join('');
+  db.channel('orders-rt').on('postgres_changes',{event:'INSERT',schema:'public',table:'orders'},()=>{loadDashboard();loadOrders();showToast('New order!');}).subscribe();
 }
 
+// ===== PAGES =====
 async function loadPages(){
-const{data}=await db.from('pages').select('*').order('sort_order');if(!data)return;
-const list=document.getElementById('pages-list');if(!list)return;
-if(!data.length){list.innerHTML='<div style="padding:40px;text-align:center;color:#aaa">No pages yet</div>';return;}
-list.innerHTML=data.map(p=>'<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;"><div><div style="font-size:14px;font-weight:700;">'+p.title+'</div><div style="font-size:12px;color:#888;margin-top:2px;">/'+p.slug+' · <span style="color:'+(p.show_in_nav?'#2d6a4f':'#c0392b')+'">'+(p.show_in_nav?'Visible':'Hidden')+'</span></div></div><div style="display:flex;gap:6px;"><button class="btn-success" onclick="editPage(\''+p.id+'\')">Edit</button><button class="btn-danger" onclick="deletePage(\''+p.id+'\',\''+p.slug+'\')">Delete</button></div></div>').join('');
+  const{data}=await db.from('pages').select('*').order('sort_order');if(!data)return;
+  const list=document.getElementById('pages-list');if(!list)return;
+  if(!data.length){list.innerHTML='<div style="padding:40px;text-align:center;color:#aaa">No pages yet</div>';return;}
+  list.innerHTML=data.map(p=>'<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;"><div><div style="font-size:14px;font-weight:700;">'+p.title+'</div><div style="font-size:12px;color:#888;margin-top:2px;">/'+p.slug+' · <span style="color:'+(p.show_in_nav?'#2d6a4f':'#c0392b')+'">'+(p.show_in_nav?'Visible':'Hidden')+'</span></div></div><div style="display:flex;gap:6px;"><button class="btn-success" onclick="editPage(\''+p.id+'\')">Edit</button><button class="btn-danger" onclick="deletePage(\''+p.id+'\',\''+p.slug+'\')">Delete</button></div></div>').join('');
 }
 
 function showAddPageForm(){
-document.getElementById('add-page-form').style.display='block';
-['page-edit-id','page-title','page-slug','page-content','page-image'].forEach(id=>document.getElementById(id).value='');
-document.getElementById('page-nav').value='true';document.getElementById('page-order').value='0';
-document.getElementById('page-form-title').textContent='Add New Page';
-window.scrollTo(0,0);
+  document.getElementById('add-page-form').style.display='block';
+  ['page-edit-id','page-title','page-slug','page-content','page-image'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('page-nav').value='true';document.getElementById('page-order').value='0';
+  document.getElementById('page-form-title').textContent='Add New Page';
+  window.scrollTo(0,0);
 }
 
 async function savePage(){
-const title=document.getElementById('page-title').value.trim();
-const slug=document.getElementById('page-slug').value.trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
-if(!title||!slug){showToast('Title and Slug required!',true);return;}
-const pd={title,slug,content:document.getElementById('page-content').value,image_url:document.getElementById('page-image').value||null,show_in_nav:document.getElementById('page-nav').value==='true',sort_order:+document.getElementById('page-order').value||0};
-const editId=document.getElementById('page-edit-id').value;
-const{error}=editId?await db.from('pages').update(pd).eq('id',editId):await db.from('pages').insert(pd);
-if(error){showToast('Error: '+error.message,true);return;}
-showToast('Page saved!');document.getElementById('add-page-form').style.display='none';loadPages();
+  const title=document.getElementById('page-title').value.trim();
+  const slug=document.getElementById('page-slug').value.trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  if(!title||!slug){showToast('Title and Slug required!',true);return;}
+  const pd={title,slug,content:document.getElementById('page-content').value,image_url:document.getElementById('page-image').value||null,show_in_nav:document.getElementById('page-nav').value==='true',sort_order:+document.getElementById('page-order').value||0};
+  const editId=document.getElementById('page-edit-id').value;
+  const{error}=editId?await db.from('pages').update(pd).eq('id',editId):await db.from('pages').insert(pd);
+  if(error){showToast('Error: '+error.message,true);return;}
+  showToast('Page saved!');document.getElementById('add-page-form').style.display='none';loadPages();
 }
 
 async function editPage(id){
-const{data}=await db.from('pages').select('*').eq('id',id).single();if(!data)return;
-document.getElementById('page-edit-id').value=id;document.getElementById('page-title').value=data.title;
-document.getElementById('page-slug').value=data.slug;document.getElementById('page-content').value=data.content||'';
-document.getElementById('page-image').value=data.image_url||'';document.getElementById('page-nav').value=String(data.show_in_nav);
-document.getElementById('page-order').value=data.sort_order||0;document.getElementById('page-form-title').textContent='Edit: '+data.title;
-document.getElementById('add-page-form').style.display='block';window.scrollTo(0,0);
+  const{data}=await db.from('pages').select('*').eq('id',id).single();if(!data)return;
+  document.getElementById('page-edit-id').value=id;document.getElementById('page-title').value=data.title;
+  document.getElementById('page-slug').value=data.slug;document.getElementById('page-content').value=data.content||'';
+  document.getElementById('page-image').value=data.image_url||'';document.getElementById('page-nav').value=String(data.show_in_nav);
+  document.getElementById('page-order').value=data.sort_order||0;document.getElementById('page-form-title').textContent='Edit: '+data.title;
+  document.getElementById('add-page-form').style.display='block';window.scrollTo(0,0);
 }
 
 async function deletePage(id,slug){
-if(slug==='home'){showToast('Home cannot be deleted!',true);return;}
-if(!confirm('Delete this page?'))return;
-await db.from('pages').delete().eq('id',id);showToast('Deleted');loadPages();
+  if(slug==='home'){showToast('Home cannot be deleted!',true);return;}
+  if(!confirm('Delete this page?'))return;
+  await db.from('pages').delete().eq('id',id);showToast('Deleted');loadPages();
 }
 
+// ===== STAFF =====
 async function loadStaff(){
-const{data}=await db.from('staff').select('*').order('created_at');if(!data)return;
-const list=document.getElementById('staff-list');if(!list)return;
-list.innerHTML=data.map(s=>'<div class="staff-card"><div style="flex:1;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><div style="font-size:14px;font-weight:800;">'+s.name+'</div><span class="role-badge role-'+s.role+'">'+s.role+'</span>'+(!s.active?'<span class="badge badge-unavailable">Inactive</span>':'')+'</div><div style="font-size:12px;color:#888;">'+s.email+'</div></div>'+(s.role!=='owner'?'<div style="display:flex;gap:6px;flex-shrink:0;"><button class="btn-success" onclick="editStaff(\''+s.id+'\')">Edit</button><button class="btn-warning" onclick="toggleStaffActive(\''+s.id+'\','+s.active+')">'+(s.active?'Disable':'Enable')+'</button><button class="btn-danger" onclick="deleteStaff(\''+s.id+'\')">Delete</button></div>':'<span style="font-size:11px;color:#aaa">Owner</span>')+'</div>').join('');
+  const{data}=await db.from('staff').select('*').order('created_at');if(!data)return;
+  const list=document.getElementById('staff-list');if(!list)return;
+  list.innerHTML=data.map(s=>'<div class="staff-card"><div style="flex:1;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><div style="font-size:14px;font-weight:800;">'+s.name+'</div><span class="role-badge role-'+s.role+'">'+s.role+'</span>'+(!s.active?'<span class="badge badge-unavailable">Inactive</span>':'')+'</div><div style="font-size:12px;color:#888;">'+s.email+'</div></div>'+(s.role!=='owner'?'<div style="display:flex;gap:6px;flex-shrink:0;"><button class="btn-success" onclick="editStaff(\''+s.id+'\')">Edit</button><button class="btn-warning" onclick="toggleStaffActive(\''+s.id+'\','+s.active+')">'+(s.active?'Disable':'Enable')+'</button><button class="btn-danger" onclick="deleteStaff(\''+s.id+'\')">Delete</button></div>':'<span style="font-size:11px;color:#aaa">Owner</span>')+'</div>').join('');
 }
 
 async function saveStaff(){
-const name=document.getElementById('staff-name').value.trim();
-const email=document.getElementById('staff-email').value.trim();
-const pass=document.getElementById('staff-pass').value;
-if(!name||!email||!pass){showToast('All fields required!',true);return;}
-const permissions={orders:document.getElementById('perm-orders').checked,menu:document.getElementById('perm-menu').checked,pages:document.getElementById('perm-pages').checked,dashboard:document.getElementById('perm-dashboard').checked};
-const staffData={name,email,password:pass,role:'staff',permissions,active:true};
-const editId=document.getElementById('staff-edit-id').value;
-const{error}=editId?await db.from('staff').update(staffData).eq('id',editId):await db.from('staff').insert(staffData);
-if(error){showToast('Error: '+error.message,true);return;}
-showToast('Staff saved!');document.getElementById('add-staff-form').style.display='none';
-['staff-edit-id','staff-name','staff-email','staff-pass'].forEach(id=>document.getElementById(id).value='');
-loadStaff();
+  const name=document.getElementById('staff-name').value.trim();
+  const email=document.getElementById('staff-email').value.trim();
+  const pass=document.getElementById('staff-pass').value;
+  if(!name||!email||!pass){showToast('All fields required!',true);return;}
+  const permissions={orders:document.getElementById('perm-orders').checked,menu:document.getElementById('perm-menu').checked,pages:document.getElementById('perm-pages').checked,dashboard:document.getElementById('perm-dashboard').checked};
+  const staffData={name,email,password:pass,role:'staff',permissions,active:true};
+  const editId=document.getElementById('staff-edit-id').value;
+  const{error}=editId?await db.from('staff').update(staffData).eq('id',editId):await db.from('staff').insert(staffData);
+  if(error){showToast('Error: '+error.message,true);return;}
+  showToast('Staff saved!');document.getElementById('add-staff-form').style.display='none';
+  ['staff-edit-id','staff-name','staff-email','staff-pass'].forEach(id=>document.getElementById(id).value='');
+  loadStaff();
 }
 
 async function editStaff(id){
-const{data}=await db.from('staff').select('*').eq('id',id).single();if(!data)return;
-document.getElementById('staff-edit-id').value=id;document.getElementById('staff-name').value=data.name;
-document.getElementById('staff-email').value=data.email;document.getElementById('staff-pass').value=data.password;
-document.getElementById('perm-orders').checked=data.permissions?.orders||false;
-document.getElementById('perm-menu').checked=data.permissions?.menu||false;
-document.getElementById('perm-pages').checked=data.permissions?.pages||false;
-document.getElementById('perm-dashboard').checked=data.permissions?.dashboard||false;
-document.getElementById('add-staff-form').style.display='block';window.scrollTo(0,0);
+  const{data}=await db.from('staff').select('*').eq('id',id).single();if(!data)return;
+  document.getElementById('staff-edit-id').value=id;document.getElementById('staff-name').value=data.name;
+  document.getElementById('staff-email').value=data.email;document.getElementById('staff-pass').value=data.password;
+  document.getElementById('perm-orders').checked=data.permissions?.orders||false;
+  document.getElementById('perm-menu').checked=data.permissions?.menu||false;
+  document.getElementById('perm-pages').checked=data.permissions?.pages||false;
+  document.getElementById('perm-dashboard').checked=data.permissions?.dashboard||false;
+  document.getElementById('add-staff-form').style.display='block';window.scrollTo(0,0);
 }
 
 async function toggleStaffActive(id,current){
-await db.from('staff').update({active:!current}).eq('id',id);
-showToast(current?'Staff disabled':'Staff enabled');loadStaff();
+  await db.from('staff').update({active:!current}).eq('id',id);
+  showToast(current?'Staff disabled':'Staff enabled');loadStaff();
 }
 
 async function deleteStaff(id){
-if(!confirm('Delete this staff?'))return;
-await db.from('staff').delete().eq('id',id);showToast('Deleted');loadStaff();
+  if(!confirm('Delete this staff?'))return;
+  await db.from('staff').delete().eq('id',id);showToast('Deleted');loadStaff();
 }
 
+// ===== GALLERY =====
 async function loadGallery(){
-const{data,error}=await db.from('gallery').select('*').order('created_at',{ascending:false});
-const grid=document.getElementById('gallery-grid');
-if(error||!data||!data.length){if(grid)grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No images yet.</div>';return;}
-allGalleryItems=data;
-updateGalleryLocationDropdowns();
-renderGalleryGrid(data);
+  const{data,error}=await db.from('gallery').select('*').order('created_at',{ascending:false});
+  const grid=document.getElementById('gallery-grid');
+  if(error||!data||!data.length){if(grid)grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No images yet.</div>';return;}
+  allGalleryItems=data;
+  updateGalleryLocationDropdowns();
+  renderGalleryGrid(data);
 }
 
 function updateGalleryLocationDropdowns(){
-const locOptions=allLocations.map(l=>'<option value="'+l.id+'">'+l.name+'</option>').join('');
-const locSel=document.getElementById('gallery-location');
-const editLocSel=document.getElementById('gallery-edit-location');
-if(locSel)locSel.innerHTML='<option value="all">All Locations</option>'+locOptions;
-if(editLocSel)editLocSel.innerHTML='<option value="all">All Locations</option>'+locOptions;
-const btns=document.getElementById('gallery-filter-btns');
-if(btns)btns.innerHTML='<button onclick="filterGallery(\'all\',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:none;cursor:pointer;background:#1a1a1a;color:#fff;">All</button>'+allLocations.map(l=>'<button onclick="filterGallery(\''+l.id+'\',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid #ddd;cursor:pointer;background:#fff;color:#1a1a1a;">'+l.name+'</button>').join('');
+  const locOptions=allLocations.map(l=>'<option value="'+l.id+'">'+l.name+'</option>').join('');
+  const locSel=document.getElementById('gallery-location');
+  const editLocSel=document.getElementById('gallery-edit-location');
+  if(locSel)locSel.innerHTML='<option value="all">All Locations</option>'+locOptions;
+  if(editLocSel)editLocSel.innerHTML='<option value="all">All Locations</option>'+locOptions;
+  const btns=document.getElementById('gallery-filter-btns');
+  if(btns)btns.innerHTML='<button onclick="filterGallery(\'all\',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:none;cursor:pointer;background:#1a1a1a;color:#fff;">All</button>'+allLocations.map(l=>'<button onclick="filterGallery(\''+l.id+'\',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid #ddd;cursor:pointer;background:#fff;color:#1a1a1a;">'+l.name+'</button>').join('');
 }
 
 function renderGalleryGrid(items){
-const grid=document.getElementById('gallery-grid');if(!grid)return;
-if(!items.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No images found.</div>';return;}
-grid.innerHTML=items.map(img=>'<div class="gallery-item"><img src="'+img.image_url+'" alt="'+(img.caption||'')+'" loading="lazy"/><div class="gallery-item-body"><div class="gallery-item-caption">'+(img.caption||'No caption')+'</div><div class="gallery-item-actions"><button class="btn-success" onclick="openGalleryEdit(\''+img.id+'\')">Edit</button><button class="btn-danger" onclick="deleteGalleryImage(\''+img.id+'\',\''+(img.storage_path||'')+'\')">Delete</button></div></div></div>').join('');
+  const grid=document.getElementById('gallery-grid');if(!grid)return;
+  if(!items.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No images found.</div>';return;}
+  grid.innerHTML=items.map(img=>'<div class="gallery-item"><img src="'+img.image_url+'" alt="'+(img.caption||'')+'" loading="lazy"/><div class="gallery-item-body"><div class="gallery-item-caption">'+(img.caption||'No caption')+'</div><div class="gallery-item-actions"><button class="btn-success" onclick="openGalleryEdit(\''+img.id+'\')">Edit</button><button class="btn-danger" onclick="deleteGalleryImage(\''+img.id+'\',\''+(img.storage_path||'')+'\')">Delete</button></div></div></div>').join('');
 }
 
 function filterGallery(loc,btn){
-document.querySelectorAll('#gallery-filter-btns button').forEach(b=>{b.style.background='#fff';b.style.color='#1a1a1a';b.style.border='1px solid #ddd';});
-if(btn){btn.style.background='#1a1a1a';btn.style.color='#fff';btn.style.border='none';}
-const filtered=loc==='all'?allGalleryItems:allGalleryItems.filter(i=>i.location===loc);
-renderGalleryGrid(filtered);
+  document.querySelectorAll('#gallery-filter-btns button').forEach(b=>{b.style.background='#fff';b.style.color='#1a1a1a';b.style.border='1px solid #ddd';});
+  if(btn){btn.style.background='#1a1a1a';btn.style.color='#fff';btn.style.border='none';}
+  const filtered=loc==='all'?allGalleryItems:allGalleryItems.filter(i=>i.location===loc);
+  renderGalleryGrid(filtered);
 }
 
 function previewGalleryImage(e){
-const file=e.target.files[0];if(!file)return;
-gallerySelectedFile=file;
-const reader=new FileReader();
-reader.onload=ev=>{const p=document.getElementById('gallery-upload-preview');p.src=ev.target.result;p.style.display='block';};
-reader.readAsDataURL(file);
+  const file=e.target.files[0];if(!file)return;
+  gallerySelectedFile=file;
+  const reader=new FileReader();
+  reader.onload=ev=>{const p=document.getElementById('gallery-upload-preview');p.src=ev.target.result;p.style.display='block';};
+  reader.readAsDataURL(file);
 }
 
 async function uploadGalleryImage(){
-if(!gallerySelectedFile){showToast('Please select an image!',true);return;}
-const caption=document.getElementById('gallery-caption').value.trim();
-const location=document.getElementById('gallery-location').value;
-const ext=gallerySelectedFile.name.split('.').pop();
-const storagePath='gallery/'+Date.now()+'.'+ext;
-document.getElementById('gallery-upload-progress').style.display='block';
-const{error:uploadError}=await db.storage.from('menu-images').upload(storagePath,gallerySelectedFile,{upsert:true});
-if(uploadError){showToast('Upload failed: '+uploadError.message,true);document.getElementById('gallery-upload-progress').style.display='none';return;}
-const{data:{publicUrl}}=db.storage.from('menu-images').getPublicUrl(storagePath);
-const{error:dbError}=await db.from('gallery').insert({image_url:publicUrl,storage_path:storagePath,caption,location});
-document.getElementById('gallery-upload-progress').style.display='none';
-if(dbError){showToast('DB Error: '+dbError.message,true);return;}
-showToast('Image uploaded!');cancelGalleryUpload();loadGallery();
+  if(!gallerySelectedFile){showToast('Please select an image!',true);return;}
+  const caption=document.getElementById('gallery-caption').value.trim();
+  const location=document.getElementById('gallery-location').value;
+  const ext=gallerySelectedFile.name.split('.').pop();
+  const storagePath='gallery/'+Date.now()+'.'+ext;
+  document.getElementById('gallery-upload-progress').style.display='block';
+  const{error:uploadError}=await db.storage.from('menu-images').upload(storagePath,gallerySelectedFile,{upsert:true});
+  if(uploadError){showToast('Upload failed: '+uploadError.message,true);document.getElementById('gallery-upload-progress').style.display='none';return;}
+  const{data:{publicUrl}}=db.storage.from('menu-images').getPublicUrl(storagePath);
+  const{error:dbError}=await db.from('gallery').insert({image_url:publicUrl,storage_path:storagePath,caption,location});
+  document.getElementById('gallery-upload-progress').style.display='none';
+  if(dbError){showToast('DB Error: '+dbError.message,true);return;}
+  showToast('Image uploaded!');cancelGalleryUpload();loadGallery();
 }
 
 function cancelGalleryUpload(){
-document.getElementById('gallery-upload-card').style.display='none';
-document.getElementById('gallery-upload-preview').style.display='none';
-document.getElementById('gallery-upload-preview').src='';
-document.getElementById('gallery-caption').value='';
-document.getElementById('gallery-file-input').value='';
-gallerySelectedFile=null;
+  document.getElementById('gallery-upload-card').style.display='none';
+  document.getElementById('gallery-upload-preview').style.display='none';
+  document.getElementById('gallery-upload-preview').src='';
+  document.getElementById('gallery-caption').value='';
+  document.getElementById('gallery-file-input').value='';
+  gallerySelectedFile=null;
 }
 
 function openGalleryEdit(id){
-const img=allGalleryItems.find(i=>i.id===id);if(!img)return;
-document.getElementById('gallery-edit-id').value=id;
-document.getElementById('gallery-edit-preview').src=img.image_url;
-document.getElementById('gallery-edit-caption').value=img.caption||'';
-document.getElementById('gallery-edit-location').value=img.location||'all';
-document.getElementById('gallery-edit-card').style.display='block';
-window.scrollTo(0,0);
+  const img=allGalleryItems.find(i=>i.id===id);if(!img)return;
+  document.getElementById('gallery-edit-id').value=id;
+  document.getElementById('gallery-edit-preview').src=img.image_url;
+  document.getElementById('gallery-edit-caption').value=img.caption||'';
+  document.getElementById('gallery-edit-location').value=img.location||'all';
+  document.getElementById('gallery-edit-card').style.display='block';
+  window.scrollTo(0,0);
 }
 
 async function saveGalleryEdit(){
-const id=document.getElementById('gallery-edit-id').value;
-const caption=document.getElementById('gallery-edit-caption').value.trim();
-const location=document.getElementById('gallery-edit-location').value;
-const{error}=await db.from('gallery').update({caption,location}).eq('id',id);
-if(error){showToast('Error: '+error.message,true);return;}
-showToast('Saved!');document.getElementById('gallery-edit-card').style.display='none';loadGallery();
+  const id=document.getElementById('gallery-edit-id').value;
+  const caption=document.getElementById('gallery-edit-caption').value.trim();
+  const location=document.getElementById('gallery-edit-location').value;
+  const{error}=await db.from('gallery').update({caption,location}).eq('id',id);
+  if(error){showToast('Error: '+error.message,true);return;}
+  showToast('Saved!');document.getElementById('gallery-edit-card').style.display='none';loadGallery();
 }
 
 async function deleteGalleryImage(id,storagePath){
-if(!confirm('Delete this image?'))return;
-if(storagePath)await db.storage.from('menu-images').remove([storagePath]);
-await db.from('gallery').delete().eq('id',id);
-showToast('Deleted');loadGallery();
+  if(!confirm('Delete this image?'))return;
+  if(storagePath)await db.storage.from('menu-images').remove([storagePath]);
+  await db.from('gallery').delete().eq('id',id);
+  showToast('Deleted');loadGallery();
 }
 
+// ===== LOCATIONS =====
 async function loadLocations(){
-const{data}=await db.from('locations').select('*').order('sort_order');
-if(!data)return;
-allLocations=data;
-updateGalleryLocationDropdowns();
-const list=document.getElementById('locations-list');if(!list)return;
-if(!data.length){list.innerHTML='<div style="padding:40px;text-align:center;color:#aaa">No locations yet.</div>';return;}
-list.innerHTML=data.map(loc=>'<div class="location-card"><div class="location-card-header"><div class="location-name">📍 '+loc.name+'</div><div style="display:flex;gap:6px;align-items:center;"><span class="location-badge">'+(loc.active?'Active':'Inactive')+'</span><button class="btn-success" onclick="editLocation(\''+loc.id+'\')">Edit</button><button class="btn-danger" onclick="deleteLocation(\''+loc.id+'\')">Delete</button></div></div><div style="font-size:13px;color:#555;line-height:2;"><div>📍 '+(loc.address||'-')+'</div><div>📞 '+(loc.phone||'-')+'</div><div>🕐 '+(loc.hours||'-')+'</div><div>⏱️ Pickup: '+(loc.pickup_time||'-')+'</div><div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;">'+(loc.uber_eats_url?'<span style="background:#06c167;color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">Uber Eats ✓</span>':'')+(loc.doordash_url?'<span style="background:#ff3008;color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">DoorDash ✓</span>':'')+(loc.menulog_url?'<span style="background:#ff6b35;color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">Menulog ✓</span>':'')+'</div></div></div>').join('');
+  const{data}=await db.from('locations').select('*').order('sort_order');
+  if(!data)return;
+  allLocations=data;
+  updateGalleryLocationDropdowns();
+  const list=document.getElementById('locations-list');if(!list)return;
+  if(!data.length){list.innerHTML='<div style="padding:40px;text-align:center;color:#aaa">No locations yet.</div>';return;}
+  list.innerHTML=data.map(loc=>'<div class="location-card"><div class="location-card-header"><div class="location-name">📍 '+loc.name+'</div><div style="display:flex;gap:6px;align-items:center;"><span class="location-badge">'+(loc.active?'Active':'Inactive')+'</span><button class="btn-success" onclick="editLocation(\''+loc.id+'\')">Edit</button><button class="btn-danger" onclick="deleteLocation(\''+loc.id+'\')">Delete</button></div></div><div style="font-size:13px;color:#555;line-height:2;"><div>📍 '+(loc.address||'-')+'</div><div>📞 '+(loc.phone||'-')+'</div><div>🕐 '+(loc.hours||'-')+'</div><div>⏱️ Pickup: '+(loc.pickup_time||'-')+'</div><div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;">'+(loc.uber_eats_url?'<span style="background:#06c167;color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">Uber Eats ✓</span>':'')+(loc.doordash_url?'<span style="background:#ff3008;color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">DoorDash ✓</span>':'')+(loc.menulog_url?'<span style="background:#ff6b35;color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">Menulog ✓</span>':'')+'</div></div></div>').join('');
 }
 
 function showAddLocationForm(){
-document.getElementById('location-form-card').style.display='block';
-['loc-edit-id','loc-name','loc-address','loc-phone','loc-hours','loc-maps','loc-pickup-time','loc-ubereats','loc-doordash','loc-menulog'].forEach(id=>document.getElementById(id).value='');
-document.getElementById('loc-sort').value='0';
-document.getElementById('loc-active').value='true';
-document.getElementById('location-form-title').textContent='Add New Location';
-window.scrollTo(0,0);
+  document.getElementById('location-form-card').style.display='block';
+  ['loc-edit-id','loc-name','loc-address','loc-phone','loc-hours','loc-maps','loc-pickup-time','loc-ubereats','loc-doordash','loc-menulog'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('loc-sort').value='0';
+  document.getElementById('loc-active').value='true';
+  document.getElementById('location-form-title').textContent='Add New Location';
+  window.scrollTo(0,0);
 }
 
 async function saveLocation(){
-const name=document.getElementById('loc-name').value.trim();
-if(!name){showToast('Location name required!',true);return;}
-const locData={name,address:document.getElementById('loc-address').value,phone:document.getElementById('loc-phone').value,hours:document.getElementById('loc-hours').value,maps_url:document.getElementById('loc-maps').value,pickup_time:document.getElementById('loc-pickup-time').value||'15 Minutes',uber_eats_url:document.getElementById('loc-ubereats').value||null,doordash_url:document.getElementById('loc-doordash').value||null,menulog_url:document.getElementById('loc-menulog').value||null,sort_order:parseInt(document.getElementById('loc-sort').value)||0,active:document.getElementById('loc-active').value==='true'};
-const editId=document.getElementById('loc-edit-id').value;
-const{error}=editId?await db.from('locations').update(locData).eq('id',editId):await db.from('locations').insert(locData);
-if(error){showToast('Error: '+error.message,true);return;}
-showToast('Location saved!');document.getElementById('location-form-card').style.display='none';loadLocations();
+  const name=document.getElementById('loc-name').value.trim();
+  if(!name){showToast('Location name required!',true);return;}
+  const locData={name,address:document.getElementById('loc-address').value,phone:document.getElementById('loc-phone').value,hours:document.getElementById('loc-hours').value,maps_url:document.getElementById('loc-maps').value,pickup_time:document.getElementById('loc-pickup-time').value||'15 Minutes',uber_eats_url:document.getElementById('loc-ubereats').value||null,doordash_url:document.getElementById('loc-doordash').value||null,menulog_url:document.getElementById('loc-menulog').value||null,sort_order:parseInt(document.getElementById('loc-sort').value)||0,active:document.getElementById('loc-active').value==='true'};
+  const editId=document.getElementById('loc-edit-id').value;
+  const{error}=editId?await db.from('locations').update(locData).eq('id',editId):await db.from('locations').insert(locData);
+  if(error){showToast('Error: '+error.message,true);return;}
+  showToast('Location saved!');document.getElementById('location-form-card').style.display='none';loadLocations();
 }
 
 async function editLocation(id){
-const loc=allLocations.find(l=>l.id===id);if(!loc)return;
-document.getElementById('loc-edit-id').value=id;
-document.getElementById('loc-name').value=loc.name||'';
-document.getElementById('loc-address').value=loc.address||'';
-document.getElementById('loc-phone').value=loc.phone||'';
-document.getElementById('loc-hours').value=loc.hours||'';
-document.getElementById('loc-maps').value=loc.maps_url||'';
-document.getElementById('loc-pickup-time').value=loc.pickup_time||'';
-document.getElementById('loc-ubereats').value=loc.uber_eats_url||'';
-document.getElementById('loc-doordash').value=loc.doordash_url||'';
-document.getElementById('loc-menulog').value=loc.menulog_url||'';
-document.getElementById('loc-sort').value=loc.sort_order||0;
-document.getElementById('loc-active').value=String(loc.active);
-document.getElementById('location-form-title').textContent='Edit: '+loc.name;
-document.getElementById('location-form-card').style.display='block';
-window.scrollTo(0,0);
+  const loc=allLocations.find(l=>l.id===id);if(!loc)return;
+  document.getElementById('loc-edit-id').value=id;
+  document.getElementById('loc-name').value=loc.name||'';
+  document.getElementById('loc-address').value=loc.address||'';
+  document.getElementById('loc-phone').value=loc.phone||'';
+  document.getElementById('loc-hours').value=loc.hours||'';
+  document.getElementById('loc-maps').value=loc.maps_url||'';
+  document.getElementById('loc-pickup-time').value=loc.pickup_time||'';
+  document.getElementById('loc-ubereats').value=loc.uber_eats_url||'';
+  document.getElementById('loc-doordash').value=loc.doordash_url||'';
+  document.getElementById('loc-menulog').value=loc.menulog_url||'';
+  document.getElementById('loc-sort').value=loc.sort_order||0;
+  document.getElementById('loc-active').value=String(loc.active);
+  document.getElementById('location-form-title').textContent='Edit: '+loc.name;
+  document.getElementById('location-form-card').style.display='block';
+  window.scrollTo(0,0);
 }
 
 async function deleteLocation(id){
-if(!confirm('Delete this location?'))return;
-await db.from('locations').delete().eq('id',id);
-showToast('Deleted');loadLocations();
+  if(!confirm('Delete this location?'))return;
+  await db.from('locations').delete().eq('id',id);
+  showToast('Deleted');loadLocations();
 }
 
+// ===== BRAND =====
 async function loadBrand(){
-const{data}=await db.from('site_settings').select('*').eq('type','brand');
-if(!data)return;
-data.forEach(row=>{
-const el=document.getElementById('brand-'+row.key);
-if(el)el.value=row.value||'';
-const hexEl=document.getElementById('brand-'+row.key+'-hex');
-if(hexEl)hexEl.value=row.value||'';
-});
+  const{data}=await db.from('site_settings').select('*').eq('type','brand');
+  if(!data)return;
+  data.forEach(row=>{
+    const el=document.getElementById('brand-'+row.key);
+    if(el)el.value=row.value||'';
+    const hexEl=document.getElementById('brand-'+row.key+'-hex');
+    if(hexEl)hexEl.value=row.value||'';
+  });
 }
 
 async function saveBrand(){
-const fields=['name','tagline','email','abn','primary-color','accent-color','button-color','facebook','instagram','youtube','tiktok','footer-tagline','copyright'];
-for(const f of fields){
-const el=document.getElementById('brand-'+f);
-const val=el?el.value:'';
-await db.from('site_settings').upsert({type:'brand',key:f,value:val},{onConflict:'type,key'});
-}
-showToast('Brand settings saved!');
-const nameEl=document.getElementById('brand-name');
-if(nameEl&&nameEl.value)document.getElementById('topbar-title').textContent=nameEl.value+' Admin';
+  const fields=['name','tagline','email','abn','primary-color','accent-color','button-color','facebook','instagram','youtube','tiktok','footer-tagline','copyright'];
+  for(const f of fields){
+    const el=document.getElementById('brand-'+f);
+    const val=el?el.value:'';
+    await db.from('site_settings').upsert({type:'brand',key:f,value:val},{onConflict:'type,key'});
+  }
+  showToast('Brand settings saved!');
+  const nameEl=document.getElementById('brand-name');
+  if(nameEl&&nameEl.value)document.getElementById('topbar-title').textContent=nameEl.value+' Admin';
 }
 </script>
 </body>
