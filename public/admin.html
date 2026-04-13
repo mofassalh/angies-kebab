@@ -7,6 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
+/* CSS Styling - Do not change */
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f0f2f5;font-family:'Nunito',sans-serif;min-height:100vh;color:#1a1a1a;}
 input,button,select,textarea{outline:none;font-family:'Nunito',sans-serif;}
@@ -34,20 +35,12 @@ input,button,select,textarea{outline:none;font-family:'Nunito',sans-serif;}
 .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);border:1px solid #e8e8e8;}
 .card-title{font-size:13px;font-weight:800;color:#1a1a1a;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f0f0f0;}
 .ig2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
-.ig3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
 .fl{font-size:11px;font-weight:700;color:#555;margin-bottom:3px;}
 .fi{width:100%;padding:9px 12px;border-radius:8px;border:1px solid #ddd;font-size:13px;color:#1a1a1a;}
-textarea.fi{resize:vertical;min-height:80px;}
 .btn-primary{padding:10px 20px;background:#1a1a1a;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;}
-.btn-danger{padding:6px 12px;background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;}
-.toast{background:#d4edda;color:#155724;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;margin-bottom:14px;display:none;}
-.img-upload-zone{border:2px dashed #ddd;border-radius:10px;padding:20px;text-align:center;cursor:pointer;}
-.img-preview{width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:8px;}
-
-/* Custom Style for Dynamic Options */
+.btn-danger{background:#fee;color:#c0392b;border:1px solid #fcc;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;}
 .addon-section{border:1px solid #f5c842; background: #fffcf0; padding: 15px; border-radius: 12px; margin-bottom: 15px;}
 .addon-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
-.rm-btn{background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:11px;font-weight:700;}
 </style>
 </head>
 <body>
@@ -67,183 +60,143 @@ textarea.fi{resize:vertical;min-height:80px;}
 <div id="app">
     <div class="topbar">
         <img src="/logo.jpg" onclick="window.location.href='/'"/>
-        <div>
-            <div class="topbar-title" id="topbar-title">Admin Panel</div>
-            <div class="topbar-user" id="topbar-user"></div>
-        </div>
+        <div class="topbar-title">Admin Panel</div>
+        <div class="topbar-user" id="topbar-user"></div>
         <div class="tabs" id="nav-tabs"></div>
         <button class="logout-btn" onclick="doLogout()">Logout</button>
     </div>
 
     <div class="content">
-        <div class="toast" id="toast"></div>
-
-        <div id="tab-dashboard" class="sheet"><div class="card"><div class="card-title">Dashboard</div><p>Welcome to your control panel.</p></div></div>
+        <div id="tab-dashboard" class="sheet active">
+            <div class="card"><div class="card-title">Welcome</div><p>Select Menu to manage items.</p></div>
+        </div>
 
         <div id="tab-menu" class="sheet">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
                 <div style="font-size:16px;font-weight:800;">Menu Items</div>
-                <button class="btn-primary" onclick="showAddItemForm()">+ Add Item</button>
+                <button class="btn-primary" onclick="showAddItemForm()">+ Add New Item</button>
             </div>
             <div id="menu-grid">Loading menu...</div>
         </div>
 
         <div id="tab-add-item" class="sheet">
-            <input type="hidden" id="edit-id"/>
             <div class="card">
                 <div class="card-title">Basic Info</div>
                 <div class="ig2">
                     <div><div class="fl">Item Name *</div><input type="text" id="item-name" class="fi"/></div>
-                    <div><div class="fl">Price ($) *</div><input type="number" id="item-price" class="fi" step="0.01"/></div>
-                </div>
-                <div class="ig2">
-                    <div><div class="fl">Category</div><input type="text" id="item-category" class="fi"/></div>
-                    <div><div class="fl">Available</div><select id="item-available" class="fi"><option value="true">Yes</option><option value="false">No</option></select></div>
+                    <div><div class="fl">Base Price ($) *</div><input type="number" id="item-price" class="fi" step="0.01"/></div>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-title">Product Image</div>
-                <div class="img-upload-zone" onclick="document.getElementById('img-file').click()">
-                    <img id="img-preview" class="img-preview" style="display:none"/>
-                    <div id="upload-placeholder">📷 Click to upload</div>
-                </div>
-                <input type="file" id="img-file" accept="image/*" style="display:none" onchange="handleImageUpload(event)"/>
-                <input type="hidden" id="item-image-url"/>
-            </div>
-
-            <div class="card">
-                <div class="card-title">Customisation Options (e.g. Select Sauce, Toppings)</div>
+                <div class="card-title">Customisation (Options)</div>
                 <div id="sections-container"></div>
                 <button class="btn-primary" onclick="addNewSection()" style="background:#555;">+ Add New Section</button>
             </div>
 
-            <div style="display:flex;gap:10px;margin-bottom:40px;">
-                <button class="btn-primary" onclick="saveItem()" style="flex:1;">SAVE ITEM</button>
-                <button onclick="showTab('menu')" style="padding:10px 20px; background:#ddd; border:none; border-radius:8px; cursor:pointer;">Cancel</button>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-primary" onclick="saveItem()">SAVE PRODUCT</button>
+                <button class="btn-primary" onclick="showTab('menu')" style="background:#888;">CANCEL</button>
             </div>
         </div>
-
-        <div id="tab-orders" class="sheet">Orders list...</div>
-        <div id="tab-pages" class="sheet">Pages list...</div>
-        <div id="tab-gallery" class="sheet">Gallery list...</div>
-        <div id="tab-locations" class="sheet">Locations list...</div>
-        <div id="tab-brand" class="sheet">Brand settings...</div>
-        <div id="tab-staff" class="sheet">Staff list...</div>
     </div>
 </div>
 
 <script>
+// Supabase Config
 const SUPABASE_URL="https://egyxvzjfqnpcfdnwusxn.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVneXh2empmcW5wY2Zkbnd1c3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODMyMjUsImV4cCI6MjA4OTg1OTIyNX0.modzK6AhGyo3YBjZtDl2lK4tFQuj0B3KsDFIf2n-was";
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let currentUser = null;
 
 async function doLogin(){
     const email = document.getElementById('login-email').value;
     const pass = document.getElementById('login-pass').value;
     const { data, error } = await db.from('staff').select('*').eq('email',email).eq('password',pass).single();
     if(error || !data) { document.getElementById('err-msg').style.display='block'; return; }
-    currentUser = data;
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='block';
-    document.getElementById('topbar-user').textContent = data.name + ' · ' + data.role;
+    document.getElementById('topbar-user').textContent = data.name;
     buildNav();
 }
 
-function buildNav(){
-    const tabs = ['Dashboard', 'Menu', 'Orders', 'Pages', 'Gallery', 'Locations', 'Brand', 'Staff'];
+function buildNav() {
+    const tabs = ['Dashboard', 'Menu'];
     const nav = document.getElementById('nav-tabs');
-    nav.innerHTML = tabs.map(t => `<button class="tab" onclick="showTab('${t.toLowerCase()}')">${t}</button>`).join('');
-    showTab('dashboard');
+    nav.innerHTML = tabs.map(t => `<button class="tab" onclick="showTab('${t.toLowerCase()}'); if('${t}'==='Menu') loadMenu();">${t}</button>`).join('');
 }
 
 function showTab(name){
     document.querySelectorAll('.sheet').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    const target = document.getElementById('tab-' + name);
-    if(target) target.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
 }
 
-// Customisation Logic
-function addNewSection(name = '', max = 1, ingredients = []) {
+// Menu Loading
+async function loadMenu() {
+    const grid = document.getElementById('menu-grid');
+    grid.innerHTML = "Loading...";
+    const { data, error } = await db.from('menu').select('*');
+    if (error) { grid.innerHTML = "Error: " + error.message; return; }
+    if (data.length === 0) { grid.innerHTML = "No items. Add one!"; return; }
+
+    grid.innerHTML = data.map(item => `
+        <div class="card" style="display:flex; justify-content:space-between;">
+            <div><strong>${item.name}</strong> - $${item.base_price}</div>
+            <button class="btn-danger" onclick="deleteItem('${item.id}')">Delete</button>
+        </div>
+    `).join('');
+}
+
+// Customization logic
+function addNewSection(name = '', max = 1) {
     const sid = 'sec_' + Date.now();
     const div = document.createElement('div');
-    div.className = 'addon-section';
-    div.id = sid;
+    div.className = 'addon-section'; div.id = sid;
     div.innerHTML = `
         <div class="ig2">
-            <input type="text" class="fi sec-name" placeholder="Section Name (e.g. Choose Sauce)" value="${name}"/>
-            <input type="number" class="fi sec-max" placeholder="Max" value="${max}"/>
+            <input type="text" class="sec-name fi" placeholder="Section Name" value="${name}"/>
+            <input type="number" class="sec-max fi" placeholder="Max Select" value="${max}"/>
         </div>
-        <div class="ing-list" style="margin-left:15px;"></div>
-        <button onclick="addIng('${sid}')" style="cursor:pointer; font-size:11px; margin-top:5px;">+ Add Ingredient</button>
-        <button onclick="document.getElementById('${sid}').remove()" class="rm-btn" style="float:right;">Delete Section</button>
+        <div class="ing-list"></div>
+        <button onclick="addIng('${sid}')" style="font-size:10px;">+ Add Ingredient</button>
     `;
     document.getElementById('sections-container').appendChild(div);
-    if(ingredients.length > 0) ingredients.forEach(i => addIng(sid, i.name, i.price));
 }
 
-function addIng(sid, name = '', price = 0) {
+function addIng(sid, name='', price=0) {
     const list = document.querySelector(`#${sid} .ing-list`);
     const div = document.createElement('div');
     div.className = 'addon-row';
-    div.innerHTML = `
-        <input type="text" class="fi ing-name" placeholder="Name" value="${name}" style="flex:2"/>
-        <input type="number" class="fi ing-price" placeholder="Price" value="${price}" step="0.01" style="flex:1"/>
-        <button class="rm-btn" onclick="this.parentElement.remove()">X</button>
-    `;
+    div.innerHTML = `<input type="text" class="ing-name fi" style="flex:2" placeholder="Name"/><input type="number" class="ing-price fi" style="flex:1" placeholder="Price"/><button onclick="this.parentElement.remove()">X</button>`;
     list.appendChild(div);
 }
 
 async function saveItem() {
     const name = document.getElementById('item-name').value;
-    const price = parseFloat(document.getElementById('item-price').value);
-    const category = document.getElementById('item-category').value;
-    const avail = document.getElementById('item-available').value === 'true';
-    const imageUrl = document.getElementById('item-image-url').value;
-
+    const price = document.getElementById('item-price').value;
     const options = [];
+    
     document.querySelectorAll('.addon-section').forEach(sec => {
         const title = sec.querySelector('.sec-name').value;
-        const max = sec.querySelector('.sec-max').value;
-        const ingredients = [];
+        const ings = [];
         sec.querySelectorAll('.addon-row').forEach(row => {
-            ingredients.push({ name: row.querySelector('.ing-name').value, price: parseFloat(row.querySelector('.ing-price').value) || 0 });
+            ings.push({ name: row.querySelector('.ing-name').value, price: row.querySelector('.ing-price').value });
         });
-        if(title) options.push({ section_title: title, max_select: max, items: ingredients });
+        options.push({ title, ings });
     });
 
-    const { error } = await db.from('menu').upsert([{ 
-        name, 
-        base_price: price, 
-        category, 
-        available: avail, 
-        image_url: imageUrl, 
-        custom_options: options 
-    }]);
-
-    if(!error) { alert("Product saved!"); showTab('menu'); }
-    else { alert("Error: " + error.message); }
+    const { error } = await db.from('menu').insert([{ name, base_price: price, custom_options: options }]);
+    if(!error) { alert("Saved!"); showTab('menu'); loadMenu(); }
 }
 
-async function handleImageUpload(e){
-    const file = e.target.files[0]; if(!file) return;
-    const ext = file.name.split('.').pop();
-    const path = 'menu/' + Date.now() + '.' + ext;
-    const { error } = await db.storage.from('menu-images').upload(path, file);
-    if(error) return alert("Upload failed");
-    const { data } = db.storage.from('menu-images').getPublicUrl(path);
-    document.getElementById('item-image-url').value = data.publicUrl;
-    document.getElementById('img-preview').src = data.publicUrl;
-    document.getElementById('img-preview').style.display = 'block';
+async function deleteItem(id) {
+    if(!confirm("Delete?")) return;
+    await db.from('menu').delete().eq('id', id);
+    loadMenu();
 }
 
 function showAddItemForm() {
     document.getElementById('sections-container').innerHTML = '';
-    document.getElementById('edit-id').value = '';
     showTab('add-item');
 }
 
