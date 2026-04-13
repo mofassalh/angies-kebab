@@ -1,5 +1,3 @@
-cat > src/App.js << 'ENDOFFILE'
-import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = "https://egyxvzjfqnpcfdnwusxn.supabase.co";
@@ -717,4 +715,3 @@ export default function App() {
     </div>
   );
 }
-ENDOFFILE
