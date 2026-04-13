@@ -571,11 +571,11 @@ showToast('Item saved!');resetForm();loadMenuItems();showTab('menu',null);
 
 function resetForm(){
 ['edit-id','item-name','item-category','item-price','item-desc','item-ingredients','item-image-url'].forEach(id=>document.getElementById(id).value='');
-document.getElementById('sections-list').innerHTML='';sectionCount=0;optCount=0;
+document.getElementById('sections-list').innerHTML='';
+sectionCount=0;optCount=0;
 document.getElementById('item-available').value='true';
 document.getElementById('img-preview').style.display='none';
 document.getElementById('upload-placeholder').style.display='block';
-document.getElementById('addons-list').innerHTML='';
 document.getElementById('form-title').textContent='Add New Menu Item';
 addonCount=0;
 }
