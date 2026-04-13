@@ -7,7 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
-/* CSS Styling - Do not change */
+/* Styling - Shob ager motoi thakbe */
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f0f2f5;font-family:'Nunito',sans-serif;min-height:100vh;color:#1a1a1a;}
 input,button,select,textarea{outline:none;font-family:'Nunito',sans-serif;}
@@ -68,7 +68,7 @@ input,button,select,textarea{outline:none;font-family:'Nunito',sans-serif;}
 
     <div class="content">
         <div id="tab-dashboard" class="sheet active">
-            <div class="card"><div class="card-title">Welcome</div><p>Select Menu to manage items.</p></div>
+            <div class="card"><div class="card-title">Dashboard</div><p>Welcome back!</p></div>
         </div>
 
         <div id="tab-menu" class="sheet">
@@ -79,6 +79,30 @@ input,button,select,textarea{outline:none;font-family:'Nunito',sans-serif;}
             <div id="menu-grid">Loading menu...</div>
         </div>
 
+        <div id="tab-orders" class="sheet">
+            <div class="card"><div class="card-title">Manage Orders</div><p>Current orders will show here.</p></div>
+        </div>
+
+        <div id="tab-pages" class="sheet">
+            <div class="card"><div class="card-title">Manage Pages</div><p>Website pages settings.</p></div>
+        </div>
+
+        <div id="tab-gallery" class="sheet">
+            <div class="card"><div class="card-title">Gallery</div><p>Upload shop photos.</p></div>
+        </div>
+
+        <div id="tab-locations" class="sheet">
+            <div class="card"><div class="card-title">Locations</div><p>Manage your shop branches.</p></div>
+        </div>
+
+        <div id="tab-brand" class="sheet">
+            <div class="card"><div class="card-title">Brand & Website Settings</div><p>Update logo, colors, and site name.</p></div>
+        </div>
+
+        <div id="tab-staff" class="sheet">
+            <div class="card"><div class="card-title">Staff Management</div><p>Manage admin users.</p></div>
+        </div>
+
         <div id="tab-add-item" class="sheet">
             <div class="card">
                 <div class="card-title">Basic Info</div>
@@ -87,15 +111,13 @@ input,button,select,textarea{outline:none;font-family:'Nunito',sans-serif;}
                     <div><div class="fl">Base Price ($) *</div><input type="number" id="item-price" class="fi" step="0.01"/></div>
                 </div>
             </div>
-
             <div class="card">
-                <div class="card-title">Customisation (Options)</div>
+                <div class="card-title">Customisation (Click to add)</div>
                 <div id="sections-container"></div>
-                <button class="btn-primary" onclick="addNewSection()" style="background:#555;">+ Add New Section</button>
+                <button class="btn-primary" onclick="addNewSection()" style="background:#555;">+ Add New Section (e.g. Choose Sauce)</button>
             </div>
-
             <div style="display:flex; gap:10px;">
-                <button class="btn-primary" onclick="saveItem()">SAVE PRODUCT</button>
+                <button class="btn-primary" onclick="saveItem()" style="background:#2d6a4f;">SAVE PRODUCT</button>
                 <button class="btn-primary" onclick="showTab('menu')" style="background:#888;">CANCEL</button>
             </div>
         </div>
@@ -103,7 +125,6 @@ input,button,select,textarea{outline:none;font-family:'Nunito',sans-serif;}
 </div>
 
 <script>
-// Supabase Config
 const SUPABASE_URL="https://egyxvzjfqnpcfdnwusxn.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVneXh2empmcW5wY2Zkbnd1c3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODMyMjUsImV4cCI6MjA4OTg1OTIyNX0.modzK6AhGyo3YBjZtDl2lK4tFQuj0B3KsDFIf2n-was";
 const { createClient } = supabase;
@@ -121,26 +142,34 @@ async function doLogin(){
 }
 
 function buildNav() {
-    const tabs = ['Dashboard', 'Menu'];
+    // Tomar ager shob tab gulo ekhane list kora holo
+    const tabs = ['Dashboard', 'Menu', 'Orders', 'Pages', 'Gallery', 'Locations', 'Brand', 'Staff'];
     const nav = document.getElementById('nav-tabs');
     nav.innerHTML = tabs.map(t => `<button class="tab" onclick="showTab('${t.toLowerCase()}'); if('${t}'==='Menu') loadMenu();">${t}</button>`).join('');
+    showTab('dashboard');
 }
 
 function showTab(name){
     document.querySelectorAll('.sheet').forEach(s => s.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    const target = document.getElementById('tab-' + name);
+    if(target) target.classList.add('active');
+    // Active button highlight
+    document.querySelectorAll('.tab').forEach(t => {
+        if(t.textContent.toLowerCase() === name) t.classList.add('active');
+    });
 }
 
 // Menu Loading
 async function loadMenu() {
     const grid = document.getElementById('menu-grid');
-    grid.innerHTML = "Loading...";
-    const { data, error } = await db.from('menu').select('*');
+    grid.innerHTML = "Loading menu...";
+    const { data, error } = await db.from('menu').select('*').order('created_at', {ascending: false});
     if (error) { grid.innerHTML = "Error: " + error.message; return; }
-    if (data.length === 0) { grid.innerHTML = "No items. Add one!"; return; }
+    if (data.length === 0) { grid.innerHTML = "No items. Click + Add New Item to start."; return; }
 
     grid.innerHTML = data.map(item => `
-        <div class="card" style="display:flex; justify-content:space-between;">
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
             <div><strong>${item.name}</strong> - $${item.base_price}</div>
             <button class="btn-danger" onclick="deleteItem('${item.id}')">Delete</button>
         </div>
@@ -154,20 +183,25 @@ function addNewSection(name = '', max = 1) {
     div.className = 'addon-section'; div.id = sid;
     div.innerHTML = `
         <div class="ig2">
-            <input type="text" class="sec-name fi" placeholder="Section Name" value="${name}"/>
-            <input type="number" class="sec-max fi" placeholder="Max Select" value="${max}"/>
+            <input type="text" class="sec-name fi" placeholder="Section Name (e.g. Select Sauce)" value="${name}"/>
+            <input type="number" class="sec-max fi" placeholder="Max" value="${max}"/>
         </div>
         <div class="ing-list"></div>
-        <button onclick="addIng('${sid}')" style="font-size:10px;">+ Add Ingredient</button>
+        <button onclick="addIng('${sid}')" style="cursor:pointer; font-size:11px;">+ Add Ingredient</button>
+        <button onclick="document.getElementById('${sid}').remove()" class="rm-btn" style="float:right; font-size:10px; color:red; border:none; background:none; cursor:pointer;">Delete Section</button>
     `;
     document.getElementById('sections-container').appendChild(div);
 }
 
-function addIng(sid, name='', price=0) {
+function addIng(sid) {
     const list = document.querySelector(`#${sid} .ing-list`);
     const div = document.createElement('div');
     div.className = 'addon-row';
-    div.innerHTML = `<input type="text" class="ing-name fi" style="flex:2" placeholder="Name"/><input type="number" class="ing-price fi" style="flex:1" placeholder="Price"/><button onclick="this.parentElement.remove()">X</button>`;
+    div.innerHTML = `
+        <input type="text" class="ing-name fi" style="flex:2" placeholder="Ingredient Name"/>
+        <input type="number" class="ing-price fi" style="flex:1" placeholder="Price (+$)" step="0.01"/>
+        <button onclick="this.parentElement.remove()" style="border:none; background:none; cursor:pointer;">X</button>
+    `;
     list.appendChild(div);
 }
 
@@ -178,24 +212,35 @@ async function saveItem() {
     
     document.querySelectorAll('.addon-section').forEach(sec => {
         const title = sec.querySelector('.sec-name').value;
+        const max = sec.querySelector('.sec-max').value;
         const ings = [];
         sec.querySelectorAll('.addon-row').forEach(row => {
-            ings.push({ name: row.querySelector('.ing-name').value, price: row.querySelector('.ing-price').value });
+            ings.push({ 
+                name: row.querySelector('.ing-name').value, 
+                price: parseFloat(row.querySelector('.ing-price').value) || 0 
+            });
         });
-        options.push({ title, ings });
+        if(title) options.push({ section_title: title, max_select: max, items: ings });
     });
 
-    const { error } = await db.from('menu').insert([{ name, base_price: price, custom_options: options }]);
-    if(!error) { alert("Saved!"); showTab('menu'); loadMenu(); }
+    const { error } = await db.from('menu').insert([{ 
+        name, 
+        base_price: price, 
+        custom_options: options 
+    }]);
+
+    if(!error) { alert("Saved Successfully!"); showTab('menu'); loadMenu(); }
 }
 
 async function deleteItem(id) {
-    if(!confirm("Delete?")) return;
+    if(!confirm("Are you sure?")) return;
     await db.from('menu').delete().eq('id', id);
     loadMenu();
 }
 
 function showAddItemForm() {
+    document.getElementById('item-name').value = '';
+    document.getElementById('item-price').value = '';
     document.getElementById('sections-container').innerHTML = '';
     showTab('add-item');
 }
