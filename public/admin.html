@@ -20,7 +20,7 @@ input,button,select,textarea{outline:none;font-family:'Nunito',sans-serif;}
 .login-btn{width:100%;padding:11px;border-radius:8px;background:#1a1a1a;color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;}
 #app{display:none;}
 .topbar{background:#1a1a1a;height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100;}
-.topbar img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #f5c842;}
+.topbar img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #f5c842;cursor:pointer;}
 .topbar-title{color:#fff;font-weight:800;font-size:14px;flex:1;}
 .topbar-user{color:rgba(255,255,255,0.6);font-size:11px;}
 .tabs{display:flex;gap:3px;overflow-x:auto;}
@@ -74,616 +74,790 @@ textarea.fi{resize:vertical;min-height:80px;}
 .role-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;}
 .role-owner{background:#fff3cd;color:#856404;}
 .role-staff{background:#e8f4fd;color:#0c5460;}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:16px;}
+.gallery-item{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e8e8e8;}
+.gallery-item img{width:100%;height:150px;object-fit:cover;display:block;}
+.gallery-item-body{padding:10px;}
+.gallery-item-caption{font-size:12px;font-weight:700;color:#1a1a1a;margin-bottom:4px;}
+.gallery-item-actions{display:flex;gap:6px;}
+.gallery-upload-zone{border:2px dashed #ddd;border-radius:10px;padding:30px;text-align:center;cursor:pointer;transition:all 0.2s;background:#fafafa;}
+.gallery-upload-zone:hover{border-color:#1a1a1a;background:#f0f0f0;}
+.location-card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;border:1px solid #e8e8e8;}
+.location-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f0f0f0;}
+.location-name{font-size:14px;font-weight:900;}
+.location-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:#fff3cd;color:#856404;}
+.social-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;}
+.social-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
 @media(max-width:768px){
-  .ig2,.ig3{grid-template-columns:1fr;}
-  .kpi-grid{grid-template-columns:1fr 1fr;}
-  .menu-grid{grid-template-columns:1fr 1fr;}
-  .order-grid{grid-template-columns:1fr;}
+.ig2,.ig3{grid-template-columns:1fr;}
+.kpi-grid{grid-template-columns:1fr 1fr;}
+.menu-grid{grid-template-columns:1fr 1fr;}
+.order-grid{grid-template-columns:1fr;}
+.gallery-grid{grid-template-columns:1fr 1fr;}
 }
 </style>
 </head>
 <body>
-
 <div id="login-screen">
-  <div class="login-box">
-    <img src="/logo.jpg" alt="logo"/>
-    <h2>Admin Panel</h2>
-    <p>Angie's Kebabs & Burgers</p>
-    <input type="email" id="login-email" placeholder="Email address"/>
-    <input type="password" id="login-pass" placeholder="Password"/>
-    <div class="err" id="err-msg">❌ Wrong email or password!</div>
-    <button class="login-btn" onclick="doLogin()">Login →</button>
-  </div>
+<div class="login-box">
+<img src="/logo.jpg" alt="logo"/>
+<h2>Admin Panel</h2>
+<p>Angie's Kebabs & Burgers</p>
+<input type="email" id="login-email" placeholder="Email address"/>
+<input type="password" id="login-pass" placeholder="Password"/>
+<div class="err" id="err-msg">Wrong email or password!</div>
+<button class="login-btn" onclick="doLogin()">Login</button>
 </div>
-
+</div>
 <div id="app">
-  <div class="topbar">
-    <img src="/logo.jpg" onclick="window.location.href='/'"/>
-    <div>
-      <div class="topbar-title">Angie's Admin Panel</div>
-      <div class="topbar-user" id="topbar-user"></div>
-    </div>
-    <div class="tabs" id="nav-tabs"></div>
-    <button class="logout-btn" onclick="doLogout()">Logout</button>
-  </div>
-
-  <div class="content">
-    <div class="toast" id="toast"></div>
-
-    <!-- DASHBOARD -->
-    <div id="tab-dashboard" class="sheet">
-      <div class="kpi-grid">
-        <div class="kpi-card"><div class="kpi-val" id="kpi-orders">-</div><div class="kpi-lbl">Total Orders</div></div>
-        <div class="kpi-card"><div class="kpi-val" id="kpi-revenue">-</div><div class="kpi-lbl">Total Revenue</div></div>
-        <div class="kpi-card"><div class="kpi-val" id="kpi-pending">-</div><div class="kpi-lbl">Pending Orders</div></div>
-        <div class="kpi-card"><div class="kpi-val" id="kpi-menu">-</div><div class="kpi-lbl">Menu Items</div></div>
-      </div>
-      <div class="card">
-        <div class="card-title">📋 Recent Orders</div>
-        <div id="recent-orders-list">Loading...</div>
-      </div>
-      <div class="card">
-        <div class="card-title">📊 Order Status Summary</div>
-        <div id="status-summary" style="display:flex;gap:12px;flex-wrap:wrap;"></div>
-      </div>
-    </div>
-
-    <!-- MENU -->
-    <div id="tab-menu" class="sheet">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-        <div style="font-size:16px;font-weight:800;">Menu Items</div>
-        <div style="display:flex;gap:8px;">
-          <select id="filter-cat" class="fi" style="width:auto" onchange="filterMenuItems()">
-            <option value="">All Categories</option>
-          </select>
-          <button class="btn-primary" onclick="showAddItemForm()">+ Add Item</button>
-        </div>
-      </div>
-      <div class="menu-grid" id="menu-grid">Loading...</div>
-    </div>
-
-    <!-- ORDERS -->
-    <div id="tab-orders" class="sheet">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-        <div style="font-size:16px;font-weight:800;">Order Management</div>
-        <select id="order-filter" class="fi" style="width:auto" onchange="loadOrders()">
-          <option value="">All Orders</option>
-          <option value="pending">Pending</option>
-          <option value="processing">On Process</option>
-          <option value="ontheway">On The Way</option>
-          <option value="delivered">Delivered</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
-      </div>
-      <div class="order-grid" id="order-grid">Loading...</div>
-    </div>
-
-    <!-- PAGES -->
-    <div id="tab-pages" class="sheet">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <div style="font-size:16px;font-weight:800;">Page Management</div>
-        <button class="btn-primary" onclick="showAddPageForm()">+ Add Page</button>
-      </div>
-      <div id="add-page-form" style="display:none;" class="card">
-        <div class="card-title" id="page-form-title">Add New Page</div>
-        <input type="hidden" id="page-edit-id"/>
-        <div class="ig2">
-          <div><div class="fl">Page Title *</div><input type="text" id="page-title" class="fi" placeholder="e.g. About Us"/></div>
-          <div><div class="fl">URL Slug *</div><input type="text" id="page-slug" class="fi" placeholder="e.g. about"/></div>
-        </div>
-        <div><div class="fl">Content</div><textarea id="page-content" class="fi" rows="5" placeholder="Page content..."></textarea></div>
-        <div class="ig3" style="margin-top:10px;">
-          <div><div class="fl">Image URL</div><input type="text" id="page-image" class="fi" placeholder="https://..."/></div>
-          <div><div class="fl">Show in Nav</div><select id="page-nav" class="fi"><option value="true">✅ Yes</option><option value="false">❌ No</option></select></div>
-          <div><div class="fl">Sort Order</div><input type="number" id="page-order" class="fi" value="0"/></div>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:14px;">
-          <button class="btn-primary" onclick="savePage()">💾 Save</button>
-          <button onclick="document.getElementById('add-page-form').style.display='none'" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
-        </div>
-      </div>
-      <div id="pages-list">Loading...</div>
-    </div>
-
-    <!-- STAFF -->
-    <div id="tab-staff" class="sheet">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <div style="font-size:16px;font-weight:800;">Staff Management</div>
-        <button class="btn-primary" onclick="document.getElementById('add-staff-form').style.display='block'">+ Add Staff</button>
-      </div>
-
-      <div id="add-staff-form" style="display:none;" class="card">
-        <div class="card-title">Add New Staff</div>
-        <input type="hidden" id="staff-edit-id"/>
-        <div class="ig3">
-          <div><div class="fl">Name *</div><input type="text" id="staff-name" class="fi" placeholder="Staff name"/></div>
-          <div><div class="fl">Email *</div><input type="email" id="staff-email" class="fi" placeholder="email@example.com"/></div>
-          <div><div class="fl">Password *</div><input type="password" id="staff-pass" class="fi" placeholder="Password"/></div>
-        </div>
-        <div style="margin-bottom:14px;">
-          <div class="fl" style="margin-bottom:10px;">Permissions</div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;">
-            <label class="perm-check"><input type="checkbox" id="perm-orders" checked/> Orders</label>
-            <label class="perm-check"><input type="checkbox" id="perm-menu"/> Menu</label>
-            <label class="perm-check"><input type="checkbox" id="perm-pages"/> Pages</label>
-            <label class="perm-check"><input type="checkbox" id="perm-dashboard"/> Dashboard</label>
-          </div>
-        </div>
-        <div style="display:flex;gap:10px;">
-          <button class="btn-primary" onclick="saveStaff()">💾 Save Staff</button>
-          <button onclick="document.getElementById('add-staff-form').style.display='none'" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
-        </div>
-      </div>
-
-      <div id="staff-list">Loading...</div>
-    </div>
-
-    <!-- ADD/EDIT ITEM -->
-    <div id="tab-add-item" class="sheet">
-      <div style="font-size:16px;font-weight:800;margin-bottom:16px;" id="form-title">➕ Add New Menu Item</div>
-      <input type="hidden" id="edit-id"/>
-      <div class="card">
-        <div class="card-title">Basic Info</div>
-        <div class="ig2">
-          <div><div class="fl">Item Name *</div><input type="text" id="item-name" class="fi" placeholder="e.g. Shish Kebab"/></div>
-          <div><div class="fl">Category *</div><input type="text" id="item-category" class="fi" placeholder="e.g. Kebabs" list="cat-list"/><datalist id="cat-list"></datalist></div>
-        </div>
-        <div class="ig2">
-          <div><div class="fl">Price ($) *</div><input type="number" id="item-price" class="fi" placeholder="0.00" step="0.01" min="0"/></div>
-          <div><div class="fl">Available</div><select id="item-available" class="fi"><option value="true">✅ Yes</option><option value="false">❌ No</option></select></div>
-        </div>
-        <div><div class="fl">Description</div><textarea id="item-desc" class="fi"></textarea></div>
-      </div>
-      <div class="card">
-        <div class="card-title">📸 Image</div>
-        <div class="img-upload-zone" onclick="document.getElementById('img-file').click()">
-          <img id="img-preview" class="img-preview" style="display:none"/>
-          <div id="upload-placeholder"><div style="font-size:36px;margin-bottom:8px">📷</div><div style="font-size:13px;font-weight:700;color:#555">Click to upload</div><div style="font-size:11px;color:#aaa;margin-top:4px">JPG, PNG, WEBP — Max 5MB</div></div>
-          <div id="upload-progress" style="display:none;font-size:12px;color:#888;margin-top:8px;">⏳ Uploading...</div>
-        </div>
-        <input type="file" id="img-file" accept="image/*" style="display:none" onchange="handleImageUpload(event)"/>
-        <input type="hidden" id="item-image-url"/>
-      </div>
-      <div class="card">
-        <div class="card-title">🥗 Ingredients</div>
-        <input type="text" id="item-ingredients" class="fi" placeholder="e.g. Lamb, Rice, Garlic sauce"/>
-      </div>
-      <div class="card">
-        <div class="card-title">⚙️ Customisation Options</div>
-        <div id="addons-list"></div>
-        <button onclick="addAddonRow()" style="padding:8px 16px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;">+ Add Option</button>
-      </div>
-      <div style="display:flex;gap:10px;margin-bottom:30px;">
-        <button class="btn-primary" onclick="saveItem()" style="flex:1;padding:13px;">💾 Save Item</button>
-        <button onclick="showTab('menu',null)" style="padding:13px 20px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">✕ Cancel</button>
-      </div>
-    </div>
-
-  </div>
+<div class="topbar">
+<img src="/logo.jpg" onclick="window.location.href='/'"/>
+<div>
+<div class="topbar-title">Angie's Admin Panel</div>
+<div class="topbar-user" id="topbar-user"></div>
 </div>
-
+<div class="tabs" id="nav-tabs"></div>
+<button class="logout-btn" onclick="doLogout()">Logout</button>
+</div>
+<div class="content">
+<div class="toast" id="toast"></div>
+<div id="tab-dashboard" class="sheet">
+<div class="kpi-grid">
+<div class="kpi-card"><div class="kpi-val" id="kpi-orders">-</div><div class="kpi-lbl">Total Orders</div></div>
+<div class="kpi-card"><div class="kpi-val" id="kpi-revenue">-</div><div class="kpi-lbl">Total Revenue</div></div>
+<div class="kpi-card"><div class="kpi-val" id="kpi-pending">-</div><div class="kpi-lbl">Pending Orders</div></div>
+<div class="kpi-card"><div class="kpi-val" id="kpi-menu">-</div><div class="kpi-lbl">Menu Items</div></div>
+</div>
+<div class="card"><div class="card-title">Recent Orders</div><div id="recent-orders-list">Loading...</div></div>
+<div class="card"><div class="card-title">Order Status Summary</div><div id="status-summary" style="display:flex;gap:12px;flex-wrap:wrap;"></div></div>
+</div>
+<div id="tab-menu" class="sheet">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+<div style="font-size:16px;font-weight:800;">Menu Items</div>
+<div style="display:flex;gap:8px;">
+<select id="filter-cat" class="fi" style="width:auto" onchange="filterMenuItems()"><option value="">All Categories</option></select>
+<button class="btn-primary" onclick="showAddItemForm()">+ Add Item</button>
+</div>
+</div>
+<div class="menu-grid" id="menu-grid">Loading...</div>
+</div>
+<div id="tab-orders" class="sheet">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+<div style="font-size:16px;font-weight:800;">Order Management</div>
+<select id="order-filter" class="fi" style="width:auto" onchange="loadOrders()">
+<option value="">All Orders</option>
+<option value="pending">Pending</option>
+<option value="processing">On Process</option>
+<option value="ontheway">On The Way</option>
+<option value="delivered">Delivered</option>
+<option value="cancelled">Cancelled</option>
+</select>
+</div>
+<div class="order-grid" id="order-grid">Loading...</div>
+</div>
+<div id="tab-pages" class="sheet">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+<div style="font-size:16px;font-weight:800;">Page Management</div>
+<button class="btn-primary" onclick="showAddPageForm()">+ Add Page</button>
+</div>
+<div id="add-page-form" style="display:none;" class="card">
+<div class="card-title" id="page-form-title">Add New Page</div>
+<input type="hidden" id="page-edit-id"/>
+<div class="ig2">
+<div><div class="fl">Page Title *</div><input type="text" id="page-title" class="fi" placeholder="e.g. About Us"/></div>
+<div><div class="fl">URL Slug *</div><input type="text" id="page-slug" class="fi" placeholder="e.g. about"/></div>
+</div>
+<div><div class="fl">Content</div><textarea id="page-content" class="fi" rows="5"></textarea></div>
+<div class="ig3" style="margin-top:10px;">
+<div><div class="fl">Image URL</div><input type="text" id="page-image" class="fi" placeholder="https://..."/></div>
+<div><div class="fl">Show in Nav</div><select id="page-nav" class="fi"><option value="true">Yes</option><option value="false">No</option></select></div>
+<div><div class="fl">Sort Order</div><input type="number" id="page-order" class="fi" value="0"/></div>
+</div>
+<div style="display:flex;gap:10px;margin-top:14px;">
+<button class="btn-primary" onclick="savePage()">Save</button>
+<button onclick="document.getElementById('add-page-form').style.display='none'" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
+</div>
+</div>
+<div id="pages-list">Loading...</div>
+</div>
+<div id="tab-staff" class="sheet">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+<div style="font-size:16px;font-weight:800;">Staff Management</div>
+<button class="btn-primary" onclick="document.getElementById('add-staff-form').style.display='block'">+ Add Staff</button>
+</div>
+<div id="add-staff-form" style="display:none;" class="card">
+<div class="card-title">Add New Staff</div>
+<input type="hidden" id="staff-edit-id"/>
+<div class="ig3">
+<div><div class="fl">Name *</div><input type="text" id="staff-name" class="fi"/></div>
+<div><div class="fl">Email *</div><input type="email" id="staff-email" class="fi"/></div>
+<div><div class="fl">Password *</div><input type="password" id="staff-pass" class="fi"/></div>
+</div>
+<div style="margin-bottom:14px;">
+<div class="fl" style="margin-bottom:10px;">Permissions</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;">
+<label class="perm-check"><input type="checkbox" id="perm-orders" checked/> Orders</label>
+<label class="perm-check"><input type="checkbox" id="perm-menu"/> Menu</label>
+<label class="perm-check"><input type="checkbox" id="perm-pages"/> Pages</label>
+<label class="perm-check"><input type="checkbox" id="perm-dashboard"/> Dashboard</label>
+</div>
+</div>
+<div style="display:flex;gap:10px;">
+<button class="btn-primary" onclick="saveStaff()">Save Staff</button>
+<button onclick="document.getElementById('add-staff-form').style.display='none'" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
+</div>
+</div>
+<div id="staff-list">Loading...</div>
+</div>
+<div id="tab-gallery" class="sheet">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+<div style="font-size:16px;font-weight:800;">Image Gallery</div>
+<button class="btn-primary" onclick="document.getElementById('gallery-upload-card').style.display='block';window.scrollTo(0,0)">+ Add Image</button>
+</div>
+<div id="gallery-upload-card" class="card" style="display:none;">
+<div class="card-title">Upload New Image</div>
+<div class="gallery-upload-zone" onclick="document.getElementById('gallery-file-input').click()">
+<div style="font-size:40px;margin-bottom:8px;">📷</div>
+<div style="font-size:13px;font-weight:700;color:#555;">Click to upload image</div>
+<div style="font-size:11px;color:#aaa;margin-top:4px;">JPG, PNG, WEBP — Max 5MB</div>
+<img id="gallery-upload-preview" style="display:none;width:100%;max-height:200px;object-fit:contain;margin-top:12px;border-radius:8px;"/>
+</div>
+<input type="file" id="gallery-file-input" accept="image/*" style="display:none" onchange="previewGalleryImage(event)"/>
+<div id="gallery-upload-progress" style="display:none;margin-top:10px;font-size:12px;color:#888;font-weight:600;">Uploading...</div>
+<div style="margin-top:12px;">
+<div class="fl">Caption (optional)</div>
+<input type="text" id="gallery-caption" class="fi" placeholder="e.g. Our St Albans location"/>
+</div>
+<div style="margin-top:10px;">
+<div class="fl">Location Tag</div>
+<select id="gallery-location" class="fi">
+<option value="all">All Locations</option>
+<option value="st-albans">St Albans</option>
+<option value="fitzroy-north">Fitzroy North</option>
+<option value="ascot-vale">Ascot Vale</option>
+</select>
+</div>
+<div style="display:flex;gap:10px;margin-top:14px;">
+<button class="btn-primary" onclick="uploadGalleryImage()">Upload & Save</button>
+<button onclick="cancelGalleryUpload()" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
+</div>
+</div>
+<div id="gallery-edit-card" class="card" style="display:none;">
+<div class="card-title">Edit Image</div>
+<input type="hidden" id="gallery-edit-id"/>
+<img id="gallery-edit-preview" style="width:100%;max-height:180px;object-fit:contain;border-radius:8px;margin-bottom:12px;"/>
+<div style="margin-bottom:10px;"><div class="fl">Caption</div><input type="text" id="gallery-edit-caption" class="fi"/></div>
+<div style="margin-bottom:10px;">
+<div class="fl">Location Tag</div>
+<select id="gallery-edit-location" class="fi">
+<option value="all">All Locations</option>
+<option value="st-albans">St Albans</option>
+<option value="fitzroy-north">Fitzroy North</option>
+<option value="ascot-vale">Ascot Vale</option>
+</select>
+</div>
+<div style="display:flex;gap:10px;">
+<button class="btn-primary" onclick="saveGalleryEdit()">Save</button>
+<button onclick="document.getElementById('gallery-edit-card').style.display='none'" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
+</div>
+</div>
+<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;" id="gallery-filter-btns">
+<button onclick="filterGallery('all',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:none;cursor:pointer;background:#1a1a1a;color:#fff;">All</button>
+<button onclick="filterGallery('st-albans',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid #ddd;cursor:pointer;background:#fff;color:#1a1a1a;">St Albans</button>
+<button onclick="filterGallery('fitzroy-north',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid #ddd;cursor:pointer;background:#fff;color:#1a1a1a;">Fitzroy North</button>
+<button onclick="filterGallery('ascot-vale',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid #ddd;cursor:pointer;background:#fff;color:#1a1a1a;">Ascot Vale</button>
+</div>
+<div class="gallery-grid" id="gallery-grid">Loading...</div>
+</div>
+<div id="tab-address" class="sheet">
+<div style="font-size:16px;font-weight:800;margin-bottom:16px;">Location & Address</div>
+<div class="location-card">
+<div class="location-card-header"><div class="location-name">St Albans</div><span class="location-badge">Location 1</span></div>
+<div class="ig2">
+<div><div class="fl">Street Address</div><input type="text" id="addr-street-st-albans" class="fi" placeholder="e.g. 123 Main Street"/></div>
+<div><div class="fl">Suburb</div><input type="text" id="addr-suburb-st-albans" class="fi" placeholder="St Albans"/></div>
+</div>
+<div class="ig3">
+<div><div class="fl">State</div><input type="text" id="addr-state-st-albans" class="fi" placeholder="VIC"/></div>
+<div><div class="fl">Postcode</div><input type="text" id="addr-postcode-st-albans" class="fi" placeholder="3021"/></div>
+<div><div class="fl">Phone</div><input type="text" id="addr-phone-st-albans" class="fi" placeholder="03 XXXX XXXX"/></div>
+</div>
+<div class="ig2">
+<div><div class="fl">Opening Hours</div><input type="text" id="addr-hours-st-albans" class="fi" placeholder="Mon-Sun: 11am - 10pm"/></div>
+<div><div class="fl">Google Maps Link</div><input type="text" id="addr-maps-st-albans" class="fi" placeholder="https://maps.google.com/..."/></div>
+</div>
+<div style="margin-top:12px;"><button class="btn-primary" onclick="saveAddress('st-albans')">Save St Albans</button></div>
+</div>
+<div class="location-card">
+<div class="location-card-header"><div class="location-name">Fitzroy North</div><span class="location-badge">Location 2</span></div>
+<div class="ig2">
+<div><div class="fl">Street Address</div><input type="text" id="addr-street-fitzroy-north" class="fi" placeholder="e.g. 456 High Street"/></div>
+<div><div class="fl">Suburb</div><input type="text" id="addr-suburb-fitzroy-north" class="fi" placeholder="Fitzroy North"/></div>
+</div>
+<div class="ig3">
+<div><div class="fl">State</div><input type="text" id="addr-state-fitzroy-north" class="fi" placeholder="VIC"/></div>
+<div><div class="fl">Postcode</div><input type="text" id="addr-postcode-fitzroy-north" class="fi" placeholder="3068"/></div>
+<div><div class="fl">Phone</div><input type="text" id="addr-phone-fitzroy-north" class="fi" placeholder="03 XXXX XXXX"/></div>
+</div>
+<div class="ig2">
+<div><div class="fl">Opening Hours</div><input type="text" id="addr-hours-fitzroy-north" class="fi" placeholder="Mon-Sun: 11am - 10pm"/></div>
+<div><div class="fl">Google Maps Link</div><input type="text" id="addr-maps-fitzroy-north" class="fi" placeholder="https://maps.google.com/..."/></div>
+</div>
+<div style="margin-top:12px;"><button class="btn-primary" onclick="saveAddress('fitzroy-north')">Save Fitzroy North</button></div>
+</div>
+<div class="location-card">
+<div class="location-card-header"><div class="location-name">Ascot Vale</div><span class="location-badge">Location 3</span></div>
+<div class="ig2">
+<div><div class="fl">Street Address</div><input type="text" id="addr-street-ascot-vale" class="fi" placeholder="e.g. 789 Union Road"/></div>
+<div><div class="fl">Suburb</div><input type="text" id="addr-suburb-ascot-vale" class="fi" placeholder="Ascot Vale"/></div>
+</div>
+<div class="ig3">
+<div><div class="fl">State</div><input type="text" id="addr-state-ascot-vale" class="fi" placeholder="VIC"/></div>
+<div><div class="fl">Postcode</div><input type="text" id="addr-postcode-ascot-vale" class="fi" placeholder="3032"/></div>
+<div><div class="fl">Phone</div><input type="text" id="addr-phone-ascot-vale" class="fi" placeholder="03 XXXX XXXX"/></div>
+</div>
+<div class="ig2">
+<div><div class="fl">Opening Hours</div><input type="text" id="addr-hours-ascot-vale" class="fi" placeholder="Mon-Sun: 11am - 10pm"/></div>
+<div><div class="fl">Google Maps Link</div><input type="text" id="addr-maps-ascot-vale" class="fi" placeholder="https://maps.google.com/..."/></div>
+</div>
+<div style="margin-top:12px;"><button class="btn-primary" onclick="saveAddress('ascot-vale')">Save Ascot Vale</button></div>
+</div>
+</div>
+<div id="tab-footer" class="sheet">
+<div style="font-size:16px;font-weight:800;margin-bottom:16px;">Footer Settings</div>
+<div class="card">
+<div class="card-title">Footer Text</div>
+<div style="margin-bottom:10px;"><div class="fl">Tagline</div><textarea id="footer-tagline" class="fi" rows="3" placeholder="e.g. Authentic kebabs and burgers served fresh across Melbourne."></textarea></div>
+<div class="ig2">
+<div><div class="fl">Copyright Text</div><input type="text" id="footer-copyright" class="fi" placeholder="e.g. 2025 Angie's Kebabs and Burgers"/></div>
+<div><div class="fl">ABN (optional)</div><input type="text" id="footer-abn" class="fi" placeholder="e.g. ABN: 12 345 678 901"/></div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">Social Media Links</div>
+<div class="social-row"><div class="social-icon" style="background:#1877f2;">F</div><div style="flex:1;"><div class="fl">Facebook URL</div><input type="text" id="footer-facebook" class="fi" placeholder="https://facebook.com/angiesknb"/></div></div>
+<div class="social-row"><div class="social-icon" style="background:#e1306c;color:#fff;">In</div><div style="flex:1;"><div class="fl">Instagram URL</div><input type="text" id="footer-instagram" class="fi" placeholder="https://instagram.com/angiesknb"/></div></div>
+<div class="social-row"><div class="social-icon" style="background:#ff0000;color:#fff;">YT</div><div style="flex:1;"><div class="fl">YouTube URL</div><input type="text" id="footer-youtube" class="fi" placeholder="https://youtube.com/@angiesknb"/></div></div>
+<div class="social-row"><div class="social-icon" style="background:#000;color:#fff;">TK</div><div style="flex:1;"><div class="fl">TikTok URL</div><input type="text" id="footer-tiktok" class="fi" placeholder="https://tiktok.com/@angiesknb"/></div></div>
+</div>
+<div class="card">
+<div class="card-title">Delivery Platforms</div>
+<div class="ig2">
+<div><div class="fl">Uber Eats URL</div><input type="text" id="footer-ubereats" class="fi" placeholder="https://ubereats.com/..."/></div>
+<div><div class="fl">DoorDash URL</div><input type="text" id="footer-doordash" class="fi" placeholder="https://doordash.com/..."/></div>
+</div>
+<div class="ig2" style="margin-top:10px;">
+<div><div class="fl">MenuLog URL</div><input type="text" id="footer-menulog" class="fi" placeholder="https://menulog.com.au/..."/></div>
+<div><div class="fl">Other Platform</div><input type="text" id="footer-other" class="fi" placeholder="Optional"/></div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">Quick Links</div>
+<div id="quick-links-list"></div>
+<button onclick="addQuickLink()" style="padding:8px 16px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;">+ Add Link</button>
+</div>
+<div style="margin-bottom:30px;"><button class="btn-primary" onclick="saveFooter()" style="padding:13px 30px;font-size:14px;">Save Footer Settings</button></div>
+</div>
+<div id="tab-add-item" class="sheet">
+<div style="font-size:16px;font-weight:800;margin-bottom:16px;" id="form-title">Add New Menu Item</div>
+<input type="hidden" id="edit-id"/>
+<div class="card">
+<div class="card-title">Basic Info</div>
+<div class="ig2">
+<div><div class="fl">Item Name *</div><input type="text" id="item-name" class="fi" placeholder="e.g. Shish Kebab"/></div>
+<div><div class="fl">Category *</div><input type="text" id="item-category" class="fi" placeholder="e.g. Kebabs" list="cat-list"/><datalist id="cat-list"></datalist></div>
+</div>
+<div class="ig2">
+<div><div class="fl">Price ($) *</div><input type="number" id="item-price" class="fi" placeholder="0.00" step="0.01" min="0"/></div>
+<div><div class="fl">Available</div><select id="item-available" class="fi"><option value="true">Yes</option><option value="false">No</option></select></div>
+</div>
+<div><div class="fl">Description</div><textarea id="item-desc" class="fi"></textarea></div>
+</div>
+<div class="card">
+<div class="card-title">Image</div>
+<div class="img-upload-zone" onclick="document.getElementById('img-file').click()">
+<img id="img-preview" class="img-preview" style="display:none"/>
+<div id="upload-placeholder"><div style="font-size:36px;margin-bottom:8px">📷</div><div style="font-size:13px;font-weight:700;color:#555">Click to upload</div><div style="font-size:11px;color:#aaa;margin-top:4px">JPG, PNG, WEBP — Max 5MB</div></div>
+<div id="upload-progress" style="display:none;font-size:12px;color:#888;margin-top:8px;">Uploading...</div>
+</div>
+<input type="file" id="img-file" accept="image/*" style="display:none" onchange="handleImageUpload(event)"/>
+<input type="hidden" id="item-image-url"/>
+</div>
+<div class="card">
+<div class="card-title">Ingredients</div>
+<input type="text" id="item-ingredients" class="fi" placeholder="e.g. Lamb, Rice, Garlic sauce"/>
+</div>
+<div class="card">
+<div class="card-title">Customisation Options</div>
+<div id="addons-list"></div>
+<button onclick="addAddonRow()" style="padding:8px 16px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;">+ Add Option</button>
+</div>
+<div style="display:flex;gap:10px;margin-bottom:30px;">
+<button class="btn-primary" onclick="saveItem()" style="flex:1;padding:13px;">Save Item</button>
+<button onclick="showTab('menu',null)" style="padding:13px 20px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
+</div>
+</div>
+</div>
+</div>
 <script>
 const SUPABASE_URL="https://egyxvzjfqnpcfdnwusxn.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVneXh2empmcW5wY2Zkbnd1c3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODMyMjUsImV4cCI6MjA4OTg1OTIyNX0.modzK6AhGyo3YBjZtDl2lK4tFQuj0B3KsDFIf2n-was";
 const{createClient}=supabase;
 const db=createClient(SUPABASE_URL,SUPABASE_KEY);
+let currentUser=null,allMenuItems=[],addonCount=0,allGalleryItems=[],gallerySelectedFile=null,quickLinkCount=0;
 
-let currentUser=null;
-let allMenuItems=[];
-let addonCount=0;
-
-// ===== LOGIN =====
 async function doLogin(){
-  const email=document.getElementById('login-email').value.trim();
-  const pass=document.getElementById('login-pass').value;
-  if(!email||!pass)return;
-
-  const{data,error}=await db.from('staff').select('*').eq('email',email).eq('password',pass).eq('active',true).single();
-  if(error||!data){
-    document.getElementById('err-msg').style.display='block';
-    return;
-  }
-
-  currentUser=data;
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('topbar-user').textContent=`${data.name} · ${data.role}`;
-  buildNav();
-  loadInitial();
+const email=document.getElementById('login-email').value.trim();
+const pass=document.getElementById('login-pass').value;
+if(!email||!pass)return;
+const{data,error}=await db.from('staff').select('*').eq('email',email).eq('password',pass).eq('active',true).single();
+if(error||!data){document.getElementById('err-msg').style.display='block';return;}
+currentUser=data;
+document.getElementById('login-screen').style.display='none';
+document.getElementById('app').style.display='block';
+document.getElementById('topbar-user').textContent=data.name+' · '+data.role;
+buildNav();loadInitial();
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 });
 
 function doLogout(){
-  currentUser=null;
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('app').style.display='none';
-  document.getElementById('login-email').value='';
-  document.getElementById('login-pass').value='';
+currentUser=null;
+document.getElementById('login-screen').style.display='flex';
+document.getElementById('app').style.display='none';
+document.getElementById('login-email').value='';
+document.getElementById('login-pass').value='';
 }
 
 function hasPerm(perm){
-  if(!currentUser)return false;
-  if(currentUser.role==='owner')return true;
-  return currentUser.permissions?.[perm]===true;
+if(!currentUser)return false;
+if(currentUser.role==='owner')return true;
+if(['gallery','address','footer'].includes(perm))return currentUser.permissions?.[perm]!==false;
+return currentUser.permissions?.[perm]===true;
 }
 
 function buildNav(){
-  const tabs=[];
-  if(hasPerm('dashboard'))tabs.push({id:'dashboard',label:'📊 Dashboard'});
-  if(hasPerm('menu'))tabs.push({id:'menu',label:'🍔 Menu'});
-  if(hasPerm('orders'))tabs.push({id:'orders',label:'📋 Orders'});
-  if(hasPerm('pages'))tabs.push({id:'pages',label:'📄 Pages'});
-  if(hasPerm('staff'))tabs.push({id:'staff',label:'👥 Staff'});
-
-  const nav=document.getElementById('nav-tabs');
-  nav.innerHTML=tabs.map((t,i)=>`<button class="tab${i===0?' active':''}" onclick="showTab('${t.id}',this)">${t.label}</button>`).join('');
-
-  // Show first tab
-  if(tabs.length>0) showTab(tabs[0].id,null);
+const tabs=[];
+if(hasPerm('dashboard'))tabs.push({id:'dashboard',label:'Dashboard'});
+if(hasPerm('menu'))tabs.push({id:'menu',label:'Menu'});
+if(hasPerm('orders'))tabs.push({id:'orders',label:'Orders'});
+if(hasPerm('pages'))tabs.push({id:'pages',label:'Pages'});
+if(hasPerm('gallery'))tabs.push({id:'gallery',label:'Gallery'});
+if(hasPerm('address'))tabs.push({id:'address',label:'Address'});
+if(hasPerm('footer'))tabs.push({id:'footer',label:'Footer'});
+if(hasPerm('staff'))tabs.push({id:'staff',label:'Staff'});
+const nav=document.getElementById('nav-tabs');
+nav.innerHTML=tabs.map((t,i)=>'<button class="tab'+(i===0?' active':'')+'" onclick="showTab(\''+t.id+'\',this)">'+t.label+'</button>').join('');
+if(tabs.length>0)showTab(tabs[0].id,null);
 }
 
 function loadInitial(){
-  if(hasPerm('dashboard'))loadDashboard();
-  if(hasPerm('menu'))loadMenuItems();
-  if(hasPerm('orders'))loadOrders();
-  if(hasPerm('pages'))loadPages();
-  if(hasPerm('staff'))loadStaff();
+if(hasPerm('dashboard'))loadDashboard();
+if(hasPerm('menu'))loadMenuItems();
+if(hasPerm('orders'))loadOrders();
+if(hasPerm('pages'))loadPages();
+if(hasPerm('gallery'))loadGallery();
+if(hasPerm('address'))loadAddresses();
+if(hasPerm('footer'))loadFooter();
+if(hasPerm('staff'))loadStaff();
 }
 
 function showTab(name,btn){
-  document.querySelectorAll('.sheet').forEach(e=>e.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
-  const sheet=document.getElementById('tab-'+name);
-  if(sheet)sheet.classList.add('active');
-  if(btn)btn.classList.add('active');
-  else{const b=document.querySelector(`.tab[onclick*="'${name}'"]`);if(b)b.classList.add('active');}
-  if(name==='orders')loadOrders();
-  if(name==='dashboard')loadDashboard();
-  if(name==='menu')loadMenuItems();
-  if(name==='pages')loadPages();
-  if(name==='staff')loadStaff();
+document.querySelectorAll('.sheet').forEach(e=>e.classList.remove('active'));
+document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
+const sheet=document.getElementById('tab-'+name);
+if(sheet)sheet.classList.add('active');
+if(btn)btn.classList.add('active');
+else{const b=document.querySelector('.tab[onclick*="\''+name+'\'"]');if(b)b.classList.add('active');}
 }
 
 function showToast(msg,isError=false){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast'+(isError?' error':'');t.style.display='block';
-  setTimeout(()=>t.style.display='none',3000);
+const t=document.getElementById('toast');
+t.textContent=msg;t.className='toast'+(isError?' error':'');t.style.display='block';
+setTimeout(()=>t.style.display='none',3000);
 }
 
-// ===== IMAGE =====
 async function handleImageUpload(e){
-  const file=e.target.files[0];if(!file)return;
-  if(file.size>5*1024*1024){showToast('Max 5MB!',true);return;}
-  document.getElementById('upload-progress').style.display='block';
-  document.getElementById('upload-placeholder').style.display='none';
-  const ext=file.name.split('.').pop();
-  const{error}=await db.storage.from('menu-images').upload(`menu/${Date.now()}.${ext}`,file,{upsert:true});
-  if(error){showToast('Upload failed',true);document.getElementById('upload-progress').style.display='none';document.getElementById('upload-placeholder').style.display='block';return;}
-  const fileName=`menu/${Date.now()}.${ext}`;
-  await db.storage.from('menu-images').upload(fileName,file,{upsert:true});
-  const{data:{publicUrl}}=db.storage.from('menu-images').getPublicUrl(fileName);
-  document.getElementById('item-image-url').value=publicUrl;
-  const p=document.getElementById('img-preview');p.src=publicUrl;p.style.display='block';
-  document.getElementById('upload-progress').style.display='none';
-  showToast('✅ Image uploaded!');
+const file=e.target.files[0];if(!file)return;
+if(file.size>5*1024*1024){showToast('Max 5MB!',true);return;}
+document.getElementById('upload-progress').style.display='block';
+document.getElementById('upload-placeholder').style.display='none';
+const ext=file.name.split('.').pop();
+const fileName='menu/'+Date.now()+'.'+ext;
+const{error}=await db.storage.from('menu-images').upload(fileName,file,{upsert:true});
+if(error){showToast('Upload failed',true);document.getElementById('upload-progress').style.display='none';document.getElementById('upload-placeholder').style.display='block';return;}
+const{data:{publicUrl}}=db.storage.from('menu-images').getPublicUrl(fileName);
+document.getElementById('item-image-url').value=publicUrl;
+const p=document.getElementById('img-preview');p.src=publicUrl;p.style.display='block';
+document.getElementById('upload-progress').style.display='none';
+showToast('Image uploaded!');
 }
 
-// ===== ADD-ONS =====
 function addAddonRow(name='',price=0){
-  addonCount++;
-  const div=document.createElement('div');
-  div.className='addon-row';div.id='addon-'+addonCount;
-  div.innerHTML=`<input type="text" class="fi" placeholder="Option name" value="${name}" style="flex:1"/><input type="number" class="fi price-input" placeholder="Price $" value="${price}" step="0.50" min="0"/><button class="rm-btn" onclick="document.getElementById('addon-${addonCount}').remove()">✕</button>`;
-  document.getElementById('addons-list').appendChild(div);
+addonCount++;
+const div=document.createElement('div');
+div.className='addon-row';div.id='addon-'+addonCount;
+div.innerHTML='<input type="text" class="fi" placeholder="Option name" value="'+name+'" style="flex:1"/><input type="number" class="fi price-input" placeholder="Price $" value="'+price+'" step="0.50" min="0"/><button class="rm-btn" onclick="document.getElementById(\'addon-'+addonCount+'\').remove()">X</button>';
+document.getElementById('addons-list').appendChild(div);
 }
 
 function getAddons(){
-  return [...document.querySelectorAll('#addons-list .addon-row')].map(row=>{
-    const inputs=row.querySelectorAll('input');
-    return{name:inputs[0].value.trim(),price:parseFloat(inputs[1].value)||0};
-  }).filter(a=>a.name);
+return[...document.querySelectorAll('#addons-list .addon-row')].map(row=>{
+const inputs=row.querySelectorAll('input');
+return{name:inputs[0].value.trim(),price:parseFloat(inputs[1].value)||0};
+}).filter(a=>a.name);
 }
 
-// ===== MENU =====
-function showAddItemForm(){
-  resetForm();
-  showTab('add-item',null);
-}
+function showAddItemForm(){resetForm();showTab('add-item',null);}
 
 async function saveItem(){
-  const name=document.getElementById('item-name').value.trim();
-  const category=document.getElementById('item-category').value.trim();
-  const price=parseFloat(document.getElementById('item-price').value);
-  if(!name||!category||!price){showToast('Name, Category, Price required!',true);return;}
-  const item={name,category,price,
-    description:document.getElementById('item-desc').value,
-    image_url:document.getElementById('item-image-url').value||null,
-    ingredients:document.getElementById('item-ingredients').value.split(',').map(s=>s.trim()).filter(Boolean),
-    addons:getAddons(),
-    available:document.getElementById('item-available').value==='true',
-  };
-  const editId=document.getElementById('edit-id').value;
-  const{error}=editId?await db.from('menu_items').update(item).eq('id',editId):await db.from('menu_items').insert(item);
-  if(error){showToast('Error: '+error.message,true);return;}
-  showToast('✅ Item saved!');
-  resetForm();loadMenuItems();
-  showTab('menu',null);
+const name=document.getElementById('item-name').value.trim();
+const category=document.getElementById('item-category').value.trim();
+const price=parseFloat(document.getElementById('item-price').value);
+if(!name||!category||!price){showToast('Name, Category, Price required!',true);return;}
+const item={name,category,price,
+description:document.getElementById('item-desc').value,
+image_url:document.getElementById('item-image-url').value||null,
+ingredients:document.getElementById('item-ingredients').value.split(',').map(s=>s.trim()).filter(Boolean),
+addons:getAddons(),
+available:document.getElementById('item-available').value==='true'};
+const editId=document.getElementById('edit-id').value;
+const{error}=editId?await db.from('menu_items').update(item).eq('id',editId):await db.from('menu_items').insert(item);
+if(error){showToast('Error: '+error.message,true);return;}
+showToast('Item saved!');resetForm();loadMenuItems();showTab('menu',null);
 }
 
 function resetForm(){
-  ['edit-id','item-name','item-category','item-price','item-desc','item-ingredients','item-image-url'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('item-available').value='true';
-  document.getElementById('img-preview').style.display='none';
-  document.getElementById('upload-placeholder').style.display='block';
-  document.getElementById('addons-list').innerHTML='';
-  document.getElementById('form-title').textContent='➕ Add New Menu Item';
-  addonCount=0;
+['edit-id','item-name','item-category','item-price','item-desc','item-ingredients','item-image-url'].forEach(id=>document.getElementById(id).value='');
+document.getElementById('item-available').value='true';
+document.getElementById('img-preview').style.display='none';
+document.getElementById('upload-placeholder').style.display='block';
+document.getElementById('addons-list').innerHTML='';
+document.getElementById('form-title').textContent='Add New Menu Item';
+addonCount=0;
 }
 
 async function loadMenuItems(){
-  const{data}=await db.from('menu_items').select('*').order('category');
-  if(!data)return;
-  allMenuItems=data;
-  const cats=[...new Set(data.map(i=>i.category))];
-  const catList=document.getElementById('cat-list');
-  const filterCat=document.getElementById('filter-cat');
-  if(catList)catList.innerHTML=cats.map(c=>`<option value="${c}">`).join('');
-  if(filterCat)filterCat.innerHTML='<option value="">All Categories</option>'+cats.map(c=>`<option value="${c}">${c}</option>`).join('');
-  if(document.getElementById('kpi-menu'))document.getElementById('kpi-menu').textContent=data.length;
-  renderMenuGrid(data);
+const{data}=await db.from('menu_items').select('*').order('category');
+if(!data)return;
+allMenuItems=data;
+const cats=[...new Set(data.map(i=>i.category))];
+const catList=document.getElementById('cat-list');
+const filterCat=document.getElementById('filter-cat');
+if(catList)catList.innerHTML=cats.map(c=>'<option value="'+c+'">').join('');
+if(filterCat)filterCat.innerHTML='<option value="">All Categories</option>'+cats.map(c=>'<option value="'+c+'">'+c+'</option>').join('');
+if(document.getElementById('kpi-menu'))document.getElementById('kpi-menu').textContent=data.length;
+renderMenuGrid(data);
 }
 
 function filterMenuItems(){
-  const cat=document.getElementById('filter-cat').value;
-  renderMenuGrid(cat?allMenuItems.filter(i=>i.category===cat):allMenuItems);
+const cat=document.getElementById('filter-cat').value;
+renderMenuGrid(cat?allMenuItems.filter(i=>i.category===cat):allMenuItems);
 }
 
 function renderMenuGrid(items){
-  const grid=document.getElementById('menu-grid');if(!grid)return;
-  if(!items.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No items</div>';return;}
-  const canEdit=hasPerm('menu');
-  grid.innerHTML=items.map(item=>`
-    <div class="menu-card">
-      ${item.image_url?`<img src="${item.image_url}" alt="${item.name}" loading="lazy"/>`:`<div class="menu-card-no-img">🍔</div>`}
-      <div class="menu-card-body">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
-          <div class="menu-card-name">${item.name}</div>
-          <span class="badge ${item.available?'badge-available':'badge-unavailable'}">${item.available?'Live':'Hidden'}</span>
-        </div>
-        <div class="menu-card-cat">${item.category}</div>
-        <div class="menu-card-price">$${item.price.toFixed(2)}</div>
-        <div class="menu-card-actions">
-          ${canEdit?`<button class="btn-success" onclick="editItem('${item.id}')">✏️ Edit</button>
-          <button class="btn-warning" onclick="toggleAvailable('${item.id}',${item.available})">${item.available?'Hide':'Show'}</button>
-          <button class="btn-danger" onclick="deleteItem('${item.id}')">🗑️</button>`:'<span style="font-size:11px;color:#aaa">View only</span>'}
-        </div>
-      </div>
-    </div>`).join('');
+const grid=document.getElementById('menu-grid');if(!grid)return;
+if(!items.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No items</div>';return;}
+const canEdit=hasPerm('menu');
+grid.innerHTML=items.map(item=>'<div class="menu-card">'+(item.image_url?'<img src="'+item.image_url+'" alt="'+item.name+'" loading="lazy"/>':'<div class="menu-card-no-img">🍔</div>')+'<div class="menu-card-body"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;"><div class="menu-card-name">'+item.name+'</div><span class="badge '+(item.available?'badge-available':'badge-unavailable')+'">'+(item.available?'Live':'Hidden')+'</span></div><div class="menu-card-cat">'+item.category+'</div><div class="menu-card-price">$'+item.price.toFixed(2)+'</div><div class="menu-card-actions">'+(canEdit?'<button class="btn-success" onclick="editItem(\''+item.id+'\')">Edit</button><button class="btn-warning" onclick="toggleAvailable(\''+item.id+'\','+item.available+')">'+(item.available?'Hide':'Show')+'</button><button class="btn-danger" onclick="deleteItem(\''+item.id+'\')">Delete</button>':'<span style="font-size:11px;color:#aaa">View only</span>')+'</div></div></div>').join('');
 }
 
 async function editItem(id){
-  const item=allMenuItems.find(i=>i.id===id);if(!item)return;
-  document.getElementById('edit-id').value=id;
-  document.getElementById('item-name').value=item.name;
-  document.getElementById('item-category').value=item.category;
-  document.getElementById('item-price').value=item.price;
-  document.getElementById('item-desc').value=item.description||'';
-  document.getElementById('item-ingredients').value=(item.ingredients||[]).join(', ');
-  document.getElementById('item-available').value=String(item.available);
-  document.getElementById('item-image-url').value=item.image_url||'';
-  if(item.image_url){document.getElementById('img-preview').src=item.image_url;document.getElementById('img-preview').style.display='block';document.getElementById('upload-placeholder').style.display='none';}
-  document.getElementById('addons-list').innerHTML='';addonCount=0;
-  (item.addons||[]).forEach(a=>addAddonRow(a.name,a.price));
-  document.getElementById('form-title').textContent='✏️ Edit: '+item.name;
-  showTab('add-item',null);
+const item=allMenuItems.find(i=>i.id===id);if(!item)return;
+document.getElementById('edit-id').value=id;
+document.getElementById('item-name').value=item.name;
+document.getElementById('item-category').value=item.category;
+document.getElementById('item-price').value=item.price;
+document.getElementById('item-desc').value=item.description||'';
+document.getElementById('item-ingredients').value=(item.ingredients||[]).join(', ');
+document.getElementById('item-available').value=String(item.available);
+document.getElementById('item-image-url').value=item.image_url||'';
+if(item.image_url){document.getElementById('img-preview').src=item.image_url;document.getElementById('img-preview').style.display='block';document.getElementById('upload-placeholder').style.display='none';}
+document.getElementById('addons-list').innerHTML='';addonCount=0;
+(item.addons||[]).forEach(a=>addAddonRow(a.name,a.price));
+document.getElementById('form-title').textContent='Edit: '+item.name;
+showTab('add-item',null);
 }
 
 async function toggleAvailable(id,current){
-  await db.from('menu_items').update({available:!current}).eq('id',id);
-  showToast(current?'Item hidden':'Item visible');loadMenuItems();
+await db.from('menu_items').update({available:!current}).eq('id',id);
+showToast(current?'Item hidden':'Item visible');loadMenuItems();
 }
 
 async function deleteItem(id){
-  if(!confirm('Delete this item?'))return;
-  await db.from('menu_items').delete().eq('id',id);
-  showToast('Deleted');loadMenuItems();
+if(!confirm('Delete this item?'))return;
+await db.from('menu_items').delete().eq('id',id);
+showToast('Deleted');loadMenuItems();
 }
 
-// ===== ORDERS =====
 async function loadOrders(){
-  const filter=document.getElementById('order-filter')?document.getElementById('order-filter').value:'';
-  let query=db.from('orders').select('*').order('created_at',{ascending:false}).limit(50);
-  if(filter)query=query.eq('status',filter);
-  const{data}=await query;if(!data)return;
-  const grid=document.getElementById('order-grid');if(!grid)return;
-  if(!data.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No orders</div>';return;}
-  const canUpdate=hasPerm('orders');
-  grid.innerHTML=data.map(order=>{
-    const items=Array.isArray(order.items)?order.items:[];
-    return`<div class="order-card">
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-        <div><div style="font-size:14px;font-weight:900;">${order.order_number||'#'+order.id.slice(0,6)}</div>
-        <div style="font-size:11px;color:#888;">🕐 ${getTimeAgo(order.created_at)}</div></div>
-        <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#f0f0f0">${order.order_type==='pickup'?'🏃 Pickup':'🛵 Delivery'}</span>
-      </div>
-      <div style="font-size:12px;color:#555;margin-bottom:8px;line-height:1.8">${items.map(i=>`${i.name} × ${i.qty}`).join('<br>')}</div>
-      <div style="font-size:15px;font-weight:900;margin-bottom:10px;">$${parseFloat(order.total).toFixed(2)}</div>
-      ${canUpdate?`<select style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid ${statusColor(order.status)};font-size:12px;font-weight:700;cursor:pointer;color:${statusColor(order.status)}" onchange="updateOrderStatus('${order.id}',this)">
-        <option value="pending" ${order.status==='pending'?'selected':''}>⏳ Pending</option>
-        <option value="processing" ${order.status==='processing'?'selected':''}>🔄 On Process</option>
-        <option value="ontheway" ${order.status==='ontheway'?'selected':''}>🛵 On The Way</option>
-        <option value="delivered" ${order.status==='delivered'?'selected':''}>✅ Delivered</option>
-        <option value="cancelled" ${order.status==='cancelled'?'selected':''}>❌ Cancelled</option>
-      </select>`:`<span style="font-size:12px;font-weight:700;color:${statusColor(order.status)}">${order.status}</span>`}
-    </div>`;
-  }).join('');
+const filter=document.getElementById('order-filter')?document.getElementById('order-filter').value:'';
+let query=db.from('orders').select('*').order('created_at',{ascending:false}).limit(50);
+if(filter)query=query.eq('status',filter);
+const{data}=await query;if(!data)return;
+const grid=document.getElementById('order-grid');if(!grid)return;
+if(!data.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No orders</div>';return;}
+const canUpdate=hasPerm('orders');
+grid.innerHTML=data.map(order=>{
+const items=Array.isArray(order.items)?order.items:[];
+return'<div class="order-card"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div><div style="font-size:14px;font-weight:900;">'+(order.order_number||'#'+order.id.slice(0,6))+'</div><div style="font-size:11px;color:#888;">'+getTimeAgo(order.created_at)+'</div></div><span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#f0f0f0">'+(order.order_type==='pickup'?'Pickup':'Delivery')+'</span></div><div style="font-size:12px;color:#555;margin-bottom:8px;line-height:1.8">'+items.map(i=>i.name+' x '+i.qty).join('<br>')+'</div><div style="font-size:15px;font-weight:900;margin-bottom:10px;">$'+parseFloat(order.total).toFixed(2)+'</div>'+(canUpdate?'<select style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid '+statusColor(order.status)+';font-size:12px;font-weight:700;cursor:pointer;color:'+statusColor(order.status)+'" onchange="updateOrderStatus(\''+order.id+'\',this)"><option value="pending" '+(order.status==='pending'?'selected':'')+'>Pending</option><option value="processing" '+(order.status==='processing'?'selected':'')+'>On Process</option><option value="ontheway" '+(order.status==='ontheway'?'selected':'')+'>On The Way</option><option value="delivered" '+(order.status==='delivered'?'selected':'')+'>Delivered</option><option value="cancelled" '+(order.status==='cancelled'?'selected':'')+'>Cancelled</option></select>':'<span style="font-size:12px;font-weight:700;color:'+statusColor(order.status)+'">'+order.status+'</span>')+'</div>';
+}).join('');
 }
 
 async function updateOrderStatus(id,sel){
-  await db.from('orders').update({status:sel.value,updated_at:new Date().toISOString()}).eq('id',id);
-  sel.style.borderColor=statusColor(sel.value);sel.style.color=statusColor(sel.value);
-  showToast('✅ Status updated!');loadDashboard();
+await db.from('orders').update({status:sel.value,updated_at:new Date().toISOString()}).eq('id',id);
+sel.style.borderColor=statusColor(sel.value);sel.style.color=statusColor(sel.value);
+showToast('Status updated!');loadDashboard();
 }
 
 function statusColor(s){return{pending:'#f39c12',processing:'#3498db',ontheway:'#9b59b6',delivered:'#2ecc71',cancelled:'#e74c3c'}[s]||'#95a5a6';}
 function getTimeAgo(d){const diff=Math.floor((Date.now()-new Date(d))/1000);if(diff<60)return diff+'s ago';if(diff<3600)return Math.floor(diff/60)+'m ago';if(diff<86400)return Math.floor(diff/3600)+'h ago';return Math.floor(diff/86400)+'d ago';}
 
-// ===== DASHBOARD =====
 async function loadDashboard(){
-  const{data:orders}=await db.from('orders').select('*').order('created_at',{ascending:false});
-  if(!orders)return;
-  const total=orders.reduce((s,o)=>s+parseFloat(o.total||0),0);
-  const pending=orders.filter(o=>o.status==='pending').length;
-  if(document.getElementById('kpi-orders'))document.getElementById('kpi-orders').textContent=orders.length;
-  if(document.getElementById('kpi-revenue'))document.getElementById('kpi-revenue').textContent='$'+Math.round(total).toLocaleString();
-  if(document.getElementById('kpi-pending'))document.getElementById('kpi-pending').textContent=pending;
-  const rl=document.getElementById('recent-orders-list');
-  if(rl)rl.innerHTML=orders.slice(0,5).map(o=>`
-    <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f5f5f5;">
-      <div><div style="font-size:13px;font-weight:700;">${o.order_number||'#'+o.id.slice(0,6)}</div>
-      <div style="font-size:11px;color:#888;">${getTimeAgo(o.created_at)} · ${o.order_type}</div></div>
-      <div style="display:flex;gap:10px;align-items:center;">
-        <span style="font-size:13px;font-weight:700;">$${parseFloat(o.total).toFixed(2)}</span>
-        <span style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:${statusColor(o.status)}22;color:${statusColor(o.status)}">${o.status}</span>
-      </div>
-    </div>`).join('')||'<div style="color:#aaa;padding:20px;text-align:center">No orders yet</div>';
-  const ss=document.getElementById('status-summary');
-  if(ss)ss.innerHTML=['pending','processing','ontheway','delivered','cancelled'].map(s=>`
-    <div style="background:#f5f5f5;border-radius:10px;padding:10px 16px;text-align:center;min-width:90px;">
-      <div style="font-size:18px;font-weight:900;color:${statusColor(s)}">${orders.filter(o=>o.status===s).length}</div>
-      <div style="font-size:11px;color:#888">${s==='ontheway'?'On The Way':s.charAt(0).toUpperCase()+s.slice(1)}</div>
-    </div>`).join('');
-
-  db.channel('orders-rt').on('postgres_changes',{event:'INSERT',schema:'public',table:'orders'},()=>{
-    loadDashboard();loadOrders();showToast('🔔 New order!');
-  }).subscribe();
+const{data:orders}=await db.from('orders').select('*').order('created_at',{ascending:false});
+if(!orders)return;
+const total=orders.reduce((s,o)=>s+parseFloat(o.total||0),0);
+const pending=orders.filter(o=>o.status==='pending').length;
+if(document.getElementById('kpi-orders'))document.getElementById('kpi-orders').textContent=orders.length;
+if(document.getElementById('kpi-revenue'))document.getElementById('kpi-revenue').textContent='$'+Math.round(total).toLocaleString();
+if(document.getElementById('kpi-pending'))document.getElementById('kpi-pending').textContent=pending;
+const rl=document.getElementById('recent-orders-list');
+if(rl)rl.innerHTML=orders.slice(0,5).map(o=>'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f5f5f5;"><div><div style="font-size:13px;font-weight:700;">'+(o.order_number||'#'+o.id.slice(0,6))+'</div><div style="font-size:11px;color:#888;">'+getTimeAgo(o.created_at)+' · '+o.order_type+'</div></div><div style="display:flex;gap:10px;align-items:center;"><span style="font-size:13px;font-weight:700;">$'+parseFloat(o.total).toFixed(2)+'</span><span style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:'+statusColor(o.status)+'22;color:'+statusColor(o.status)+'">'+o.status+'</span></div></div>').join('')||'<div style="color:#aaa;padding:20px;text-align:center">No orders yet</div>';
+const ss=document.getElementById('status-summary');
+if(ss)ss.innerHTML=['pending','processing','ontheway','delivered','cancelled'].map(s=>'<div style="background:#f5f5f5;border-radius:10px;padding:10px 16px;text-align:center;min-width:90px;"><div style="font-size:18px;font-weight:900;color:'+statusColor(s)+'">'+orders.filter(o=>o.status===s).length+'</div><div style="font-size:11px;color:#888">'+(s==='ontheway'?'On The Way':s.charAt(0).toUpperCase()+s.slice(1))+'</div></div>').join('');
+db.channel('orders-rt').on('postgres_changes',{event:'INSERT',schema:'public',table:'orders'},()=>{loadDashboard();loadOrders();showToast('New order!');}).subscribe();
 }
 
-// ===== PAGES =====
 async function loadPages(){
-  const{data}=await db.from('pages').select('*').order('sort_order');if(!data)return;
-  const list=document.getElementById('pages-list');if(!list)return;
-  if(!data.length){list.innerHTML='<div style="padding:40px;text-align:center;color:#aaa">No pages yet</div>';return;}
-  list.innerHTML=data.map(p=>`
-    <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;">
-      <div>
-        <div style="font-size:14px;font-weight:700;">${p.title}</div>
-        <div style="font-size:12px;color:#888;margin-top:2px;">/${p.slug} · <span style="color:${p.show_in_nav?'#2d6a4f':'#c0392b'}">${p.show_in_nav?'Visible':'Hidden'}</span></div>
-        <div style="font-size:12px;color:#aaa;margin-top:3px;">${(p.content||'').slice(0,80)}${(p.content||'').length>80?'...':''}</div>
-      </div>
-      <div style="display:flex;gap:6px;flex-shrink:0;margin-left:12px;">
-        <button class="btn-success" onclick="editPage('${p.id}')">✏️</button>
-        <button class="btn-danger" onclick="deletePage('${p.id}','${p.slug}')">🗑️</button>
-      </div>
-    </div>`).join('');
+const{data}=await db.from('pages').select('*').order('sort_order');if(!data)return;
+const list=document.getElementById('pages-list');if(!list)return;
+if(!data.length){list.innerHTML='<div style="padding:40px;text-align:center;color:#aaa">No pages yet</div>';return;}
+list.innerHTML=data.map(p=>'<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;"><div><div style="font-size:14px;font-weight:700;">'+p.title+'</div><div style="font-size:12px;color:#888;margin-top:2px;">/'+p.slug+' · <span style="color:'+(p.show_in_nav?'#2d6a4f':'#c0392b')+'">'+(p.show_in_nav?'Visible':'Hidden')+'</span></div><div style="font-size:12px;color:#aaa;margin-top:3px;">'+(p.content||'').slice(0,80)+((p.content||'').length>80?'...':'')+'</div></div><div style="display:flex;gap:6px;flex-shrink:0;margin-left:12px;"><button class="btn-success" onclick="editPage(\''+p.id+'\')">Edit</button><button class="btn-danger" onclick="deletePage(\''+p.id+'\',\''+p.slug+'\')">Delete</button></div></div>').join('');
 }
 
 function showAddPageForm(){
-  document.getElementById('add-page-form').style.display='block';
-  ['page-edit-id','page-title','page-slug','page-content','page-image'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('page-nav').value='true';document.getElementById('page-order').value='0';
-  document.getElementById('page-form-title').textContent='Add New Page';
-  window.scrollTo(0,0);
+document.getElementById('add-page-form').style.display='block';
+['page-edit-id','page-title','page-slug','page-content','page-image'].forEach(id=>document.getElementById(id).value='');
+document.getElementById('page-nav').value='true';document.getElementById('page-order').value='0';
+document.getElementById('page-form-title').textContent='Add New Page';
+window.scrollTo(0,0);
 }
 
 async function savePage(){
-  const title=document.getElementById('page-title').value.trim();
-  const slug=document.getElementById('page-slug').value.trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
-  if(!title||!slug){showToast('Title and Slug required!',true);return;}
-  const pd={title,slug,content:document.getElementById('page-content').value,image_url:document.getElementById('page-image').value||null,show_in_nav:document.getElementById('page-nav').value==='true',sort_order:+document.getElementById('page-order').value||0};
-  const editId=document.getElementById('page-edit-id').value;
-  const{error}=editId?await db.from('pages').update(pd).eq('id',editId):await db.from('pages').insert(pd);
-  if(error){showToast('Error: '+error.message,true);return;}
-  showToast('✅ Page saved!');document.getElementById('add-page-form').style.display='none';loadPages();
+const title=document.getElementById('page-title').value.trim();
+const slug=document.getElementById('page-slug').value.trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+if(!title||!slug){showToast('Title and Slug required!',true);return;}
+const pd={title,slug,content:document.getElementById('page-content').value,image_url:document.getElementById('page-image').value||null,show_in_nav:document.getElementById('page-nav').value==='true',sort_order:+document.getElementById('page-order').value||0};
+const editId=document.getElementById('page-edit-id').value;
+const{error}=editId?await db.from('pages').update(pd).eq('id',editId):await db.from('pages').insert(pd);
+if(error){showToast('Error: '+error.message,true);return;}
+showToast('Page saved!');document.getElementById('add-page-form').style.display='none';loadPages();
 }
 
 async function editPage(id){
-  const{data}=await db.from('pages').select('*').eq('id',id).single();if(!data)return;
-  document.getElementById('page-edit-id').value=id;document.getElementById('page-title').value=data.title;
-  document.getElementById('page-slug').value=data.slug;document.getElementById('page-content').value=data.content||'';
-  document.getElementById('page-image').value=data.image_url||'';document.getElementById('page-nav').value=String(data.show_in_nav);
-  document.getElementById('page-order').value=data.sort_order||0;document.getElementById('page-form-title').textContent='✏️ Edit: '+data.title;
-  document.getElementById('add-page-form').style.display='block';window.scrollTo(0,0);
+const{data}=await db.from('pages').select('*').eq('id',id).single();if(!data)return;
+document.getElementById('page-edit-id').value=id;document.getElementById('page-title').value=data.title;
+document.getElementById('page-slug').value=data.slug;document.getElementById('page-content').value=data.content||'';
+document.getElementById('page-image').value=data.image_url||'';document.getElementById('page-nav').value=String(data.show_in_nav);
+document.getElementById('page-order').value=data.sort_order||0;document.getElementById('page-form-title').textContent='Edit: '+data.title;
+document.getElementById('add-page-form').style.display='block';window.scrollTo(0,0);
 }
 
 async function deletePage(id,slug){
-  if(slug==='home'){showToast('Home cannot be deleted!',true);return;}
-  if(!confirm('Delete this page?'))return;
-  await db.from('pages').delete().eq('id',id);showToast('Deleted');loadPages();
+if(slug==='home'){showToast('Home cannot be deleted!',true);return;}
+if(!confirm('Delete this page?'))return;
+await db.from('pages').delete().eq('id',id);showToast('Deleted');loadPages();
 }
 
-// ===== STAFF =====
 async function loadStaff(){
-  const{data}=await db.from('staff').select('*').order('created_at');if(!data)return;
-  const list=document.getElementById('staff-list');if(!list)return;
-  list.innerHTML=data.map(s=>`
-    <div class="staff-card">
-      <div style="flex:1;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-          <div style="font-size:14px;font-weight:800;">${s.name}</div>
-          <span class="role-badge role-${s.role}">${s.role}</span>
-          ${!s.active?'<span class="badge badge-unavailable">Inactive</span>':''}
-        </div>
-        <div style="font-size:12px;color:#888;margin-bottom:8px;">${s.email}</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          ${Object.entries(s.permissions||{}).filter(([,v])=>v).map(([k])=>`<span style="background:#e8f4fd;color:#0c5460;border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700">${k}</span>`).join('')}
-        </div>
-      </div>
-      ${s.role!=='owner'?`<div style="display:flex;gap:6px;flex-shrink:0;margin-left:12px;">
-        <button class="btn-success" onclick="editStaff('${s.id}')">✏️ Edit</button>
-        <button class="btn-warning" onclick="toggleStaffActive('${s.id}',${s.active})">${s.active?'Disable':'Enable'}</button>
-        <button class="btn-danger" onclick="deleteStaff('${s.id}')">🗑️</button>
-      </div>`:'<span style="font-size:11px;color:#aaa">Owner account</span>'}
-    </div>`).join('');
+const{data}=await db.from('staff').select('*').order('created_at');if(!data)return;
+const list=document.getElementById('staff-list');if(!list)return;
+list.innerHTML=data.map(s=>'<div class="staff-card"><div style="flex:1;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><div style="font-size:14px;font-weight:800;">'+s.name+'</div><span class="role-badge role-'+s.role+'">'+s.role+'</span>'+(!s.active?'<span class="badge badge-unavailable">Inactive</span>':'')+'</div><div style="font-size:12px;color:#888;margin-bottom:8px;">'+s.email+'</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+Object.entries(s.permissions||{}).filter(([,v])=>v).map(([k])=>'<span style="background:#e8f4fd;color:#0c5460;border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700">'+k+'</span>').join('')+'</div></div>'+(s.role!=='owner'?'<div style="display:flex;gap:6px;flex-shrink:0;margin-left:12px;"><button class="btn-success" onclick="editStaff(\''+s.id+'\')">Edit</button><button class="btn-warning" onclick="toggleStaffActive(\''+s.id+'\','+s.active+')">'+(s.active?'Disable':'Enable')+'</button><button class="btn-danger" onclick="deleteStaff(\''+s.id+'\')">Delete</button></div>':'<span style="font-size:11px;color:#aaa">Owner account</span>')+'</div>').join('');
 }
 
 async function saveStaff(){
-  const name=document.getElementById('staff-name').value.trim();
-  const email=document.getElementById('staff-email').value.trim();
-  const pass=document.getElementById('staff-pass').value;
-  if(!name||!email||!pass){showToast('All fields required!',true);return;}
-  const permissions={
-    orders:document.getElementById('perm-orders').checked,
-    menu:document.getElementById('perm-menu').checked,
-    pages:document.getElementById('perm-pages').checked,
-    dashboard:document.getElementById('perm-dashboard').checked,
-  };
-  const staffData={name,email,password:pass,role:'staff',permissions,active:true};
-  const editId=document.getElementById('staff-edit-id').value;
-  const{error}=editId?await db.from('staff').update(staffData).eq('id',editId):await db.from('staff').insert(staffData);
-  if(error){showToast('Error: '+error.message,true);return;}
-  showToast('✅ Staff saved!');
-  document.getElementById('add-staff-form').style.display='none';
-  ['staff-edit-id','staff-name','staff-email','staff-pass'].forEach(id=>document.getElementById(id).value='');
-  loadStaff();
+const name=document.getElementById('staff-name').value.trim();
+const email=document.getElementById('staff-email').value.trim();
+const pass=document.getElementById('staff-pass').value;
+if(!name||!email||!pass){showToast('All fields required!',true);return;}
+const permissions={orders:document.getElementById('perm-orders').checked,menu:document.getElementById('perm-menu').checked,pages:document.getElementById('perm-pages').checked,dashboard:document.getElementById('perm-dashboard').checked};
+const staffData={name,email,password:pass,role:'staff',permissions,active:true};
+const editId=document.getElementById('staff-edit-id').value;
+const{error}=editId?await db.from('staff').update(staffData).eq('id',editId):await db.from('staff').insert(staffData);
+if(error){showToast('Error: '+error.message,true);return;}
+showToast('Staff saved!');
+document.getElementById('add-staff-form').style.display='none';
+['staff-edit-id','staff-name','staff-email','staff-pass'].forEach(id=>document.getElementById(id).value='');
+loadStaff();
 }
 
 async function editStaff(id){
-  const{data}=await db.from('staff').select('*').eq('id',id).single();if(!data)return;
-  document.getElementById('staff-edit-id').value=id;
-  document.getElementById('staff-name').value=data.name;
-  document.getElementById('staff-email').value=data.email;
-  document.getElementById('staff-pass').value=data.password;
-  document.getElementById('perm-orders').checked=data.permissions?.orders||false;
-  document.getElementById('perm-menu').checked=data.permissions?.menu||false;
-  document.getElementById('perm-pages').checked=data.permissions?.pages||false;
-  document.getElementById('perm-dashboard').checked=data.permissions?.dashboard||false;
-  document.getElementById('add-staff-form').style.display='block';
-  window.scrollTo(0,0);
+const{data}=await db.from('staff').select('*').eq('id',id).single();if(!data)return;
+document.getElementById('staff-edit-id').value=id;
+document.getElementById('staff-name').value=data.name;
+document.getElementById('staff-email').value=data.email;
+document.getElementById('staff-pass').value=data.password;
+document.getElementById('perm-orders').checked=data.permissions?.orders||false;
+document.getElementById('perm-menu').checked=data.permissions?.menu||false;
+document.getElementById('perm-pages').checked=data.permissions?.pages||false;
+document.getElementById('perm-dashboard').checked=data.permissions?.dashboard||false;
+document.getElementById('add-staff-form').style.display='block';window.scrollTo(0,0);
 }
 
 async function toggleStaffActive(id,current){
-  await db.from('staff').update({active:!current}).eq('id',id);
-  showToast(current?'Staff disabled':'Staff enabled');loadStaff();
+await db.from('staff').update({active:!current}).eq('id',id);
+showToast(current?'Staff disabled':'Staff enabled');loadStaff();
 }
 
 async function deleteStaff(id){
-  if(!confirm('Delete this staff?'))return;
-  await db.from('staff').delete().eq('id',id);
-  showToast('Deleted');loadStaff();
+if(!confirm('Delete this staff?'))return;
+await db.from('staff').delete().eq('id',id);showToast('Deleted');loadStaff();
+}
+
+async function loadGallery(){
+const{data,error}=await db.from('gallery').select('*').order('created_at',{ascending:false});
+const grid=document.getElementById('gallery-grid');
+if(error||!data||!data.length){if(grid)grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No images yet. Click Add Image to upload!</div>';return;}
+allGalleryItems=data;renderGalleryGrid(data);
+}
+
+function renderGalleryGrid(items){
+const grid=document.getElementById('gallery-grid');if(!grid)return;
+if(!items.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No images found.</div>';return;}
+grid.innerHTML=items.map(img=>'<div class="gallery-item"><img src="'+img.image_url+'" alt="'+(img.caption||'')+'" loading="lazy"/><div class="gallery-item-body"><div class="gallery-item-caption">'+(img.caption||'No caption')+'</div><div style="font-size:10px;color:#aaa;margin-bottom:8px;">'+locationLabel(img.location)+'</div><div class="gallery-item-actions"><button class="btn-success" onclick="openGalleryEdit(\''+img.id+'\')">Edit</button><button class="btn-danger" onclick="deleteGalleryImage(\''+img.id+'\',\''+( img.storage_path||'')+'\')">Delete</button></div></div></div>').join('');
+}
+
+function locationLabel(loc){return{'all':'All Locations','st-albans':'St Albans','fitzroy-north':'Fitzroy North','ascot-vale':'Ascot Vale'}[loc]||'All';}
+
+function filterGallery(loc,btn){
+document.querySelectorAll('#gallery-filter-btns button').forEach(b=>{b.style.background='#fff';b.style.color='#1a1a1a';b.style.border='1px solid #ddd';});
+if(btn){btn.style.background='#1a1a1a';btn.style.color='#fff';btn.style.border='none';}
+const filtered=loc==='all'?allGalleryItems:allGalleryItems.filter(i=>i.location===loc);
+renderGalleryGrid(filtered);
+}
+
+function previewGalleryImage(e){
+const file=e.target.files[0];if(!file)return;
+gallerySelectedFile=file;
+const preview=document.getElementById('gallery-upload-preview');
+const reader=new FileReader();
+reader.onload=ev=>{preview.src=ev.target.result;preview.style.display='block';};
+reader.readAsDataURL(file);
+}
+
+async function uploadGalleryImage(){
+if(!gallerySelectedFile){showToast('Please select an image!',true);return;}
+const caption=document.getElementById('gallery-caption').value.trim();
+const location=document.getElementById('gallery-location').value;
+const ext=gallerySelectedFile.name.split('.').pop();
+const storagePath='gallery/'+Date.now()+'.'+ext;
+document.getElementById('gallery-upload-progress').style.display='block';
+const{error:uploadError}=await db.storage.from('menu-images').upload(storagePath,gallerySelectedFile,{upsert:true});
+if(uploadError){showToast('Upload failed: '+uploadError.message,true);document.getElementById('gallery-upload-progress').style.display='none';return;}
+const{data:{publicUrl}}=db.storage.from('menu-images').getPublicUrl(storagePath);
+const{error:dbError}=await db.from('gallery').insert({image_url:publicUrl,storage_path:storagePath,caption,location});
+document.getElementById('gallery-upload-progress').style.display='none';
+if(dbError){showToast('DB Error: '+dbError.message,true);return;}
+showToast('Image uploaded!');cancelGalleryUpload();loadGallery();
+}
+
+function cancelGalleryUpload(){
+document.getElementById('gallery-upload-card').style.display='none';
+document.getElementById('gallery-upload-preview').style.display='none';
+document.getElementById('gallery-upload-preview').src='';
+document.getElementById('gallery-caption').value='';
+document.getElementById('gallery-location').value='all';
+document.getElementById('gallery-file-input').value='';
+gallerySelectedFile=null;
+}
+
+function openGalleryEdit(id){
+const img=allGalleryItems.find(i=>i.id===id);if(!img)return;
+document.getElementById('gallery-edit-id').value=id;
+document.getElementById('gallery-edit-preview').src=img.image_url;
+document.getElementById('gallery-edit-caption').value=img.caption||'';
+document.getElementById('gallery-edit-location').value=img.location||'all';
+document.getElementById('gallery-edit-card').style.display='block';
+window.scrollTo(0,0);
+}
+
+async function saveGalleryEdit(){
+const id=document.getElementById('gallery-edit-id').value;
+const caption=document.getElementById('gallery-edit-caption').value.trim();
+const location=document.getElementById('gallery-edit-location').value;
+const{error}=await db.from('gallery').update({caption,location}).eq('id',id);
+if(error){showToast('Error: '+error.message,true);return;}
+showToast('Saved!');document.getElementById('gallery-edit-card').style.display='none';loadGallery();
+}
+
+async function deleteGalleryImage(id,storagePath){
+if(!confirm('Delete this image?'))return;
+if(storagePath)await db.storage.from('menu-images').remove([storagePath]);
+await db.from('gallery').delete().eq('id',id);
+showToast('Deleted');loadGallery();
+}
+
+async function loadAddresses(){
+const{data}=await db.from('site_settings').select('*').eq('type','address');
+if(!data)return;
+data.forEach(row=>{
+const loc=row.key;
+let val={};
+try{val=JSON.parse(row.value);}catch{val={};}
+['street','suburb','state','postcode','phone','hours','maps'].forEach(field=>{
+const el=document.getElementById('addr-'+field+'-'+loc);
+if(el)el.value=val[field]||'';
+});
+});
+}
+
+async function saveAddress(loc){
+const get=field=>(document.getElementById('addr-'+field+'-'+loc)||{}).value||'';
+const value=JSON.stringify({street:get('street'),suburb:get('suburb'),state:get('state'),postcode:get('postcode'),phone:get('phone'),hours:get('hours'),maps:get('maps')});
+const{error}=await db.from('site_settings').upsert({type:'address',key:loc,value},{onConflict:'type,key'});
+if(error){showToast('Error: '+error.message,true);return;}
+showToast(loc.replace(/-/g,' ')+' saved!');
+}
+
+async function loadFooter(){
+const{data}=await db.from('site_settings').select('*').eq('type','footer');
+if(!data)return;
+data.forEach(row=>{
+if(row.key==='quick-links'){
+try{const links=JSON.parse(row.value)||[];document.getElementById('quick-links-list').innerHTML='';quickLinkCount=0;links.forEach(ql=>addQuickLink(ql.label,ql.url));}catch{}
+return;
+}
+const el=document.getElementById('footer-'+row.key);
+if(el)el.value=row.value||'';
+});
+}
+
+async function saveFooter(){
+const fields=['tagline','copyright','abn','facebook','instagram','youtube','tiktok','ubereats','doordash','menulog','other'];
+for(const f of fields){
+const val=(document.getElementById('footer-'+f)||{}).value||'';
+await db.from('site_settings').upsert({type:'footer',key:f,value:val},{onConflict:'type,key'});
+}
+const links=getQuickLinks();
+await db.from('site_settings').upsert({type:'footer',key:'quick-links',value:JSON.stringify(links)},{onConflict:'type,key'});
+showToast('Footer saved!');
+}
+
+function addQuickLink(label='',url=''){
+quickLinkCount++;
+const div=document.createElement('div');
+div.className='addon-row';div.id='ql-'+quickLinkCount;
+div.innerHTML='<input type="text" class="fi" placeholder="Label (e.g. Menu)" value="'+label+'" style="flex:1"/><input type="text" class="fi" placeholder="URL (e.g. /menu)" value="'+url+'" style="flex:2"/><button class="rm-btn" onclick="document.getElementById(\'ql-'+quickLinkCount+'\').remove()">X</button>';
+document.getElementById('quick-links-list').appendChild(div);
+}
+
+function getQuickLinks(){
+return[...document.querySelectorAll('#quick-links-list .addon-row')].map(row=>{
+const inputs=row.querySelectorAll('input');
+return{label:inputs[0].value.trim(),url:inputs[1].value.trim()};
+}).filter(q=>q.label&&q.url);
 }
 </script>
 </body>
