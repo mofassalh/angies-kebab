@@ -66,7 +66,6 @@ textarea.fi{resize:vertical;min-height:80px;}
 .kpi-val{font-size:22px;font-weight:900;margin-bottom:4px;}
 .kpi-lbl{font-size:11px;color:#888;font-weight:600;}
 .addon-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
-.addon-row .price-input{width:90px;}
 .rm-btn{background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px;font-weight:700;}
 .staff-card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;border:1px solid #e8e8e8;display:flex;justify-content:space-between;align-items:flex-start;}
 .perm-check{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;cursor:pointer;}
@@ -85,9 +84,9 @@ textarea.fi{resize:vertical;min-height:80px;}
 .location-card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;border:1px solid #e8e8e8;}
 .location-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f0f0f0;}
 .location-name{font-size:14px;font-weight:900;}
-.location-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:#fff3cd;color:#856404;}
+.location-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:#e8f5e9;color:#2d6a4f;}
 .social-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;}
-.social-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.social-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
 @media(max-width:768px){
 .ig2,.ig3{grid-template-columns:1fr;}
 .kpi-grid{grid-template-columns:1fr 1fr;}
@@ -113,7 +112,7 @@ textarea.fi{resize:vertical;min-height:80px;}
 <div class="topbar">
 <img src="/logo.jpg" onclick="window.location.href='/'"/>
 <div>
-<div class="topbar-title">Angie's Admin Panel</div>
+<div class="topbar-title" id="topbar-title">Admin Panel</div>
 <div class="topbar-user" id="topbar-user"></div>
 </div>
 <div class="tabs" id="nav-tabs"></div>
@@ -121,6 +120,8 @@ textarea.fi{resize:vertical;min-height:80px;}
 </div>
 <div class="content">
 <div class="toast" id="toast"></div>
+
+<!-- DASHBOARD -->
 <div id="tab-dashboard" class="sheet">
 <div class="kpi-grid">
 <div class="kpi-card"><div class="kpi-val" id="kpi-orders">-</div><div class="kpi-lbl">Total Orders</div></div>
@@ -131,6 +132,8 @@ textarea.fi{resize:vertical;min-height:80px;}
 <div class="card"><div class="card-title">Recent Orders</div><div id="recent-orders-list">Loading...</div></div>
 <div class="card"><div class="card-title">Order Status Summary</div><div id="status-summary" style="display:flex;gap:12px;flex-wrap:wrap;"></div></div>
 </div>
+
+<!-- MENU -->
 <div id="tab-menu" class="sheet">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
 <div style="font-size:16px;font-weight:800;">Menu Items</div>
@@ -141,6 +144,8 @@ textarea.fi{resize:vertical;min-height:80px;}
 </div>
 <div class="menu-grid" id="menu-grid">Loading...</div>
 </div>
+
+<!-- ORDERS -->
 <div id="tab-orders" class="sheet">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
 <div style="font-size:16px;font-weight:800;">Order Management</div>
@@ -155,6 +160,8 @@ textarea.fi{resize:vertical;min-height:80px;}
 </div>
 <div class="order-grid" id="order-grid">Loading...</div>
 </div>
+
+<!-- PAGES -->
 <div id="tab-pages" class="sheet">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
 <div style="font-size:16px;font-weight:800;">Page Management</div>
@@ -164,12 +171,12 @@ textarea.fi{resize:vertical;min-height:80px;}
 <div class="card-title" id="page-form-title">Add New Page</div>
 <input type="hidden" id="page-edit-id"/>
 <div class="ig2">
-<div><div class="fl">Page Title *</div><input type="text" id="page-title" class="fi" placeholder="e.g. About Us"/></div>
-<div><div class="fl">URL Slug *</div><input type="text" id="page-slug" class="fi" placeholder="e.g. about"/></div>
+<div><div class="fl">Page Title *</div><input type="text" id="page-title" class="fi"/></div>
+<div><div class="fl">URL Slug *</div><input type="text" id="page-slug" class="fi"/></div>
 </div>
 <div><div class="fl">Content</div><textarea id="page-content" class="fi" rows="5"></textarea></div>
 <div class="ig3" style="margin-top:10px;">
-<div><div class="fl">Image URL</div><input type="text" id="page-image" class="fi" placeholder="https://..."/></div>
+<div><div class="fl">Image URL</div><input type="text" id="page-image" class="fi"/></div>
 <div><div class="fl">Show in Nav</div><select id="page-nav" class="fi"><option value="true">Yes</option><option value="false">No</option></select></div>
 <div><div class="fl">Sort Order</div><input type="number" id="page-order" class="fi" value="0"/></div>
 </div>
@@ -180,6 +187,144 @@ textarea.fi{resize:vertical;min-height:80px;}
 </div>
 <div id="pages-list">Loading...</div>
 </div>
+
+<!-- GALLERY -->
+<div id="tab-gallery" class="sheet">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+<div style="font-size:16px;font-weight:800;">Image Gallery</div>
+<button class="btn-primary" onclick="document.getElementById('gallery-upload-card').style.display='block';window.scrollTo(0,0)">+ Add Image</button>
+</div>
+<div id="gallery-upload-card" class="card" style="display:none;">
+<div class="card-title">Upload New Image</div>
+<div class="gallery-upload-zone" onclick="document.getElementById('gallery-file-input').click()">
+<div style="font-size:40px;margin-bottom:8px;">📷</div>
+<div style="font-size:13px;font-weight:700;color:#555;">Click to upload image</div>
+<div style="font-size:11px;color:#aaa;margin-top:4px;">JPG, PNG, WEBP — Max 5MB</div>
+<img id="gallery-upload-preview" style="display:none;width:100%;max-height:200px;object-fit:contain;margin-top:12px;border-radius:8px;"/>
+</div>
+<input type="file" id="gallery-file-input" accept="image/*" style="display:none" onchange="previewGalleryImage(event)"/>
+<div id="gallery-upload-progress" style="display:none;margin-top:10px;font-size:12px;color:#888;font-weight:600;">Uploading...</div>
+<div style="margin-top:12px;"><div class="fl">Caption (optional)</div><input type="text" id="gallery-caption" class="fi" placeholder="e.g. Our St Albans location"/></div>
+<div style="margin-top:10px;"><div class="fl">Location Tag</div><select id="gallery-location" class="fi"><option value="all">All Locations</option></select></div>
+<div style="display:flex;gap:10px;margin-top:14px;">
+<button class="btn-primary" onclick="uploadGalleryImage()">Upload & Save</button>
+<button onclick="cancelGalleryUpload()" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
+</div>
+</div>
+<div id="gallery-edit-card" class="card" style="display:none;">
+<div class="card-title">Edit Image</div>
+<input type="hidden" id="gallery-edit-id"/>
+<img id="gallery-edit-preview" style="width:100%;max-height:180px;object-fit:contain;border-radius:8px;margin-bottom:12px;"/>
+<div style="margin-bottom:10px;"><div class="fl">Caption</div><input type="text" id="gallery-edit-caption" class="fi"/></div>
+<div style="margin-bottom:10px;"><div class="fl">Location Tag</div><select id="gallery-edit-location" class="fi"><option value="all">All Locations</option></select></div>
+<div style="display:flex;gap:10px;">
+<button class="btn-primary" onclick="saveGalleryEdit()">Save</button>
+<button onclick="document.getElementById('gallery-edit-card').style.display='none'" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
+</div>
+</div>
+<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;" id="gallery-filter-btns">
+<button onclick="filterGallery('all',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:none;cursor:pointer;background:#1a1a1a;color:#fff;">All</button>
+</div>
+<div class="gallery-grid" id="gallery-grid">Loading...</div>
+</div>
+
+<!-- LOCATIONS -->
+<div id="tab-locations" class="sheet">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+<div style="font-size:16px;font-weight:800;">Locations</div>
+<button class="btn-primary" onclick="showAddLocationForm()">+ Add Location</button>
+</div>
+<div id="location-form-card" class="card" style="display:none;">
+<div class="card-title" id="location-form-title">Add New Location</div>
+<input type="hidden" id="loc-edit-id"/>
+<div class="ig2">
+<div><div class="fl">Location Name *</div><input type="text" id="loc-name" class="fi" placeholder="e.g. St Albans"/></div>
+<div><div class="fl">Pickup Time</div><input type="text" id="loc-pickup-time" class="fi" placeholder="e.g. 15 Minutes"/></div>
+</div>
+<div class="ig2">
+<div><div class="fl">Street Address</div><input type="text" id="loc-address" class="fi" placeholder="123 Main St, St Albans VIC 3021"/></div>
+<div><div class="fl">Phone</div><input type="text" id="loc-phone" class="fi" placeholder="03 XXXX XXXX"/></div>
+</div>
+<div class="ig2">
+<div><div class="fl">Opening Hours</div><input type="text" id="loc-hours" class="fi" placeholder="Mon-Sun: 11am - 10pm"/></div>
+<div><div class="fl">Google Maps URL</div><input type="text" id="loc-maps" class="fi" placeholder="https://maps.google.com/..."/></div>
+</div>
+<div class="card-title" style="margin-top:14px;">Delivery Partners</div>
+<div class="ig3">
+<div><div class="fl">Uber Eats URL</div><input type="text" id="loc-ubereats" class="fi" placeholder="https://ubereats.com/..."/></div>
+<div><div class="fl">DoorDash URL</div><input type="text" id="loc-doordash" class="fi" placeholder="https://doordash.com/..."/></div>
+<div><div class="fl">Menulog URL</div><input type="text" id="loc-menulog" class="fi" placeholder="https://menulog.com.au/..."/></div>
+</div>
+<div class="ig2" style="margin-top:10px;">
+<div><div class="fl">Sort Order</div><input type="number" id="loc-sort" class="fi" value="0"/></div>
+<div><div class="fl">Active</div><select id="loc-active" class="fi"><option value="true">Yes</option><option value="false">No</option></select></div>
+</div>
+<div style="display:flex;gap:10px;margin-top:14px;">
+<button class="btn-primary" onclick="saveLocation()">Save Location</button>
+<button onclick="document.getElementById('location-form-card').style.display='none'" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
+</div>
+</div>
+<div id="locations-list">Loading...</div>
+</div>
+
+<!-- BRAND -->
+<div id="tab-brand" class="sheet">
+<div style="font-size:16px;font-weight:800;margin-bottom:16px;">Brand Settings</div>
+<div class="card">
+<div class="card-title">Business Info</div>
+<div class="ig2">
+<div><div class="fl">Business Name</div><input type="text" id="brand-name" class="fi" placeholder="Angie's Kebabs & Burgers"/></div>
+<div><div class="fl">Tagline</div><input type="text" id="brand-tagline" class="fi" placeholder="Melbourne's Finest Kebabs"/></div>
+</div>
+<div class="ig2">
+<div><div class="fl">Email</div><input type="text" id="brand-email" class="fi" placeholder="info@angiesknb.com"/></div>
+<div><div class="fl">ABN</div><input type="text" id="brand-abn" class="fi" placeholder="ABN: 12 345 678 901"/></div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">Brand Colors</div>
+<div class="ig3">
+<div>
+<div class="fl">Primary Color</div>
+<div style="display:flex;gap:8px;align-items:center;">
+<input type="color" id="brand-primary-color" value="#1a1a1a" style="width:50px;height:36px;border-radius:8px;border:1px solid #ddd;cursor:pointer;padding:2px;" oninput="document.getElementById('brand-primary-color-hex').value=this.value"/>
+<input type="text" id="brand-primary-color-hex" class="fi" value="#1a1a1a" style="flex:1;" oninput="document.getElementById('brand-primary-color').value=this.value"/>
+</div>
+</div>
+<div>
+<div class="fl">Accent Color</div>
+<div style="display:flex;gap:8px;align-items:center;">
+<input type="color" id="brand-accent-color" value="#f5c842" style="width:50px;height:36px;border-radius:8px;border:1px solid #ddd;cursor:pointer;padding:2px;" oninput="document.getElementById('brand-accent-color-hex').value=this.value"/>
+<input type="text" id="brand-accent-color-hex" class="fi" value="#f5c842" style="flex:1;" oninput="document.getElementById('brand-accent-color').value=this.value"/>
+</div>
+</div>
+<div>
+<div class="fl">Button Color</div>
+<div style="display:flex;gap:8px;align-items:center;">
+<input type="color" id="brand-button-color" value="#e8520a" style="width:50px;height:36px;border-radius:8px;border:1px solid #ddd;cursor:pointer;padding:2px;" oninput="document.getElementById('brand-button-color-hex').value=this.value"/>
+<input type="text" id="brand-button-color-hex" class="fi" value="#e8520a" style="flex:1;" oninput="document.getElementById('brand-button-color').value=this.value"/>
+</div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">Social Media</div>
+<div class="social-row"><div class="social-icon" style="background:#1877f2;color:#fff;">F</div><div style="flex:1;"><div class="fl">Facebook</div><input type="text" id="brand-facebook" class="fi" placeholder="https://facebook.com/angiesknb"/></div></div>
+<div class="social-row"><div class="social-icon" style="background:#e1306c;color:#fff;">IG</div><div style="flex:1;"><div class="fl">Instagram</div><input type="text" id="brand-instagram" class="fi" placeholder="https://instagram.com/angiesknb"/></div></div>
+<div class="social-row"><div class="social-icon" style="background:#ff0000;color:#fff;">YT</div><div style="flex:1;"><div class="fl">YouTube</div><input type="text" id="brand-youtube" class="fi" placeholder="https://youtube.com/@angiesknb"/></div></div>
+<div class="social-row"><div class="social-icon" style="background:#000;color:#fff;">TK</div><div style="flex:1;"><div class="fl">TikTok</div><input type="text" id="brand-tiktok" class="fi" placeholder="https://tiktok.com/@angiesknb"/></div></div>
+</div>
+<div class="card">
+<div class="card-title">Footer</div>
+<div style="margin-bottom:10px;"><div class="fl">Footer Tagline</div><textarea id="brand-footer-tagline" class="fi" rows="3" placeholder="Serving Melbourne's finest kebabs & burgers..."></textarea></div>
+<div><div class="fl">Copyright Text</div><input type="text" id="brand-copyright" class="fi" placeholder="© 2026 Angie's Kebabs & Burgers"/></div>
+</div>
+<div style="margin-bottom:30px;">
+<button class="btn-primary" onclick="saveBrand()" style="padding:13px 30px;font-size:14px;">Save Brand Settings</button>
+</div>
+</div>
+
+<!-- STAFF -->
 <div id="tab-staff" class="sheet">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
 <div style="font-size:16px;font-weight:800;">Staff Management</div>
@@ -209,155 +354,8 @@ textarea.fi{resize:vertical;min-height:80px;}
 </div>
 <div id="staff-list">Loading...</div>
 </div>
-<div id="tab-gallery" class="sheet">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-<div style="font-size:16px;font-weight:800;">Image Gallery</div>
-<button class="btn-primary" onclick="document.getElementById('gallery-upload-card').style.display='block';window.scrollTo(0,0)">+ Add Image</button>
-</div>
-<div id="gallery-upload-card" class="card" style="display:none;">
-<div class="card-title">Upload New Image</div>
-<div class="gallery-upload-zone" onclick="document.getElementById('gallery-file-input').click()">
-<div style="font-size:40px;margin-bottom:8px;">📷</div>
-<div style="font-size:13px;font-weight:700;color:#555;">Click to upload image</div>
-<div style="font-size:11px;color:#aaa;margin-top:4px;">JPG, PNG, WEBP — Max 5MB</div>
-<img id="gallery-upload-preview" style="display:none;width:100%;max-height:200px;object-fit:contain;margin-top:12px;border-radius:8px;"/>
-</div>
-<input type="file" id="gallery-file-input" accept="image/*" style="display:none" onchange="previewGalleryImage(event)"/>
-<div id="gallery-upload-progress" style="display:none;margin-top:10px;font-size:12px;color:#888;font-weight:600;">Uploading...</div>
-<div style="margin-top:12px;">
-<div class="fl">Caption (optional)</div>
-<input type="text" id="gallery-caption" class="fi" placeholder="e.g. Our St Albans location"/>
-</div>
-<div style="margin-top:10px;">
-<div class="fl">Location Tag</div>
-<select id="gallery-location" class="fi">
-<option value="all">All Locations</option>
-<option value="st-albans">St Albans</option>
-<option value="fitzroy-north">Fitzroy North</option>
-<option value="ascot-vale">Ascot Vale</option>
-</select>
-</div>
-<div style="display:flex;gap:10px;margin-top:14px;">
-<button class="btn-primary" onclick="uploadGalleryImage()">Upload & Save</button>
-<button onclick="cancelGalleryUpload()" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
-</div>
-</div>
-<div id="gallery-edit-card" class="card" style="display:none;">
-<div class="card-title">Edit Image</div>
-<input type="hidden" id="gallery-edit-id"/>
-<img id="gallery-edit-preview" style="width:100%;max-height:180px;object-fit:contain;border-radius:8px;margin-bottom:12px;"/>
-<div style="margin-bottom:10px;"><div class="fl">Caption</div><input type="text" id="gallery-edit-caption" class="fi"/></div>
-<div style="margin-bottom:10px;">
-<div class="fl">Location Tag</div>
-<select id="gallery-edit-location" class="fi">
-<option value="all">All Locations</option>
-<option value="st-albans">St Albans</option>
-<option value="fitzroy-north">Fitzroy North</option>
-<option value="ascot-vale">Ascot Vale</option>
-</select>
-</div>
-<div style="display:flex;gap:10px;">
-<button class="btn-primary" onclick="saveGalleryEdit()">Save</button>
-<button onclick="document.getElementById('gallery-edit-card').style.display='none'" style="padding:10px 18px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
-</div>
-</div>
-<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;" id="gallery-filter-btns">
-<button onclick="filterGallery('all',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:none;cursor:pointer;background:#1a1a1a;color:#fff;">All</button>
-<button onclick="filterGallery('st-albans',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid #ddd;cursor:pointer;background:#fff;color:#1a1a1a;">St Albans</button>
-<button onclick="filterGallery('fitzroy-north',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid #ddd;cursor:pointer;background:#fff;color:#1a1a1a;">Fitzroy North</button>
-<button onclick="filterGallery('ascot-vale',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid #ddd;cursor:pointer;background:#fff;color:#1a1a1a;">Ascot Vale</button>
-</div>
-<div class="gallery-grid" id="gallery-grid">Loading...</div>
-</div>
-<div id="tab-address" class="sheet">
-<div style="font-size:16px;font-weight:800;margin-bottom:16px;">Location & Address</div>
-<div class="location-card">
-<div class="location-card-header"><div class="location-name">St Albans</div><span class="location-badge">Location 1</span></div>
-<div class="ig2">
-<div><div class="fl">Street Address</div><input type="text" id="addr-street-st-albans" class="fi" placeholder="e.g. 123 Main Street"/></div>
-<div><div class="fl">Suburb</div><input type="text" id="addr-suburb-st-albans" class="fi" placeholder="St Albans"/></div>
-</div>
-<div class="ig3">
-<div><div class="fl">State</div><input type="text" id="addr-state-st-albans" class="fi" placeholder="VIC"/></div>
-<div><div class="fl">Postcode</div><input type="text" id="addr-postcode-st-albans" class="fi" placeholder="3021"/></div>
-<div><div class="fl">Phone</div><input type="text" id="addr-phone-st-albans" class="fi" placeholder="03 XXXX XXXX"/></div>
-</div>
-<div class="ig2">
-<div><div class="fl">Opening Hours</div><input type="text" id="addr-hours-st-albans" class="fi" placeholder="Mon-Sun: 11am - 10pm"/></div>
-<div><div class="fl">Google Maps Link</div><input type="text" id="addr-maps-st-albans" class="fi" placeholder="https://maps.google.com/..."/></div>
-</div>
-<div style="margin-top:12px;"><button class="btn-primary" onclick="saveAddress('st-albans')">Save St Albans</button></div>
-</div>
-<div class="location-card">
-<div class="location-card-header"><div class="location-name">Fitzroy North</div><span class="location-badge">Location 2</span></div>
-<div class="ig2">
-<div><div class="fl">Street Address</div><input type="text" id="addr-street-fitzroy-north" class="fi" placeholder="e.g. 456 High Street"/></div>
-<div><div class="fl">Suburb</div><input type="text" id="addr-suburb-fitzroy-north" class="fi" placeholder="Fitzroy North"/></div>
-</div>
-<div class="ig3">
-<div><div class="fl">State</div><input type="text" id="addr-state-fitzroy-north" class="fi" placeholder="VIC"/></div>
-<div><div class="fl">Postcode</div><input type="text" id="addr-postcode-fitzroy-north" class="fi" placeholder="3068"/></div>
-<div><div class="fl">Phone</div><input type="text" id="addr-phone-fitzroy-north" class="fi" placeholder="03 XXXX XXXX"/></div>
-</div>
-<div class="ig2">
-<div><div class="fl">Opening Hours</div><input type="text" id="addr-hours-fitzroy-north" class="fi" placeholder="Mon-Sun: 11am - 10pm"/></div>
-<div><div class="fl">Google Maps Link</div><input type="text" id="addr-maps-fitzroy-north" class="fi" placeholder="https://maps.google.com/..."/></div>
-</div>
-<div style="margin-top:12px;"><button class="btn-primary" onclick="saveAddress('fitzroy-north')">Save Fitzroy North</button></div>
-</div>
-<div class="location-card">
-<div class="location-card-header"><div class="location-name">Ascot Vale</div><span class="location-badge">Location 3</span></div>
-<div class="ig2">
-<div><div class="fl">Street Address</div><input type="text" id="addr-street-ascot-vale" class="fi" placeholder="e.g. 789 Union Road"/></div>
-<div><div class="fl">Suburb</div><input type="text" id="addr-suburb-ascot-vale" class="fi" placeholder="Ascot Vale"/></div>
-</div>
-<div class="ig3">
-<div><div class="fl">State</div><input type="text" id="addr-state-ascot-vale" class="fi" placeholder="VIC"/></div>
-<div><div class="fl">Postcode</div><input type="text" id="addr-postcode-ascot-vale" class="fi" placeholder="3032"/></div>
-<div><div class="fl">Phone</div><input type="text" id="addr-phone-ascot-vale" class="fi" placeholder="03 XXXX XXXX"/></div>
-</div>
-<div class="ig2">
-<div><div class="fl">Opening Hours</div><input type="text" id="addr-hours-ascot-vale" class="fi" placeholder="Mon-Sun: 11am - 10pm"/></div>
-<div><div class="fl">Google Maps Link</div><input type="text" id="addr-maps-ascot-vale" class="fi" placeholder="https://maps.google.com/..."/></div>
-</div>
-<div style="margin-top:12px;"><button class="btn-primary" onclick="saveAddress('ascot-vale')">Save Ascot Vale</button></div>
-</div>
-</div>
-<div id="tab-footer" class="sheet">
-<div style="font-size:16px;font-weight:800;margin-bottom:16px;">Footer Settings</div>
-<div class="card">
-<div class="card-title">Footer Text</div>
-<div style="margin-bottom:10px;"><div class="fl">Tagline</div><textarea id="footer-tagline" class="fi" rows="3" placeholder="e.g. Authentic kebabs and burgers served fresh across Melbourne."></textarea></div>
-<div class="ig2">
-<div><div class="fl">Copyright Text</div><input type="text" id="footer-copyright" class="fi" placeholder="e.g. 2025 Angie's Kebabs and Burgers"/></div>
-<div><div class="fl">ABN (optional)</div><input type="text" id="footer-abn" class="fi" placeholder="e.g. ABN: 12 345 678 901"/></div>
-</div>
-</div>
-<div class="card">
-<div class="card-title">Social Media Links</div>
-<div class="social-row"><div class="social-icon" style="background:#1877f2;">F</div><div style="flex:1;"><div class="fl">Facebook URL</div><input type="text" id="footer-facebook" class="fi" placeholder="https://facebook.com/angiesknb"/></div></div>
-<div class="social-row"><div class="social-icon" style="background:#e1306c;color:#fff;">In</div><div style="flex:1;"><div class="fl">Instagram URL</div><input type="text" id="footer-instagram" class="fi" placeholder="https://instagram.com/angiesknb"/></div></div>
-<div class="social-row"><div class="social-icon" style="background:#ff0000;color:#fff;">YT</div><div style="flex:1;"><div class="fl">YouTube URL</div><input type="text" id="footer-youtube" class="fi" placeholder="https://youtube.com/@angiesknb"/></div></div>
-<div class="social-row"><div class="social-icon" style="background:#000;color:#fff;">TK</div><div style="flex:1;"><div class="fl">TikTok URL</div><input type="text" id="footer-tiktok" class="fi" placeholder="https://tiktok.com/@angiesknb"/></div></div>
-</div>
-<div class="card">
-<div class="card-title">Delivery Platforms</div>
-<div class="ig2">
-<div><div class="fl">Uber Eats URL</div><input type="text" id="footer-ubereats" class="fi" placeholder="https://ubereats.com/..."/></div>
-<div><div class="fl">DoorDash URL</div><input type="text" id="footer-doordash" class="fi" placeholder="https://doordash.com/..."/></div>
-</div>
-<div class="ig2" style="margin-top:10px;">
-<div><div class="fl">MenuLog URL</div><input type="text" id="footer-menulog" class="fi" placeholder="https://menulog.com.au/..."/></div>
-<div><div class="fl">Other Platform</div><input type="text" id="footer-other" class="fi" placeholder="Optional"/></div>
-</div>
-</div>
-<div class="card">
-<div class="card-title">Quick Links</div>
-<div id="quick-links-list"></div>
-<button onclick="addQuickLink()" style="padding:8px 16px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;">+ Add Link</button>
-</div>
-<div style="margin-bottom:30px;"><button class="btn-primary" onclick="saveFooter()" style="padding:13px 30px;font-size:14px;">Save Footer Settings</button></div>
-</div>
+
+<!-- ADD/EDIT ITEM -->
 <div id="tab-add-item" class="sheet">
 <div style="font-size:16px;font-weight:800;margin-bottom:16px;" id="form-title">Add New Menu Item</div>
 <input type="hidden" id="edit-id"/>
@@ -397,14 +395,16 @@ textarea.fi{resize:vertical;min-height:80px;}
 <button onclick="showTab('menu',null)" style="padding:13px 20px;background:#f0f0f0;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
 </div>
 </div>
+
 </div>
 </div>
+
 <script>
 const SUPABASE_URL="https://egyxvzjfqnpcfdnwusxn.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVneXh2empmcW5wY2Zkbnd1c3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODMyMjUsImV4cCI6MjA4OTg1OTIyNX0.modzK6AhGyo3YBjZtDl2lK4tFQuj0B3KsDFIf2n-was";
 const{createClient}=supabase;
 const db=createClient(SUPABASE_URL,SUPABASE_KEY);
-let currentUser=null,allMenuItems=[],addonCount=0,allGalleryItems=[],gallerySelectedFile=null,quickLinkCount=0;
+let currentUser=null,allMenuItems=[],addonCount=0,allGalleryItems=[],gallerySelectedFile=null,quickLinkCount=0,allLocations=[];
 
 async function doLogin(){
 const email=document.getElementById('login-email').value.trim();
@@ -434,7 +434,7 @@ document.getElementById('login-pass').value='';
 function hasPerm(perm){
 if(!currentUser)return false;
 if(currentUser.role==='owner')return true;
-if(['gallery','address','footer'].includes(perm))return currentUser.permissions?.[perm]!==false;
+if(['gallery','locations','brand'].includes(perm))return currentUser.permissions?.[perm]!==false;
 return currentUser.permissions?.[perm]===true;
 }
 
@@ -445,8 +445,8 @@ if(hasPerm('menu'))tabs.push({id:'menu',label:'Menu'});
 if(hasPerm('orders'))tabs.push({id:'orders',label:'Orders'});
 if(hasPerm('pages'))tabs.push({id:'pages',label:'Pages'});
 if(hasPerm('gallery'))tabs.push({id:'gallery',label:'Gallery'});
-if(hasPerm('address'))tabs.push({id:'address',label:'Address'});
-if(hasPerm('footer'))tabs.push({id:'footer',label:'Footer'});
+if(hasPerm('locations'))tabs.push({id:'locations',label:'Locations'});
+if(hasPerm('brand'))tabs.push({id:'brand',label:'Brand'});
 if(hasPerm('staff'))tabs.push({id:'staff',label:'Staff'});
 const nav=document.getElementById('nav-tabs');
 nav.innerHTML=tabs.map((t,i)=>'<button class="tab'+(i===0?' active':'')+'" onclick="showTab(\''+t.id+'\',this)">'+t.label+'</button>').join('');
@@ -459,8 +459,8 @@ if(hasPerm('menu'))loadMenuItems();
 if(hasPerm('orders'))loadOrders();
 if(hasPerm('pages'))loadPages();
 if(hasPerm('gallery'))loadGallery();
-if(hasPerm('address'))loadAddresses();
-if(hasPerm('footer'))loadFooter();
+if(hasPerm('locations'))loadLocations();
+if(hasPerm('brand'))loadBrand();
 if(hasPerm('staff'))loadStaff();
 }
 
@@ -499,7 +499,7 @@ function addAddonRow(name='',price=0){
 addonCount++;
 const div=document.createElement('div');
 div.className='addon-row';div.id='addon-'+addonCount;
-div.innerHTML='<input type="text" class="fi" placeholder="Option name" value="'+name+'" style="flex:1"/><input type="number" class="fi price-input" placeholder="Price $" value="'+price+'" step="0.50" min="0"/><button class="rm-btn" onclick="document.getElementById(\'addon-'+addonCount+'\').remove()">X</button>';
+div.innerHTML='<input type="text" class="fi" placeholder="Option name" value="'+name+'" style="flex:1"/><input type="number" class="fi" placeholder="Price $" value="'+price+'" step="0.50" min="0" style="width:90px;"/><button class="rm-btn" onclick="document.getElementById(\'addon-'+addonCount+'\').remove()">X</button>';
 document.getElementById('addons-list').appendChild(div);
 }
 
@@ -517,12 +517,7 @@ const name=document.getElementById('item-name').value.trim();
 const category=document.getElementById('item-category').value.trim();
 const price=parseFloat(document.getElementById('item-price').value);
 if(!name||!category||!price){showToast('Name, Category, Price required!',true);return;}
-const item={name,category,price,
-description:document.getElementById('item-desc').value,
-image_url:document.getElementById('item-image-url').value||null,
-ingredients:document.getElementById('item-ingredients').value.split(',').map(s=>s.trim()).filter(Boolean),
-addons:getAddons(),
-available:document.getElementById('item-available').value==='true'};
+const item={name,category,price,description:document.getElementById('item-desc').value,image_url:document.getElementById('item-image-url').value||null,ingredients:document.getElementById('item-ingredients').value.split(',').map(s=>s.trim()).filter(Boolean),addons:getAddons(),available:document.getElementById('item-available').value==='true'};
 const editId=document.getElementById('edit-id').value;
 const{error}=editId?await db.from('menu_items').update(item).eq('id',editId):await db.from('menu_items').insert(item);
 if(error){showToast('Error: '+error.message,true);return;}
@@ -634,7 +629,7 @@ async function loadPages(){
 const{data}=await db.from('pages').select('*').order('sort_order');if(!data)return;
 const list=document.getElementById('pages-list');if(!list)return;
 if(!data.length){list.innerHTML='<div style="padding:40px;text-align:center;color:#aaa">No pages yet</div>';return;}
-list.innerHTML=data.map(p=>'<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;"><div><div style="font-size:14px;font-weight:700;">'+p.title+'</div><div style="font-size:12px;color:#888;margin-top:2px;">/'+p.slug+' · <span style="color:'+(p.show_in_nav?'#2d6a4f':'#c0392b')+'">'+(p.show_in_nav?'Visible':'Hidden')+'</span></div><div style="font-size:12px;color:#aaa;margin-top:3px;">'+(p.content||'').slice(0,80)+((p.content||'').length>80?'...':'')+'</div></div><div style="display:flex;gap:6px;flex-shrink:0;margin-left:12px;"><button class="btn-success" onclick="editPage(\''+p.id+'\')">Edit</button><button class="btn-danger" onclick="deletePage(\''+p.id+'\',\''+p.slug+'\')">Delete</button></div></div>').join('');
+list.innerHTML=data.map(p=>'<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;"><div><div style="font-size:14px;font-weight:700;">'+p.title+'</div><div style="font-size:12px;color:#888;margin-top:2px;">/'+p.slug+' · <span style="color:'+(p.show_in_nav?'#2d6a4f':'#c0392b')+'">'+(p.show_in_nav?'Visible':'Hidden')+'</span></div></div><div style="display:flex;gap:6px;"><button class="btn-success" onclick="editPage(\''+p.id+'\')">Edit</button><button class="btn-danger" onclick="deletePage(\''+p.id+'\',\''+p.slug+'\')">Delete</button></div></div>').join('');
 }
 
 function showAddPageForm(){
@@ -674,7 +669,7 @@ await db.from('pages').delete().eq('id',id);showToast('Deleted');loadPages();
 async function loadStaff(){
 const{data}=await db.from('staff').select('*').order('created_at');if(!data)return;
 const list=document.getElementById('staff-list');if(!list)return;
-list.innerHTML=data.map(s=>'<div class="staff-card"><div style="flex:1;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><div style="font-size:14px;font-weight:800;">'+s.name+'</div><span class="role-badge role-'+s.role+'">'+s.role+'</span>'+(!s.active?'<span class="badge badge-unavailable">Inactive</span>':'')+'</div><div style="font-size:12px;color:#888;margin-bottom:8px;">'+s.email+'</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+Object.entries(s.permissions||{}).filter(([,v])=>v).map(([k])=>'<span style="background:#e8f4fd;color:#0c5460;border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700">'+k+'</span>').join('')+'</div></div>'+(s.role!=='owner'?'<div style="display:flex;gap:6px;flex-shrink:0;margin-left:12px;"><button class="btn-success" onclick="editStaff(\''+s.id+'\')">Edit</button><button class="btn-warning" onclick="toggleStaffActive(\''+s.id+'\','+s.active+')">'+(s.active?'Disable':'Enable')+'</button><button class="btn-danger" onclick="deleteStaff(\''+s.id+'\')">Delete</button></div>':'<span style="font-size:11px;color:#aaa">Owner account</span>')+'</div>').join('');
+list.innerHTML=data.map(s=>'<div class="staff-card"><div style="flex:1;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><div style="font-size:14px;font-weight:800;">'+s.name+'</div><span class="role-badge role-'+s.role+'">'+s.role+'</span>'+(!s.active?'<span class="badge badge-unavailable">Inactive</span>':'')+'</div><div style="font-size:12px;color:#888;">'+s.email+'</div></div>'+(s.role!=='owner'?'<div style="display:flex;gap:6px;flex-shrink:0;"><button class="btn-success" onclick="editStaff(\''+s.id+'\')">Edit</button><button class="btn-warning" onclick="toggleStaffActive(\''+s.id+'\','+s.active+')">'+(s.active?'Disable':'Enable')+'</button><button class="btn-danger" onclick="deleteStaff(\''+s.id+'\')">Delete</button></div>':'<span style="font-size:11px;color:#aaa">Owner</span>')+'</div>').join('');
 }
 
 async function saveStaff(){
@@ -687,18 +682,15 @@ const staffData={name,email,password:pass,role:'staff',permissions,active:true};
 const editId=document.getElementById('staff-edit-id').value;
 const{error}=editId?await db.from('staff').update(staffData).eq('id',editId):await db.from('staff').insert(staffData);
 if(error){showToast('Error: '+error.message,true);return;}
-showToast('Staff saved!');
-document.getElementById('add-staff-form').style.display='none';
+showToast('Staff saved!');document.getElementById('add-staff-form').style.display='none';
 ['staff-edit-id','staff-name','staff-email','staff-pass'].forEach(id=>document.getElementById(id).value='');
 loadStaff();
 }
 
 async function editStaff(id){
 const{data}=await db.from('staff').select('*').eq('id',id).single();if(!data)return;
-document.getElementById('staff-edit-id').value=id;
-document.getElementById('staff-name').value=data.name;
-document.getElementById('staff-email').value=data.email;
-document.getElementById('staff-pass').value=data.password;
+document.getElementById('staff-edit-id').value=id;document.getElementById('staff-name').value=data.name;
+document.getElementById('staff-email').value=data.email;document.getElementById('staff-pass').value=data.password;
 document.getElementById('perm-orders').checked=data.permissions?.orders||false;
 document.getElementById('perm-menu').checked=data.permissions?.menu||false;
 document.getElementById('perm-pages').checked=data.permissions?.pages||false;
@@ -719,17 +711,27 @@ await db.from('staff').delete().eq('id',id);showToast('Deleted');loadStaff();
 async function loadGallery(){
 const{data,error}=await db.from('gallery').select('*').order('created_at',{ascending:false});
 const grid=document.getElementById('gallery-grid');
-if(error||!data||!data.length){if(grid)grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No images yet. Click Add Image to upload!</div>';return;}
-allGalleryItems=data;renderGalleryGrid(data);
+if(error||!data||!data.length){if(grid)grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No images yet.</div>';return;}
+allGalleryItems=data;
+updateGalleryLocationDropdowns();
+renderGalleryGrid(data);
+}
+
+function updateGalleryLocationDropdowns(){
+const locOptions=allLocations.map(l=>'<option value="'+l.id+'">'+l.name+'</option>').join('');
+const locSel=document.getElementById('gallery-location');
+const editLocSel=document.getElementById('gallery-edit-location');
+if(locSel)locSel.innerHTML='<option value="all">All Locations</option>'+locOptions;
+if(editLocSel)editLocSel.innerHTML='<option value="all">All Locations</option>'+locOptions;
+const btns=document.getElementById('gallery-filter-btns');
+if(btns)btns.innerHTML='<button onclick="filterGallery(\'all\',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:none;cursor:pointer;background:#1a1a1a;color:#fff;">All</button>'+allLocations.map(l=>'<button onclick="filterGallery(\''+l.id+'\',this)" style="padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid #ddd;cursor:pointer;background:#fff;color:#1a1a1a;">'+l.name+'</button>').join('');
 }
 
 function renderGalleryGrid(items){
 const grid=document.getElementById('gallery-grid');if(!grid)return;
 if(!items.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:#aaa;grid-column:1/-1">No images found.</div>';return;}
-grid.innerHTML=items.map(img=>'<div class="gallery-item"><img src="'+img.image_url+'" alt="'+(img.caption||'')+'" loading="lazy"/><div class="gallery-item-body"><div class="gallery-item-caption">'+(img.caption||'No caption')+'</div><div style="font-size:10px;color:#aaa;margin-bottom:8px;">'+locationLabel(img.location)+'</div><div class="gallery-item-actions"><button class="btn-success" onclick="openGalleryEdit(\''+img.id+'\')">Edit</button><button class="btn-danger" onclick="deleteGalleryImage(\''+img.id+'\',\''+( img.storage_path||'')+'\')">Delete</button></div></div></div>').join('');
+grid.innerHTML=items.map(img=>'<div class="gallery-item"><img src="'+img.image_url+'" alt="'+(img.caption||'')+'" loading="lazy"/><div class="gallery-item-body"><div class="gallery-item-caption">'+(img.caption||'No caption')+'</div><div class="gallery-item-actions"><button class="btn-success" onclick="openGalleryEdit(\''+img.id+'\')">Edit</button><button class="btn-danger" onclick="deleteGalleryImage(\''+img.id+'\',\''+(img.storage_path||'')+'\')">Delete</button></div></div></div>').join('');
 }
-
-function locationLabel(loc){return{'all':'All Locations','st-albans':'St Albans','fitzroy-north':'Fitzroy North','ascot-vale':'Ascot Vale'}[loc]||'All';}
 
 function filterGallery(loc,btn){
 document.querySelectorAll('#gallery-filter-btns button').forEach(b=>{b.style.background='#fff';b.style.color='#1a1a1a';b.style.border='1px solid #ddd';});
@@ -741,9 +743,8 @@ renderGalleryGrid(filtered);
 function previewGalleryImage(e){
 const file=e.target.files[0];if(!file)return;
 gallerySelectedFile=file;
-const preview=document.getElementById('gallery-upload-preview');
 const reader=new FileReader();
-reader.onload=ev=>{preview.src=ev.target.result;preview.style.display='block';};
+reader.onload=ev=>{const p=document.getElementById('gallery-upload-preview');p.src=ev.target.result;p.style.display='block';};
 reader.readAsDataURL(file);
 }
 
@@ -768,7 +769,6 @@ document.getElementById('gallery-upload-card').style.display='none';
 document.getElementById('gallery-upload-preview').style.display='none';
 document.getElementById('gallery-upload-preview').src='';
 document.getElementById('gallery-caption').value='';
-document.getElementById('gallery-location').value='all';
 document.getElementById('gallery-file-input').value='';
 gallerySelectedFile=null;
 }
@@ -799,65 +799,81 @@ await db.from('gallery').delete().eq('id',id);
 showToast('Deleted');loadGallery();
 }
 
-async function loadAddresses(){
-const{data}=await db.from('site_settings').select('*').eq('type','address');
+async function loadLocations(){
+const{data}=await db.from('locations').select('*').order('sort_order');
 if(!data)return;
-data.forEach(row=>{
-const loc=row.key;
-let val={};
-try{val=JSON.parse(row.value);}catch{val={};}
-['street','suburb','state','postcode','phone','hours','maps'].forEach(field=>{
-const el=document.getElementById('addr-'+field+'-'+loc);
-if(el)el.value=val[field]||'';
-});
-});
+allLocations=data;
+updateGalleryLocationDropdowns();
+const list=document.getElementById('locations-list');if(!list)return;
+if(!data.length){list.innerHTML='<div style="padding:40px;text-align:center;color:#aaa">No locations yet.</div>';return;}
+list.innerHTML=data.map(loc=>'<div class="location-card"><div class="location-card-header"><div class="location-name">📍 '+loc.name+'</div><div style="display:flex;gap:6px;align-items:center;"><span class="location-badge">'+(loc.active?'Active':'Inactive')+'</span><button class="btn-success" onclick="editLocation(\''+loc.id+'\')">Edit</button><button class="btn-danger" onclick="deleteLocation(\''+loc.id+'\')">Delete</button></div></div><div style="font-size:13px;color:#555;line-height:2;"><div>📍 '+(loc.address||'-')+'</div><div>📞 '+(loc.phone||'-')+'</div><div>🕐 '+(loc.hours||'-')+'</div><div>⏱️ Pickup: '+(loc.pickup_time||'-')+'</div><div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;">'+(loc.uber_eats_url?'<span style="background:#06c167;color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">Uber Eats ✓</span>':'')+(loc.doordash_url?'<span style="background:#ff3008;color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">DoorDash ✓</span>':'')+(loc.menulog_url?'<span style="background:#ff6b35;color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">Menulog ✓</span>':'')+'</div></div></div>').join('');
 }
 
-async function saveAddress(loc){
-const get=field=>(document.getElementById('addr-'+field+'-'+loc)||{}).value||'';
-const value=JSON.stringify({street:get('street'),suburb:get('suburb'),state:get('state'),postcode:get('postcode'),phone:get('phone'),hours:get('hours'),maps:get('maps')});
-const{error}=await db.from('site_settings').upsert({type:'address',key:loc,value},{onConflict:'type,key'});
+function showAddLocationForm(){
+document.getElementById('location-form-card').style.display='block';
+['loc-edit-id','loc-name','loc-address','loc-phone','loc-hours','loc-maps','loc-pickup-time','loc-ubereats','loc-doordash','loc-menulog'].forEach(id=>document.getElementById(id).value='');
+document.getElementById('loc-sort').value='0';
+document.getElementById('loc-active').value='true';
+document.getElementById('location-form-title').textContent='Add New Location';
+window.scrollTo(0,0);
+}
+
+async function saveLocation(){
+const name=document.getElementById('loc-name').value.trim();
+if(!name){showToast('Location name required!',true);return;}
+const locData={name,address:document.getElementById('loc-address').value,phone:document.getElementById('loc-phone').value,hours:document.getElementById('loc-hours').value,maps_url:document.getElementById('loc-maps').value,pickup_time:document.getElementById('loc-pickup-time').value||'15 Minutes',uber_eats_url:document.getElementById('loc-ubereats').value||null,doordash_url:document.getElementById('loc-doordash').value||null,menulog_url:document.getElementById('loc-menulog').value||null,sort_order:parseInt(document.getElementById('loc-sort').value)||0,active:document.getElementById('loc-active').value==='true'};
+const editId=document.getElementById('loc-edit-id').value;
+const{error}=editId?await db.from('locations').update(locData).eq('id',editId):await db.from('locations').insert(locData);
 if(error){showToast('Error: '+error.message,true);return;}
-showToast(loc.replace(/-/g,' ')+' saved!');
+showToast('Location saved!');document.getElementById('location-form-card').style.display='none';loadLocations();
 }
 
-async function loadFooter(){
-const{data}=await db.from('site_settings').select('*').eq('type','footer');
+async function editLocation(id){
+const loc=allLocations.find(l=>l.id===id);if(!loc)return;
+document.getElementById('loc-edit-id').value=id;
+document.getElementById('loc-name').value=loc.name||'';
+document.getElementById('loc-address').value=loc.address||'';
+document.getElementById('loc-phone').value=loc.phone||'';
+document.getElementById('loc-hours').value=loc.hours||'';
+document.getElementById('loc-maps').value=loc.maps_url||'';
+document.getElementById('loc-pickup-time').value=loc.pickup_time||'';
+document.getElementById('loc-ubereats').value=loc.uber_eats_url||'';
+document.getElementById('loc-doordash').value=loc.doordash_url||'';
+document.getElementById('loc-menulog').value=loc.menulog_url||'';
+document.getElementById('loc-sort').value=loc.sort_order||0;
+document.getElementById('loc-active').value=String(loc.active);
+document.getElementById('location-form-title').textContent='Edit: '+loc.name;
+document.getElementById('location-form-card').style.display='block';
+window.scrollTo(0,0);
+}
+
+async function deleteLocation(id){
+if(!confirm('Delete this location?'))return;
+await db.from('locations').delete().eq('id',id);
+showToast('Deleted');loadLocations();
+}
+
+async function loadBrand(){
+const{data}=await db.from('site_settings').select('*').eq('type','brand');
 if(!data)return;
 data.forEach(row=>{
-if(row.key==='quick-links'){
-try{const links=JSON.parse(row.value)||[];document.getElementById('quick-links-list').innerHTML='';quickLinkCount=0;links.forEach(ql=>addQuickLink(ql.label,ql.url));}catch{}
-return;
-}
-const el=document.getElementById('footer-'+row.key);
+const el=document.getElementById('brand-'+row.key);
 if(el)el.value=row.value||'';
+const hexEl=document.getElementById('brand-'+row.key+'-hex');
+if(hexEl)hexEl.value=row.value||'';
 });
 }
 
-async function saveFooter(){
-const fields=['tagline','copyright','abn','facebook','instagram','youtube','tiktok','ubereats','doordash','menulog','other'];
+async function saveBrand(){
+const fields=['name','tagline','email','abn','primary-color','accent-color','button-color','facebook','instagram','youtube','tiktok','footer-tagline','copyright'];
 for(const f of fields){
-const val=(document.getElementById('footer-'+f)||{}).value||'';
-await db.from('site_settings').upsert({type:'footer',key:f,value:val},{onConflict:'type,key'});
+const el=document.getElementById('brand-'+f);
+const val=el?el.value:'';
+await db.from('site_settings').upsert({type:'brand',key:f,value:val},{onConflict:'type,key'});
 }
-const links=getQuickLinks();
-await db.from('site_settings').upsert({type:'footer',key:'quick-links',value:JSON.stringify(links)},{onConflict:'type,key'});
-showToast('Footer saved!');
-}
-
-function addQuickLink(label='',url=''){
-quickLinkCount++;
-const div=document.createElement('div');
-div.className='addon-row';div.id='ql-'+quickLinkCount;
-div.innerHTML='<input type="text" class="fi" placeholder="Label (e.g. Menu)" value="'+label+'" style="flex:1"/><input type="text" class="fi" placeholder="URL (e.g. /menu)" value="'+url+'" style="flex:2"/><button class="rm-btn" onclick="document.getElementById(\'ql-'+quickLinkCount+'\').remove()">X</button>';
-document.getElementById('quick-links-list').appendChild(div);
-}
-
-function getQuickLinks(){
-return[...document.querySelectorAll('#quick-links-list .addon-row')].map(row=>{
-const inputs=row.querySelectorAll('input');
-return{label:inputs[0].value.trim(),url:inputs[1].value.trim()};
-}).filter(q=>q.label&&q.url);
+showToast('Brand settings saved!');
+const nameEl=document.getElementById('brand-name');
+if(nameEl&&nameEl.value)document.getElementById('topbar-title').textContent=nameEl.value+' Admin';
 }
 </script>
 </body>
